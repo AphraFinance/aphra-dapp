@@ -1,11 +1,11 @@
 <p align="center">
-  <a href="https://www.vaderprotocol.app/" target="_blank">
-    <img src="https://raw.githubusercontent.com/vetherasset/branding/main/vader/vader-symbol-w-ring.svg" alt="https://www.vaderprotocol.io" width="200" align="center" />
+  <a href="http://wwws.aphra.finance/" target="_blank">
+    <img src="https://cdn.discordapp.com/attachments/927304216706433075/931353723182145586/aphra_transparent.png" alt="https://www.aphra.finance/" width="200" align="center" />
   </a>
-  <br /><br />
-  <a href="https://www.vaderprotocol.app" target="_blank">VaderProtocol.app</a>
+  <br /><br />https://www.aphra.finance/
+  <a href="https://www.aphra.finance/" target="_blank">Aphra.Finance</a>
   <br />
-  <i>All-in-One DeFi Protocol</i>
+  <i>Glory to the Empire</i>
 </p>
 
 ## About
@@ -17,9 +17,9 @@
 
 > To simplify, Vader Protocol is a combination of the best core ideas in DeFi
 
-Find out more on [docs.vaderprotocol.io](https://docs.vaderprotocol.io)
+Find out more on [docs.aphra.finance](https://docs.aphra.finance)
 
-![credit:@viccccx1](https://raw.githubusercontent.com/vetherasset/branding/main/materials/vader-liquidity-protocol-infograph.png)
+<!-- ![credit:@viccccx1](https://raw.githubusercontent.com/vetherasset/branding/main/materials/vader-liquidity-protocol-infograph.png) -->
 
 ### Requirements
 
@@ -27,10 +27,10 @@ Find out more on [docs.vaderprotocol.io](https://docs.vaderprotocol.io)
 
 ## Getting Started
 
-[![GitHub branches](https://badgen.net/github/branches/vetherasset/vader-dapp)](https://github.com/vetherasset/vader-dapp/)
-[![GitHub issues](https://badgen.net/github/issues/vetherasset/vader-dapp/)](https://github.com/vetherasset/vader-dapp/issues/)
-[![GitHub issues](https://img.shields.io/github/issues/vetherasset/vader-dapp)](https://github.com/vetherasset/vader-dapp/issues)
-[![GitHub issues-closed](https://img.shields.io/github/issues-closed/vetherasset/vader-dapp)](https://github.com/vetherasset/vader-dapp/issues?q=is%3Aissue+is%3Aclosed)
+[![GitHub branches](https://badgen.net/github/branches/AphraFinance/aphra-dapp)](https://github.com/AphraFinance/aphra-dapp/)
+[![GitHub issues](https://badgen.net/github/issues/AphraFinance/aphra-dapp/)](https://github.com/AphraFinance/aphra-dapp/issues/)
+[![GitHub issues](https://img.shields.io/github/issues/AphraFinance/aphra-dapp)](https://github.com/AphraFinance/aphra-dapp/issues)
+[![GitHub issues-closed](https://img.shields.io/github/issues-closed/AphraFinance/aphra-dapp)](https://github.com/AphraFinance/aphra-dapp/issues?q=is%3Aissue+is%3Aclosed)
 
 1. Fork & clone repo 🍴
 2. `yarn` or `npm i`
@@ -40,13 +40,13 @@ Find out more on [docs.vaderprotocol.io](https://docs.vaderprotocol.io)
 6. Get coding! 🚀🍪
 
 #### Note(s):
-- `.env` file is ignored in Git - *DO NOT* commit your keys or remove from `.gitignore`
+
+- `.env` file is ignored in Git - _DO NOT_ commit your keys or remove from `.gitignore`
 - Project bootstrapped with [Create React App](https://github.com/facebook/create-react-app). All scripts are available if you need them (eg: `yarn eject`)
 
 ## Community
 
-- Home: [www.vaderprotocol.io](https://www.vaderprotocol.io)
-- Docs: [docs.vaderprotocol.io](https://docs.vaderprotocol.io)
-- Discord: [discord.com/invite/vaderprotocol](https://discord.com/invite/vaderprotocol)
-- Twitter: [twitter.com/VaderProtocol](https://twitter.com/VaderProtocol)
-- Telegram: [t.me/vaderprotocol](https://t.me/vaderprotocol)
+- Home: [www.aphra.finance](https://www.aphra.finance)
+- Docs: [docs.aphra.finance](https://docs.aphra.finance)
+- Discord: [discord.com/invite/aphrafinance](https://discord.com/invite/aphrafinance)
+- Twitter: [twitter.com/aphrafinance](https://twitter.com/aphrafinance)

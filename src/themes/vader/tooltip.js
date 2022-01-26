@@ -1,5 +1,5 @@
 export default {
-	baseStyle: {
-		borderRadius: '6px',
-	},
+  baseStyle: {
+    borderRadius: '6px',
+  },
 }

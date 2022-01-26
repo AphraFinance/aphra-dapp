@@ -3,5 +3,5 @@
   "trailingComma": "all",
   "singleQuote": true,
   "semi": false,
-  "useTabs": true
+  "useTabs": false
 }

@@ -1,7 +1,7 @@
 export default {
-	baseStyle: {
-		container: {
-			borderRadius: '8px',
-		},
-	},
+  baseStyle: {
+    container: {
+      borderRadius: '8px',
+    },
+  },
 }

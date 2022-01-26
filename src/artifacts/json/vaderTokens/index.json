@@ -1,9 +1,7 @@
 {
   "name": "Vader Protocol",
   "logoURI": "https://raw.githubusercontent.com/vetherasset/branding/main/vader/vader-symbol-coingecko.png",
-  "keywords": [
-    "defi"
-  ],
+  "keywords": ["defi"],
   "timestamp": "2021-11-07T06:11:02+00:00",
   "tokens": [
     {

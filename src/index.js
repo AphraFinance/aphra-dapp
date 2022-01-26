@@ -10,15 +10,15 @@ import reportWebVitals from './reportWebVitals'
 import * as serviceWorker from './serviceWorker'
 
 ReactDOM.render(
-	<StrictMode>
-		<ColorModeScript initialColorMode={theme.config.initialColorMode} />
-		<ApolloProvider client={defaults.api.graphql.client.vaderProtocol}>
-			<QueryClientProvider client={defaults.api.client}>
-				<App />
-			</QueryClientProvider>
-		</ApolloProvider>
-	</StrictMode>,
-	document.getElementById('root'),
+  <StrictMode>
+    <ColorModeScript initialColorMode={theme.config.initialColorMode} />
+    <ApolloProvider client={defaults.api.graphql.client.vaderProtocol}>
+      <QueryClientProvider client={defaults.api.client}>
+        <App />
+      </QueryClientProvider>
+    </ApolloProvider>
+  </StrictMode>,
+  document.getElementById('root'),
 )
 
 // If you want your app to work offline and load faster, you can change

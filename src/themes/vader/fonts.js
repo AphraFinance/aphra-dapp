@@ -1,5 +1,5 @@
 export default {
-	heading: 'Heading',
-	body: 'Body',
-	button: 'Button',
+  heading: 'Heading',
+  body: 'Body',
+  button: 'Button',
 }
