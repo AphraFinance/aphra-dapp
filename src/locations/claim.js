@@ -490,7 +490,7 @@ const Burn = props => {
             w="100%"
             maxW="49ch"
             m="0 auto"
-            minH={{ base: 'auto', md: '478.65px' }}
+            // minH={{ base: 'auto', md: '478.65px' }}
             // marginTop={{ base: '2rem' }}
             p={{ base: '2rem 0.9rem', md: '2rem 2.6rem' }}
             layerStyle="colorful"
@@ -501,7 +501,7 @@ const Burn = props => {
               fontSize={{ base: '1.25rem', md: '1.55rem' }}
               fontWeight="bolder"
             >
-              Claim Aphra
+              Claim
             </Text>
             {/* <Text
               align="center"
@@ -627,6 +627,7 @@ const Burn = props => {
                   fontSize="1.1rem"
                   fontWeight="bolder"
                   mr="0.66rem"
+                  mt="1rem"
                   opacity={
                     !tokenSelect
                       ? '0.5'
@@ -833,7 +834,8 @@ const Burn = props => {
               size="lg"
               minWidth="230px"
               textTransform="uppercase"
-              disabled={working}
+              disabled={true}
+              // disabled={working}
               onClick={() => submit()}
             >
               {wallet.account && (
