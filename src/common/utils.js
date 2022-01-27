@@ -49,13 +49,13 @@ const prettifyCurrency = (
     cryptocurrency = true
   }
 
-  if (currency === 'VADER') {
+  if (currency === 'APHRA') {
     options = {
       style: 'decimal',
       minimumFractionDigits: minFractionDigits,
       maximumFractionDigits: maxFractionDigits,
     }
-    symbol = 'VADER'
+    symbol = 'APHRA'
     symbolPrepended = false
     cryptocurrency = true
   }
@@ -210,31 +210,34 @@ const getStartOfTheDayTimeStamp = () => {
   return Math.floor(new Date(currentDate).getTime() / 1000)
 }
 
-const getMerkleLeaf = (account, amount) => {
-  if (account && amount) {
-    const digest = ethers.utils.solidityKeccak256(
-      ['address', 'uint256', 'uint256', 'uint256'],
-      [account, amount, defaults.redeemables[0].salt, defaults.network.chainId],
-    )
-    return digest
-  }
+function generateLeaf(address, value) {
+  return Buffer.from(
+      // Hash in appropriate Merkle format
+      ethers.utils
+          .solidityKeccak256(["address", "uint256"], [address, value])
+          .slice(2),
+      "hex",
+  )
 }
 
 const getMerkleProofForAccount = (account, snapshot) => {
   const keccak256 = require('keccak256')
-  const leaves = []
-  for (const [acc, amt] of Object.entries(snapshot)) {
-    if (amt != '0') {
-      const digest = getMerkleLeaf(acc, amt)
-      leaves.push(digest)
-    }
-  }
-  const tree = new MerkleTree(leaves, keccak256, {
-    hashLeaves: false,
-    sortPairs: true,
-  })
-  const leaf = getMerkleLeaf(account, snapshot[account])
-  const proof = tree.getHexProof(leaf)
+
+  // Setup merkle tree
+  const merkleTree = new MerkleTree(
+      // Generate leafs
+      Object.entries(snapshot).map(([address, tokens]) =>
+          generateLeaf(
+              ethers.utils.getAddress(address),
+              ethers.utils.parseUnits(tokens.toString(), 18).toString(),
+          ),
+      ),
+      // Hashing function
+      keccak256,
+      { sortPairs: true },
+  )
+  const leaf = generateLeaf(account, ethers.utils.parseUnits(snapshot[account].toString(), 18).toString())
+  const proof = merkleTree.getHexProof(leaf)
   return proof
 }
 
@@ -255,6 +258,6 @@ export {
   getTokenByAddress,
   getStartOfTheDayTimeStamp,
   getMerkleProofForAccount,
-  getMerkleLeaf,
+  generateLeaf,
   calculateDifference,
 }

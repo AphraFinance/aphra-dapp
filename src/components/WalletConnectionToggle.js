@@ -144,15 +144,8 @@ export const WalletConnectionToggle = props => {
               name="Add"
               icon={<AddIcon layerStyle="menuIcon" />}
               wallet={wallet}
-              token={defaults.vader}
+              token={defaults.aphra}
             />
-            <AddTokenItem
-              name="Add"
-              icon={<AddIcon layerStyle="menuIcon" />}
-              wallet={wallet}
-              token={defaults.xvader}
-            />
-            <MenuDivider />
             <MenuItem
               icon={<CloseIcon layerStyle="menuIcon" />}
               onClick={() => wallet?.reset()}
