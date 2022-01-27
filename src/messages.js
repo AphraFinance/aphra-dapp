@@ -100,8 +100,8 @@ const vaderconverted = {
 }
 
 const vaderclaimed = {
-  title: 'VADER succesfully claimed',
-  description: 'Your VADER tokens were successfully claimed.',
+  title: 'APHRA succesfully claimed',
+  description: 'Your APHRA tokens were successfully claimed.',
   status: 'success',
   duration: defaults.toast.duration,
   isClosable: defaults.toast.closable,

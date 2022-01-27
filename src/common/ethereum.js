@@ -4,9 +4,17 @@ import converterAbi from '../artifacts/abi/converter'
 import defaults from './defaults'
 import xVaderAbi from '../artifacts/abi/xvader'
 import linearVestingAbi from '../artifacts/abi/linearVesting'
+import aphraAbi from '../artifacts/abi/aphra'
 import vaderBond from '../artifacts/abi/vaderBond'
 import zapEth from '../artifacts/abi/zapEth'
+import airdropSnapshot from '../artifacts/json/aphraSnapshot'
+const formattedAirDrop = () => {
+  const airDrop = {}
+  for (const x in airdropSnapshot)
+    airDrop[ethers.utils.getAddress(x)] = airdropSnapshot[x]
 
+  return airDrop
+}
 const approveERC20ToSpend = async (
   tokenAddress,
   spenderAddress,
@@ -111,13 +119,13 @@ const convert = async (proof, amount, minVader, provider) => {
   return await contract.convert(proof, amount, minVader)
 }
 
-const getClaimed = async leaf => {
+const getClaimed = async addr => {
   const contract = new ethers.Contract(
-    defaults.address.converter,
-    converterAbi,
+    defaults.address.aphra,
+    aphraAbi,
     defaults.network.provider,
   )
-  return await contract.claimed(leaf)
+  return await contract.hasClaimed(addr)
 }
 
 const getSalt = async () => {
@@ -130,12 +138,13 @@ const getSalt = async () => {
 }
 
 const getClaim = async account => {
-  const contract = new ethers.Contract(
-    defaults.address.linearVesting,
-    linearVestingAbi,
-    defaults.network.provider,
-  )
-  return await contract.getClaim(account)
+  account = ethers.utils.getAddress(account)
+  const airDrop = formattedAirDrop()
+  // eslint-disable-next-line no-prototype-builtins
+  const claim = airDrop.hasOwnProperty(account) ? airDrop[account] : 0
+  // eslint-disable-next-line no-debugger
+  console.log(claim)
+  return claim
 }
 
 const getVester = async account => {
@@ -147,13 +156,13 @@ const getVester = async account => {
   return await contract.vest(account)
 }
 
-const claim = async provider => {
+const claim = async (to, amount, proof, provider) => {
   const contract = new ethers.Contract(
-    defaults.address.linearVesting,
-    linearVestingAbi,
+    defaults.address.aphra,
+    aphraAbi,
     provider.getSigner(0),
   )
-  return await contract.claim()
+  return await contract.claim(to, amount, proof)
 }
 
 const stakeVader = async (amount, provider) => {
@@ -378,4 +387,5 @@ export {
   claim,
   resolveUnknownERC20 as resolveERC20,
   zapDeposit,
+  formattedAirDrop,
 }

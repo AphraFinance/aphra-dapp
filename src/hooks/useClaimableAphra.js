@@ -4,7 +4,7 @@ import { ethers } from 'ethers'
 import { getClaim } from '../common/ethereum'
 import defaults from '../common/defaults'
 
-export const useClaimableVeth = () => {
+export const useClaimableAphra = () => {
   const wallet = useWallet()
   const [block, setBlock] = useState(0)
   const [claimable, setClaimable] = useState(ethers.BigNumber.from('0'))
@@ -13,7 +13,7 @@ export const useClaimableVeth = () => {
     if (wallet.account) {
       getClaim(wallet.account)
         .then(n => {
-          setClaimable(n)
+          setClaimable(ethers.utils.parseEther(n.toString()))
         })
         .catch(err => console.log(err))
     }
