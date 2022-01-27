@@ -79,11 +79,8 @@ export const WalletConnectionToggle = props => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   const toggle = () => {
-    if (!wallet.account) {
-      setIsModalOpen(true)
-    } else {
-      setIsMenuOpen(true)
-    }
+    if (!wallet.account) setIsModalOpen(true)
+    else setIsMenuOpen(true)
   }
 
   useEffect(() => {

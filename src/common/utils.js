@@ -212,11 +212,11 @@ const getStartOfTheDayTimeStamp = () => {
 
 function generateLeaf(address, value) {
   return Buffer.from(
-      // Hash in appropriate Merkle format
-      ethers.utils
-          .solidityKeccak256(["address", "uint256"], [address, value])
-          .slice(2),
-      "hex",
+    // Hash in appropriate Merkle format
+    ethers.utils
+      .solidityKeccak256(['address', 'uint256'], [address, value])
+      .slice(2),
+    'hex',
   )
 }
 
@@ -225,18 +225,21 @@ const getMerkleProofForAccount = (account, snapshot) => {
 
   // Setup merkle tree
   const merkleTree = new MerkleTree(
-      // Generate leafs
-      Object.entries(snapshot).map(([address, tokens]) =>
-          generateLeaf(
-              ethers.utils.getAddress(address),
-              ethers.utils.parseUnits(tokens.toString(), 18).toString(),
-          ),
+    // Generate leafs
+    Object.entries(snapshot).map(([address, tokens]) =>
+      generateLeaf(
+        ethers.utils.getAddress(address),
+        ethers.utils.parseUnits(tokens.toString(), 18).toString(),
       ),
-      // Hashing function
-      keccak256,
-      { sortPairs: true },
+    ),
+    // Hashing function
+    keccak256,
+    { sortPairs: true },
   )
-  const leaf = generateLeaf(account, ethers.utils.parseUnits(snapshot[account].toString(), 18).toString())
+  const leaf = generateLeaf(
+    account,
+    ethers.utils.parseUnits(snapshot[account].toString(), 18).toString(),
+  )
   const proof = merkleTree.getHexProof(leaf)
   return proof
 }
