@@ -217,7 +217,7 @@ defaults.vader = {
   symbol: 'VADER',
   decimals: 18,
   logoURI:
-    'https://raw.githubusercontent.com/aphrafinance/branding/main/vader/vader-symbol-w-ring.png',
+    'https://raw.githubusercontent.com/vetherasset/branding/main/vader/vader-symbol-w-ring.png',
 }
 defaults.aphra = {
   chainId: defaults.network.chainId,
@@ -236,7 +236,7 @@ defaults.xvader = {
   symbol: 'xVADER',
   decimals: 18,
   logoURI:
-    'https://raw.githubusercontent.com/aphrafinance/branding/main/xvader/xvader-symbol-w-ring.png',
+    'https://raw.githubusercontent.com/vetherasset/branding/main/xvader/xvader-symbol-w-ring.png',
 }
 
 defaults.usdv = {
@@ -246,7 +246,7 @@ defaults.usdv = {
   symbol: 'USDV',
   decimals: 18,
   logoURI:
-    'https://raw.githubusercontent.com/aphrafinance/branding/main/usdv/usdv-symbol-w-ring.png',
+    'https://raw.githubusercontent.com/vetherasset/branding/main/usdv/usdv-symbol-w-ring.png',
 }
 
 defaults.vether = {
@@ -256,7 +256,7 @@ defaults.vether = {
   symbol: 'VETH',
   decimals: 18,
   logoURI:
-    'https://raw.githubusercontent.com/aphrafinance/branding/main/vether/vether-symbol-w-ring.png',
+    'https://raw.githubusercontent.com/vetherasset/branding/main/vether/vether-symbol-w-ring.png',
 }
 
 defaults.redeemables = [

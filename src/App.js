@@ -7,7 +7,7 @@ import {
   useLocation,
 } from 'react-router-dom'
 import { ChakraProvider, Box } from '@chakra-ui/react'
-import theme from './themes/vader'
+import theme from './themes/aphra'
 import { UseWalletProvider } from 'use-wallet'
 import { Header } from './components/Header'
 import Claim from './locations/claim'

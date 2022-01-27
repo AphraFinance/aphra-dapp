@@ -1,7 +1,7 @@
 import { ColorModeScript } from '@chakra-ui/react'
 import React, { StrictMode } from 'react'
 import ReactDOM from 'react-dom'
-import theme from './themes/vader'
+import theme from './themes/aphra'
 import App from './App'
 import defaults from './common/defaults'
 import { ApolloProvider } from '@apollo/client'

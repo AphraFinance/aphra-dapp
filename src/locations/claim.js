@@ -30,6 +30,14 @@ import {
   AlertDialogBody,
   AlertDialogFooter,
   useBreakpointValue,
+  Table,
+  TableCaption,
+  Thead,
+  Tr,
+  Th,
+  Tbody,
+  Td,
+  Tfoot,
 } from '@chakra-ui/react'
 
 import { TokenSelector } from '../components/TokenSelector'
@@ -200,18 +208,54 @@ const Claim = props => {
                 >
                   Claim your airdropped <b>APHRA</b> tokens!
                 </Box>
+                <Box
+                  as="p"
+                  mb="1.3rem"
+                  fontSize={{ base: '0.9rem', md: '1rem' }}
+                >
+                  Airdrop eligibility is determined by snapshots taken at the
+                  following block heights:
+                </Box>
 
                 <Box
                   as="p"
                   fontSize={{ base: '0.8rem', md: '1rem' }}
                   mb="0.65rem"
                 >
-                  Airdrop eligibility is determined by a snapshot of{' '}
-                  <b>xVADER</b> stakers taken at block{' '}
-                  <Kbd color="red.200">13925000</Kbd> <br />
-                  Bean Farmers taken at block{' '}
-                  <Kbd color="red.200">14005000</Kbd>,<br /> FXS Stakers taken
-                  at block <Kbd color="red.200">14005000</Kbd>. <br />
+                  <Table size="sm" mb="1.3rem">
+                    <Thead>
+                      <Tr>
+                        <Th>Snapshot</Th>
+                        <Th>Block</Th>
+                      </Tr>
+                    </Thead>
+                    <Tbody>
+                      <Tr>
+                        <Td>
+                          <b>xVADER</b>{' '}
+                        </Td>
+                        <Td>
+                          <Kbd color="red.200">13925000</Kbd>
+                        </Td>
+                      </Tr>
+                      <Tr>
+                        <Td>
+                          <b>Bean Farmers</b>
+                        </Td>
+                        <Td>
+                          <Kbd color="red.200">14005000</Kbd>
+                        </Td>
+                      </Tr>
+                      <Tr>
+                        <Td>
+                          <b>FXS Stakers</b>
+                        </Td>
+                        <Td>
+                          <Kbd color="red.200">14005000</Kbd>
+                        </Td>
+                      </Tr>
+                    </Tbody>
+                  </Table>
                   You can use our{' '}
                   <Link
                     isExternal
@@ -334,9 +378,11 @@ const Claim = props => {
               {wallet.account ? (
                 <>
                   {!working && (
-                    <>{!hasClaimed && claimableAphra > 0 && <>Claim</>}</>
+                    <>{!hasClaimed && claimableAphra > 0 && 'Claim'}</>
                   )}
-                  {!working && hasClaimed && <>{<>Nothing to Claim</>}</>}
+                  {!working &&
+                    (hasClaimed || claimableAphra <= 0) &&
+                    'Nothing to Claim'}
                   {working && (
                     <>
                       <Spinner />
@@ -344,7 +390,7 @@ const Claim = props => {
                   )}
                 </>
               ) : (
-                <>Claim</>
+                'Nothing to Claim'
               )}
             </Button>
           </Flex>

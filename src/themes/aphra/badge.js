@@ -5,8 +5,8 @@ export default {
   },
   colorScheme: {
     purple: () => ({
-      color: '#fb4377',
-      background: 'rgba(250,188,200,0.16)',
+      color: '#9043FB',
+      background: 'rgba(214, 188, 250, 0.16)',
     }),
   },
 }
