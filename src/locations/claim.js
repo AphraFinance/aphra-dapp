@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import {
   Box,
@@ -6,10 +6,6 @@ import {
   Flex,
   Text,
   Button,
-  Input,
-  InputGroup,
-  InputRightAddon,
-  Image,
   Heading,
   Link,
   Kbd,
@@ -17,58 +13,19 @@ import {
   useToast,
   Container,
   useDisclosure,
-  Checkbox,
-  Alert,
-  AlertIcon,
-  AlertTitle,
-  AlertDescription,
-  AlertDialog,
-  AlertDialogOverlay,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogBody,
-  AlertDialogFooter,
-  useBreakpointValue,
 } from '@chakra-ui/react'
 
 import { TokenSelector } from '../components/TokenSelector'
 import { ethers } from 'ethers'
 import defaults from '../common/defaults'
 import AphraLogo from '../assets/png/aphra-token.png'
-import { ChevronDownIcon, ExternalLinkIcon } from '@chakra-ui/icons'
-import {
-  getERC20Allowance,
-  convert,
-  approveERC20ToSpend,
-  getERC20BalanceOf,
-  getClaimed,
-  getVester,
-  formattedAirDrop,
-  claim,
-} from '../common/ethereum'
-import {
-  getMerkleProofForAccount,
-  generateLeaf,
-  prettifyCurrency,
-} from '../common/utils'
+import { ExternalLinkIcon } from '@chakra-ui/icons'
+import { getClaimed, formattedAirDrop, claim } from '../common/ethereum'
+import { getMerkleProofForAccount, prettifyCurrency } from '../common/utils'
 import { useWallet } from 'use-wallet'
-import {
-  insufficientBalance,
-  rejected,
-  failed,
-  vethupgraded,
-  walletNotConnected,
-  noAmount,
-  tokenValueTooSmall,
-  noToken0,
-  approved,
-  exception,
-  vaderclaimed,
-  notBurnEligible,
-  nothingtoclaim,
-  nomorethaneligible,
-} from '../messages'
+import { rejected, failed, vaderclaimed } from '../messages'
 import { useClaimableAphra } from '../hooks/useClaimableAphra'
+
 const Claim = props => {
   const wallet = useWallet()
   const toast = useToast()
@@ -92,46 +49,46 @@ const Claim = props => {
     const provider = new ethers.providers.Web3Provider(wallet.ethereum)
     setWorking(true)
     claim(wallet.account, claimableAphra, proof, provider)
-        .then(tx => {
-          tx.wait(defaults.network.tx.confirmations).then(r => {
-            setWorking(false)
-            setHasClaimed(true)
-            toast({
-              ...vaderclaimed,
-              description: (
-                  <Link
-                      variant="underline"
-                      _focus={{
-                        boxShadow: '0',
-                      }}
-                      href={`${defaults.api.etherscanUrl}/tx/${r.transactionHash}`}
-                      isExternal
-                  >
-                    <Box>
-                      Click here to view transaction on{' '}
-                      <i>
-                        <b>Etherscan</b>
-                      </i>
-                      .
-                    </Box>
-                  </Link>
-              ),
-              duration: defaults.toast.txHashDuration,
-            })
+      .then(tx => {
+        tx.wait(defaults.network.tx.confirmations).then(r => {
+          setWorking(false)
+          setHasClaimed(true)
+          toast({
+            ...vaderclaimed,
+            description: (
+              <Link
+                variant="underline"
+                _focus={{
+                  boxShadow: '0',
+                }}
+                href={`${defaults.api.etherscanUrl}/tx/${r.transactionHash}`}
+                isExternal
+              >
+                <Box>
+                  Click here to view transaction on{' '}
+                  <i>
+                    <b>Etherscan</b>
+                  </i>
+                  .
+                </Box>
+              </Link>
+            ),
+            duration: defaults.toast.txHashDuration,
           })
         })
-        .catch(err => {
-          setWorking(false)
-          if (err.code === 4001) {
-            console.log(
-                'Transaction rejected: Your have decided to reject the transaction..',
-            )
-            toast(rejected)
-          } else {
-            console.log(err)
-            toast(failed)
-          }
-        })
+      })
+      .catch(err => {
+        setWorking(false)
+        if (err.code === 4001) {
+          console.log(
+            'Transaction rejected: Your have decided to reject the transaction..',
+          )
+          toast(rejected)
+        } else {
+          console.log(err)
+          toast(failed)
+        }
+      })
   }
 
   useEffect(() => {
@@ -142,19 +99,14 @@ const Claim = props => {
       const airDrop = formattedAirDrop()
 
       if (airDrop[formattedAddress]) {
-            const merkleProof = getMerkleProofForAccount(
-                formattedAddress,
-                airDrop,
-            )
-            console.log(merkleProof)
-            setProof(merkleProof)
-            console.log(merkleProof)
-            getClaimed(formattedAddress, defaults.network.provider).then(r => {
-                if (r) setHasClaimed(true)
-            })
-
-
-        }
+        const merkleProof = getMerkleProofForAccount(formattedAddress, airDrop)
+        console.log(merkleProof)
+        setProof(merkleProof)
+        console.log(merkleProof)
+        getClaimed(formattedAddress, defaults.network.provider).then(r => {
+          if (r) setHasClaimed(true)
+        })
+      }
     }
   }, [wallet.account, defaults])
 
@@ -206,10 +158,22 @@ const Claim = props => {
                   fontSize={{ base: '0.8rem', md: '1rem' }}
                   mb="0.65rem"
                 >
-                  Claiming will go live <i>21 days</i> after the first round of
-                  bonds have issued issued alongside the <b>APHRA</b> LP bonds.
-                  A snapshot of <b>xVADER</b> stakers was taken at block{' '}
-                  <Kbd color="pink.200">13925000</Kbd>, you can use our{' '}
+                  A snapshot of <br />
+                  <ul>
+                    <li>
+                      <b>xVADER</b> stakers was taken at block{' '}
+                      <Kbd color="pink.200">13925000</Kbd>
+                    </li>
+                    <li>
+                      <b>Bean</b> community participants was taken at block and
+                      <Kbd color="pink.200">14005000</Kbd>
+                    </li>
+                    <li>
+                      <b>FXS</b> stakers was taken at block{' '}
+                      <Kbd color="pink.200">14005000</Kbd>
+                    </li>
+                  </ul>
+                  <br />
                   <Link
                     isExternal
                     href="https://dune.xyz/androolloyd/AphraFinance"
@@ -217,7 +181,6 @@ const Claim = props => {
                   >
                     Dune dashboard <ExternalLinkIcon mx="2px" />
                   </Link>
-                  to confirm eligibilty by searching for your wallet address.
                 </Box>
               </>
             </Container>
@@ -249,8 +212,7 @@ const Claim = props => {
               alignItems="center"
               flexDir="column"
             >
-              {claimableAphra
-                && (
+              {claimableAphra && (
                 <>
                   {!hasClaimed && (
                     <>
@@ -293,10 +255,7 @@ const Claim = props => {
               {wallet.account && (
                 <>
                   {!working && (
-                    <>
-                      {!hasClaimed &&
-                      claimableAphra > 0 && <>Claim</>}
-                    </>
+                    <>{!hasClaimed && claimableAphra > 0 && <>Claim</>}</>
                   )}
                   {working && (
                     <>

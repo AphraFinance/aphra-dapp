@@ -7,12 +7,12 @@ import linearVestingAbi from '../artifacts/abi/linearVesting'
 import aphraAbi from '../artifacts/abi/aphra'
 import vaderBond from '../artifacts/abi/vaderBond'
 import zapEth from '../artifacts/abi/zapEth'
-import airdropSnapshot from "../artifacts/json/aphraSnapshot"
+import airdropSnapshot from '../artifacts/json/aphraSnapshot'
 const formattedAirDrop = () => {
   const airDrop = {}
-  for (const x in airdropSnapshot) {
+  for (const x in airdropSnapshot)
     airDrop[ethers.utils.getAddress(x)] = airdropSnapshot[x]
-  }
+
   return airDrop
 }
 const approveERC20ToSpend = async (
