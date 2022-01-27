@@ -18,10 +18,10 @@ import {
   Container,
   useDisclosure,
   Checkbox,
-  Alert,
-  AlertIcon,
-  AlertTitle,
-  AlertDescription,
+  // Alert,
+  // AlertIcon,
+  // AlertTitle,
+  // AlertDescription,
   AlertDialog,
   AlertDialogOverlay,
   AlertDialogContent,
@@ -35,7 +35,10 @@ import { TokenSelector } from '../components/TokenSelector'
 import { ethers } from 'ethers'
 import defaults from '../common/defaults'
 import AphraLogo from '../assets/png/aphra-token.png'
-import { ChevronDownIcon, ExternalLinkIcon } from '@chakra-ui/icons'
+import {
+  // ChevronDownIcon,
+  ExternalLinkIcon,
+} from '@chakra-ui/icons'
 import {
   getERC20Allowance,
   convert,
@@ -73,7 +76,7 @@ const Claim = props => {
   const wallet = useWallet()
   const toast = useToast()
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const [isSelect, setIsSelect] = useState(-1)
+  const [isSelect] = useState(-1)
   const [tokenSelect, setTokenSelect] = useState(false)
   const [tokenApproved, setTokenApproved] = useState(false)
   const [tokenBalance, setTokenBalance] = useState(ethers.BigNumber.from('0'))
