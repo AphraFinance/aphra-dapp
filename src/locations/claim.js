@@ -18,10 +18,10 @@ import {
   Container,
   useDisclosure,
   Checkbox,
-  Alert,
-  AlertIcon,
-  AlertTitle,
-  AlertDescription,
+  // Alert,
+  // AlertIcon,
+  // AlertTitle,
+  // AlertDescription,
   AlertDialog,
   AlertDialogOverlay,
   AlertDialogContent,
@@ -35,7 +35,10 @@ import { TokenSelector } from '../components/TokenSelector'
 import { ethers } from 'ethers'
 import defaults from '../common/defaults'
 import AphraLogo from '../assets/png/aphra-token.png'
-import { ChevronDownIcon, ExternalLinkIcon } from '@chakra-ui/icons'
+import {
+  // ChevronDownIcon,
+  ExternalLinkIcon,
+} from '@chakra-ui/icons'
 import {
   getERC20Allowance,
   convert,
@@ -73,7 +76,7 @@ const Burn = props => {
   const wallet = useWallet()
   const toast = useToast()
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const [isSelect, setIsSelect] = useState(-1)
+  const [isSelect] = useState(-1)
   const [tokenSelect, setTokenSelect] = useState(false)
   const [tokenApproved, setTokenApproved] = useState(false)
   const [tokenBalance, setTokenBalance] = useState(ethers.BigNumber.from('0'))
@@ -899,160 +902,160 @@ const Burn = props => {
   )
 }
 
-const VethBreakdown = props => {
-  VethBreakdown.propTypes = {
-    claimable: PropTypes.object.isRequired,
-    vethAccountLeafClaimed: PropTypes.bool.isRequired,
-  }
+// const VethBreakdown = props => {
+//   VethBreakdown.propTypes = {
+//     claimable: PropTypes.object.isRequired,
+//     vethAccountLeafClaimed: PropTypes.bool.isRequired,
+//   }
 
-  const wallet = useWallet()
+//   const wallet = useWallet()
 
-  const [vester, setVester] = useState([])
+//   const [vester, setVester] = useState([])
 
-  useEffect(() => {
-    if (wallet.account) {
-      getVester(wallet.account)
-        .then(n => {
-          setVester(n)
-        })
-        .catch(err => console.log(err))
-    }
-  }, [wallet.account])
+//   useEffect(() => {
+//     if (wallet.account) {
+//       getVester(wallet.account)
+//         .then(n => {
+//           setVester(n)
+//         })
+//         .catch(err => console.log(err))
+//     }
+//   }, [wallet.account])
 
-  return (
-    <>
-      <Text as="h4" fontSize="1.1rem" fontWeight="bolder" mr="0.66rem">
-        Breakdown
-      </Text>
+//   return (
+//     <>
+//       <Text as="h4" fontSize="1.1rem" fontWeight="bolder" mr="0.66rem">
+//         Breakdown
+//       </Text>
 
-      <Flex flexDir="column" p="0 0.15rem" marginBottom=".7rem" opacity="0.87">
-        {!props.vethAccountLeafClaimed && (
-          <Flex>
-            <Container p="0">
-              <Box textAlign="left">Total eligible</Box>
-            </Container>
-            <Container p="0">
-              <Box textAlign="right">
-                {wallet.account &&
-                  defaults.redeemables[0].snapshot[wallet.account] &&
-                  Number(defaults.redeemables[0].snapshot[wallet.account]) >
-                    0 && (
-                    <>
-                      {prettifyCurrency(
-                        ethers.utils.formatUnits(
-                          defaults.redeemables[0].snapshot[wallet.account],
-                          18,
-                        ) * defaults.vader.conversionRate,
-                        0,
-                        5,
-                        'VADER',
-                      )}
-                    </>
-                  )}
-              </Box>
-            </Container>
-          </Flex>
-        )}
+//       <Flex flexDir="column" p="0 0.15rem" marginBottom=".7rem" opacity="0.87">
+//         {!props.vethAccountLeafClaimed && (
+//           <Flex>
+//             <Container p="0">
+//               <Box textAlign="left">Total eligible</Box>
+//             </Container>
+//             <Container p="0">
+//               <Box textAlign="right">
+//                 {wallet.account &&
+//                   defaults.redeemables[0].snapshot[wallet.account] &&
+//                   Number(defaults.redeemables[0].snapshot[wallet.account]) >
+//                     0 && (
+//                     <>
+//                       {prettifyCurrency(
+//                         ethers.utils.formatUnits(
+//                           defaults.redeemables[0].snapshot[wallet.account],
+//                           18,
+//                         ) * defaults.vader.conversionRate,
+//                         0,
+//                         5,
+//                         'VADER',
+//                       )}
+//                     </>
+//                   )}
+//               </Box>
+//             </Container>
+//           </Flex>
+//         )}
 
-        {wallet.account &&
-          vester?.[0] &&
-          defaults.redeemables[0].snapshot[wallet.account] &&
-          Number(defaults.redeemables[0].snapshot[wallet.account]) > 0 &&
-          props.vethAccountLeafClaimed && (
-            <>
-              <Flex>
-                <Container p="0">
-                  <Box textAlign="left">Claimed</Box>
-                </Container>
-                <Container p="0">
-                  <Box textAlign="right">
-                    {prettifyCurrency(
-                      Number(
-                        ethers.utils.formatUnits(
-                          defaults.redeemables[0].snapshot[wallet.account],
-                          18,
-                        ) * defaults.vader.conversionRate,
-                      ) - Number(ethers.utils.formatUnits(vester?.[0], 18)),
-                      0,
-                      5,
-                      'VADER',
-                    )}
-                  </Box>
-                </Container>
-              </Flex>
-            </>
-          )}
+//         {wallet.account &&
+//           vester?.[0] &&
+//           defaults.redeemables[0].snapshot[wallet.account] &&
+//           Number(defaults.redeemables[0].snapshot[wallet.account]) > 0 &&
+//           props.vethAccountLeafClaimed && (
+//             <>
+//               <Flex>
+//                 <Container p="0">
+//                   <Box textAlign="left">Claimed</Box>
+//                 </Container>
+//                 <Container p="0">
+//                   <Box textAlign="right">
+//                     {prettifyCurrency(
+//                       Number(
+//                         ethers.utils.formatUnits(
+//                           defaults.redeemables[0].snapshot[wallet.account],
+//                           18,
+//                         ) * defaults.vader.conversionRate,
+//                       ) - Number(ethers.utils.formatUnits(vester?.[0], 18)),
+//                       0,
+//                       5,
+//                       'VADER',
+//                     )}
+//                   </Box>
+//                 </Container>
+//               </Flex>
+//             </>
+//           )}
 
-        {wallet.account &&
-          props.claimable &&
-          vester?.[0] &&
-          defaults.redeemables[0].snapshot[wallet.account] &&
-          Number(defaults.redeemables[0].snapshot[wallet.account]) > 0 &&
-          props.vethAccountLeafClaimed && (
-            <>
-              <Flex>
-                <Container p="0">
-                  <Box textAlign="left">Remains vested</Box>
-                </Container>
-                <Container p="0">
-                  <Box textAlign="right">
-                    {vester?.[0] && (
-                      <>
-                        {prettifyCurrency(
-                          ethers.utils.formatUnits(
-                            vester?.[0]?.sub(props.claimable),
-                            18,
-                          ),
-                          0,
-                          4,
-                          'VADER',
-                        )}
-                      </>
-                    )}
-                  </Box>
-                </Container>
-              </Flex>
-            </>
-          )}
+//         {wallet.account &&
+//           props.claimable &&
+//           vester?.[0] &&
+//           defaults.redeemables[0].snapshot[wallet.account] &&
+//           Number(defaults.redeemables[0].snapshot[wallet.account]) > 0 &&
+//           props.vethAccountLeafClaimed && (
+//             <>
+//               <Flex>
+//                 <Container p="0">
+//                   <Box textAlign="left">Remains vested</Box>
+//                 </Container>
+//                 <Container p="0">
+//                   <Box textAlign="right">
+//                     {vester?.[0] && (
+//                       <>
+//                         {prettifyCurrency(
+//                           ethers.utils.formatUnits(
+//                             vester?.[0]?.sub(props.claimable),
+//                             18,
+//                           ),
+//                           0,
+//                           4,
+//                           'VADER',
+//                         )}
+//                       </>
+//                     )}
+//                   </Box>
+//                 </Container>
+//               </Flex>
+//             </>
+//           )}
 
-        <Flex>
-          <Container p="0">
-            <Box textAlign="left">Claimable now</Box>
-          </Container>
-          <Container p="0">
-            <Box textAlign="right">
-              {props.claimable.gte(0) && props.vethAccountLeafClaimed && (
-                <>
-                  {prettifyCurrency(
-                    ethers.utils.formatUnits(props.claimable, 18),
-                    0,
-                    5,
-                    'VADER',
-                  )}
-                </>
-              )}
-              {props.claimable?.lte(0) && !props.vethAccountLeafClaimed && (
-                <>
-                  {prettifyCurrency(
-                    Number(
-                      ethers.utils.formatUnits(
-                        defaults.redeemables?.[0]?.snapshot[wallet.account],
-                        18,
-                      ) * defaults.vader.conversionRate,
-                    ) / 2,
-                    0,
-                    5,
-                    'VADER',
-                  )}
-                </>
-              )}
-            </Box>
-          </Container>
-        </Flex>
-      </Flex>
-    </>
-  )
-}
+//         <Flex>
+//           <Container p="0">
+//             <Box textAlign="left">Claimable now</Box>
+//           </Container>
+//           <Container p="0">
+//             <Box textAlign="right">
+//               {props.claimable.gte(0) && props.vethAccountLeafClaimed && (
+//                 <>
+//                   {prettifyCurrency(
+//                     ethers.utils.formatUnits(props.claimable, 18),
+//                     0,
+//                     5,
+//                     'VADER',
+//                   )}
+//                 </>
+//               )}
+//               {props.claimable?.lte(0) && !props.vethAccountLeafClaimed && (
+//                 <>
+//                   {prettifyCurrency(
+//                     Number(
+//                       ethers.utils.formatUnits(
+//                         defaults.redeemables?.[0]?.snapshot[wallet.account],
+//                         18,
+//                       ) * defaults.vader.conversionRate,
+//                     ) / 2,
+//                     0,
+//                     5,
+//                     'VADER',
+//                   )}
+//                 </>
+//               )}
+//             </Box>
+//           </Container>
+//         </Flex>
+//       </Flex>
+//     </>
+//   )
+// }
 
 const VethAllowLessOption = props => {
   VethAllowLessOption.propTypes = {
