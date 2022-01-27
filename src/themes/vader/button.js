@@ -62,32 +62,18 @@ export default {
       textTransform: 'uppercase',
       borderRadius: '9rem',
       backgroundImage:
-        'linear-gradient(90deg, rgb(255, 157, 219) 0%, rgb(38, 164, 254) 100%)',
+        'linear-gradient(90deg, rgb(255, 55, 219) 0%, rgb(38, 55, 254) 100%)',
       _hover: {
         backgroundImage:
-          'linear-gradient(90deg, rgb(254, 201, 254) 0%, rgb(56, 233, 253) 100%)',
+          'linear-gradient(90deg, rgb(254, 55, 254) 0%, rgb(56, 55, 253) 100%)',
         _disabled: {
           backgroundImage:
-            'linear-gradient(90deg, rgb(255, 157, 219) 0%, rgb(38, 164, 254) 100%)',
+            'linear-gradient(90deg, rgb(255, 55, 219) 0%, rgb(38, 55, 254) 100%)',
         },
       },
       _active: {
         backgroundImage:
-          'linear-gradient(90deg, rgb(254, 201, 254) 0%, rgb(56, 233, 253) 100%)',
-        opacity: '0.7',
-      },
-      _disabled: {
-        color: '#fff',
-      },
-    }),
-    outline: () => ({
-      color: '#fff',
-      textTransform: 'uppercase',
-      borderRadius: '12px',
-      _hover: {
-        _disabled: {},
-      },
-      _active: {
+          'linear-gradient(90deg, rgb(254, 55, 254) 0%, rgb(56, 55, 253) 100%)',
         opacity: '0.7',
       },
       _disabled: {

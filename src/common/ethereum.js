@@ -385,7 +385,6 @@ export {
   getClaim,
   getVester,
   claim,
-  resolveUnknownERC20 as resolveERC20,
   zapDeposit,
   formattedAirDrop,
 }

@@ -80,6 +80,21 @@ export const BalanceIndicator = () => {
       staleTime: defaults.api.staleTime,
     },
   )
+  const aphraBalance = useQuery(
+    `${defaults.aphra.address}_erc20Balanceof_${wallet?.account}`,
+    async () => {
+      if (wallet.account) {
+        return await getERC20BalanceOf(
+          defaults.aphra.address,
+          wallet.account,
+          defaults.network.provider,
+        )
+      }
+    },
+    {
+      staleTime: defaults.api.staleTime,
+    },
+  )
 
   const xvaderBalance = useQuery(
     `${defaults.xvader.address}_erc20Balanceof_${wallet?.account}`,
@@ -98,17 +113,8 @@ export const BalanceIndicator = () => {
   )
 
   const totalBalance = (total = true) => {
-    if (
-      xvdrExchangeRate?.[0]?.global.value &&
-      xvaderBalance.data &&
-      vaderBalance.data
-    ) {
-      return utils.formatEther(
-        BigNumber.from(xvdrExchangeRate?.[0]?.global?.value)
-          .mul(xvaderBalance?.data)
-          .div(utils.parseUnits('1', 18))
-          .add(total ? vaderBalance?.data : 0),
-      )
+    if (aphraBalance.data) {
+      return utils.formatEther(aphraBalance.data)
     }
   }
 
@@ -152,8 +158,8 @@ export const BalanceIndicator = () => {
                         width="24px"
                         height="24px"
                         mr="5px"
-                        src={defaults.vader.logoURI}
-                        alt={`${defaults.vader.name} token`}
+                        src={defaults.aphra.logoURI}
+                        alt={`${defaults.aphra.name} token`}
                       />
                       <Box
                         as="h3"
@@ -177,32 +183,12 @@ export const BalanceIndicator = () => {
                   gridGap="0.9rem"
                   padding="1.6rem 1.6rem"
                 >
-                  {Number(totalBalance(false)) > 0 && (
-                    <Item
-                      name={'Staking'}
-                      token={defaults.vader}
-                      value={prettifyNumber(totalBalance(false), 0, 2)}
-                    />
-                  )}
-
-                  {xvaderBalance.data.gt(0) && (
+                  {aphraBalance.data.gt(0) && (
                     <Item
                       name={'Balance'}
-                      token={defaults.xvader}
+                      token={defaults.aphra}
                       value={prettifyNumber(
-                        utils.formatEther(xvaderBalance.data),
-                        0,
-                        2,
-                      )}
-                    />
-                  )}
-
-                  {vaderBalance.data.gt(0) && (
-                    <Item
-                      name={'Balance'}
-                      token={defaults.vader}
-                      value={prettifyNumber(
-                        utils.formatEther(vaderBalance.data),
+                        utils.formatEther(aphraBalance.data),
                         0,
                         2,
                       )}

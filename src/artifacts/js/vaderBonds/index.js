@@ -15,7 +15,7 @@ module.exports = [
       symbol: 'VADER',
       decimals: 18,
       logoURI:
-        'https://raw.githubusercontent.com/vetherasset/branding/main/vader/vader-symbol-w-ring.png',
+        'https://raw.githubusercontent.com/aphrafinance/branding/main/vader/vader-symbol-w-ring.png',
     },
     token1: {
       name: 'ETHER',
@@ -31,7 +31,7 @@ module.exports = [
       symbol: 'VADER',
       decimals: 18,
       logoURI:
-        'https://raw.githubusercontent.com/vetherasset/branding/main/vader/vader-symbol-w-ring.png',
+        'https://raw.githubusercontent.com/aphrafinance/branding/main/vader/vader-symbol-w-ring.png',
     },
   },
 ]

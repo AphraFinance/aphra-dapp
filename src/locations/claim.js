@@ -208,7 +208,11 @@ const Claim = props => {
                 >
                   Airdrop eligibility is determined by a snapshot of{' '}
                   <b>xVADER</b> stakers taken at block{' '}
-                  <Kbd color="pink.200">13925000</Kbd>. You can use our{' '}
+                  <Kbd color="red.200">13925000</Kbd> <br />
+                  Bean Farmers taken at block{' '}
+                  <Kbd color="red.200">14005000</Kbd>,<br /> FXS Stakers taken
+                  at block <Kbd color="red.200">14005000</Kbd>. <br />
+                  You can use our{' '}
                   <Link
                     isExternal
                     href="https://dune.xyz/androolloyd/AphraFinance"
@@ -216,7 +220,7 @@ const Claim = props => {
                   >
                     Dune dashboard <ExternalLinkIcon mx="2px" />
                   </Link>
-                  to confirm eligibilty by searching for your wallet address.
+                  to confirm eligibility by searching for your wallet address.
                 </Box>
               </>
             </Container>
@@ -332,9 +336,7 @@ const Claim = props => {
                   {!working && (
                     <>{!hasClaimed && claimableAphra > 0 && <>Claim</>}</>
                   )}
-                  {!working && (
-                    <>{claimableAphra <= 0 && <>Nothing to Claim</>}</>
-                  )}
+                  {!working && hasClaimed && <>{<>Nothing to Claim</>}</>}
                   {working && (
                     <>
                       <Spinner />
