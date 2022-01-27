@@ -1,165 +1,165 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<meta name="theme-color" content="#000000" />
-		<meta name="Aphra Dapp" content="Aphra Protocol - Glory to the Empire" />
-		<link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-		<link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-		<link
-			rel="preload"
-			href="%PUBLIC_URL%/fonts/sequel.ttf"
-			as="font"
-			crossorigin="anonymous"
-		/>
-		<link
-			rel="preload"
-			href="%PUBLIC_URL%/fonts/average-sans-v9-latin-regular.woff2"
-			as="font"
-			crossorigin="anonymous"
-		/>
-		<link
-			rel="preload"
-			href="%PUBLIC_URL%/fonts/lato-v17-latin-300.woff2"
-			as="font"
-			crossorigin="anonymous"
-		/>
-		<link
-			rel="preload"
-			href="%PUBLIC_URL%/fonts/lato-v17-latin-300italic.woff2"
-			as="font"
-			crossorigin="anonymous"
-		/>
-		<link
-			rel="preload"
-			href="%PUBLIC_URL%/fonts/lato-v17-latin-italic.woff2"
-			as="font"
-			crossorigin="anonymous"
-		/>
-		<link
-			rel="preload"
-			href="%PUBLIC_URL%/fonts/lato-v17-latin-regular.woff2"
-			as="font"
-			crossorigin="anonymous"
-		/>
-		<link
-			rel="preload"
-			href="%PUBLIC_URL%/fonts/lato-v17-latin-700.woff2"
-			as="font"
-			crossorigin="anonymous"
-		/>
-		<link
-			rel="preload"
-			href="%PUBLIC_URL%/fonts/lato-v17-latin-700italic.woff2"
-			as="font"
-			crossorigin="anonymous"
-		/>
-		<style>
-			html {
-				background: #000;
-			}
-			#radialMask {
-				background: #000;
-				background: -webkit-radial-gradient(
-					center 1500%,
-					#000 77%,
-					transparent 99%
-				);
-				background: -moz-radial-gradient(
-					center 1500%,
-					#000 77%,
-					transparent 99%
-				);
-				background: radial-gradient(center 1500%, #000 77%, transparent 99%);
-			}
-			@font-face {
-				font-family: 'Heading';
-				font-style: normal;
-				src: url('%PUBLIC_URL%/fonts/sequel.ttf') format('truetype');
-			}
-			/* average-sans-regular - latin */
-			@font-face {
-				font-family: 'Button';
-				font-style: normal;
-				font-weight: 400;
-				src: local(''),
-					url('%PUBLIC_URL%/fonts/average-sans-v9-latin-regular.woff2')
-						format('woff2'),
-					/* Chrome 26+, Opera 23+, Firefox 39+ */
-						url('%PUBLIC_URL%/fonts/average-sans-v9-latin-regular.woff')
-						format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
-			}
-			/* lato-300 - latin */
-			@font-face {
-				font-family: 'Body';
-				font-style: normal;
-				font-weight: 300;
-				src: local(''),
-					url('%PUBLIC_URL%/fonts/lato-v17-latin-300.woff2') format('woff2'),
-					/* Chrome 26+, Opera 23+, Firefox 39+ */
-						url('%PUBLIC_URL%/fonts/lato-v17-latin-300.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
-			}
-			/* lato-300italic - latin */
-			@font-face {
-				font-family: 'Body';
-				font-style: italic;
-				font-weight: 300;
-				src: local(''),
-					url('%PUBLIC_URL%/fonts/lato-v17-latin-300italic.woff2')
-						format('woff2'),
-					/* Chrome 26+, Opera 23+, Firefox 39+ */
-						url('%PUBLIC_URL%/fonts/lato-v17-latin-300italic.woff')
-						format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
-			}
-			/* lato-italic - latin */
-			@font-face {
-				font-family: 'Body';
-				font-style: italic;
-				font-weight: 400;
-				src: local(''),
-					url('%PUBLIC_URL%/fonts/lato-v17-latin-italic.woff2') format('woff2'),
-					/* Chrome 26+, Opera 23+, Firefox 39+ */
-						url('%PUBLIC_URL%/fonts/lato-v17-latin-italic.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
-			}
-			/* lato-regular - latin */
-			@font-face {
-				font-family: 'Body';
-				font-style: normal;
-				font-weight: 400;
-				src: local(''),
-					url('%PUBLIC_URL%/fonts/lato-v17-latin-regular.woff2') format('woff2'),
-					/* Chrome 26+, Opera 23+, Firefox 39+ */
-						url('%PUBLIC_URL%/fonts/lato-v17-latin-regular.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
-			}
-			/* lato-700 - latin */
-			@font-face {
-				font-family: 'Body';
-				font-style: normal;
-				font-weight: 700;
-				src: local(''),
-					url('%PUBLIC_URL%/fonts/lato-v17-latin-700.woff2') format('woff2'),
-					/* Chrome 26+, Opera 23+, Firefox 39+ */
-						url('%PUBLIC_URL%/fonts/lato-v17-latin-700.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
-			}
-			/* lato-700italic - latin */
-			@font-face {
-				font-family: 'Body';
-				font-style: italic;
-				font-weight: 700;
-				src: local(''),
-					url('%PUBLIC_URL%/fonts/lato-v17-latin-700italic.woff2')
-						format('woff2'),
-					/* Chrome 26+, Opera 23+, Firefox 39+ */
-						url('%PUBLIC_URL%/fonts/lato-v17-latin-700italic.woff')
-						format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
-			}
-		</style>
-		<title>Aphra Protocol - Glory to the Empire.</title>
-	</head>
-	<body>
-		<noscript>You need to enable JavaScript to run this app.</noscript>
-		<div id="root"></div>
-	</body>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="Aphra Dapp" content="Aphra Protocol - Glory to the Empire" />
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <link
+      rel="preload"
+      href="%PUBLIC_URL%/fonts/sequel.ttf"
+      as="font"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="preload"
+      href="%PUBLIC_URL%/fonts/average-sans-v9-latin-regular.woff2"
+      as="font"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="preload"
+      href="%PUBLIC_URL%/fonts/lato-v17-latin-300.woff2"
+      as="font"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="preload"
+      href="%PUBLIC_URL%/fonts/lato-v17-latin-300italic.woff2"
+      as="font"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="preload"
+      href="%PUBLIC_URL%/fonts/lato-v17-latin-italic.woff2"
+      as="font"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="preload"
+      href="%PUBLIC_URL%/fonts/lato-v17-latin-regular.woff2"
+      as="font"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="preload"
+      href="%PUBLIC_URL%/fonts/lato-v17-latin-700.woff2"
+      as="font"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="preload"
+      href="%PUBLIC_URL%/fonts/lato-v17-latin-700italic.woff2"
+      as="font"
+      crossorigin="anonymous"
+    />
+    <style>
+      html {
+        background: #000;
+      }
+      #radialMask {
+        background: #000;
+        background: -webkit-radial-gradient(
+          center 1500%,
+          #000 77%,
+          transparent 99%
+        );
+        background: -moz-radial-gradient(
+          center 1500%,
+          #000 77%,
+          transparent 99%
+        );
+        background: radial-gradient(center 1500%, #000 77%, transparent 99%);
+      }
+      @font-face {
+        font-family: 'Heading';
+        font-style: normal;
+        src: url('%PUBLIC_URL%/fonts/sequel.ttf') format('truetype');
+      }
+      /* average-sans-regular - latin */
+      @font-face {
+        font-family: 'Button';
+        font-style: normal;
+        font-weight: 400;
+        src: local(''),
+          url('%PUBLIC_URL%/fonts/average-sans-v9-latin-regular.woff2')
+            format('woff2'),
+          /* Chrome 26+, Opera 23+, Firefox 39+ */
+            url('%PUBLIC_URL%/fonts/average-sans-v9-latin-regular.woff')
+            format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+      }
+      /* lato-300 - latin */
+      @font-face {
+        font-family: 'Body';
+        font-style: normal;
+        font-weight: 300;
+        src: local(''),
+          url('%PUBLIC_URL%/fonts/lato-v17-latin-300.woff2') format('woff2'),
+          /* Chrome 26+, Opera 23+, Firefox 39+ */
+            url('%PUBLIC_URL%/fonts/lato-v17-latin-300.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+      }
+      /* lato-300italic - latin */
+      @font-face {
+        font-family: 'Body';
+        font-style: italic;
+        font-weight: 300;
+        src: local(''),
+          url('%PUBLIC_URL%/fonts/lato-v17-latin-300italic.woff2')
+            format('woff2'),
+          /* Chrome 26+, Opera 23+, Firefox 39+ */
+            url('%PUBLIC_URL%/fonts/lato-v17-latin-300italic.woff')
+            format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+      }
+      /* lato-italic - latin */
+      @font-face {
+        font-family: 'Body';
+        font-style: italic;
+        font-weight: 400;
+        src: local(''),
+          url('%PUBLIC_URL%/fonts/lato-v17-latin-italic.woff2') format('woff2'),
+          /* Chrome 26+, Opera 23+, Firefox 39+ */
+            url('%PUBLIC_URL%/fonts/lato-v17-latin-italic.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+      }
+      /* lato-regular - latin */
+      @font-face {
+        font-family: 'Body';
+        font-style: normal;
+        font-weight: 400;
+        src: local(''),
+          url('%PUBLIC_URL%/fonts/lato-v17-latin-regular.woff2') format('woff2'),
+          /* Chrome 26+, Opera 23+, Firefox 39+ */
+            url('%PUBLIC_URL%/fonts/lato-v17-latin-regular.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+      }
+      /* lato-700 - latin */
+      @font-face {
+        font-family: 'Body';
+        font-style: normal;
+        font-weight: 700;
+        src: local(''),
+          url('%PUBLIC_URL%/fonts/lato-v17-latin-700.woff2') format('woff2'),
+          /* Chrome 26+, Opera 23+, Firefox 39+ */
+            url('%PUBLIC_URL%/fonts/lato-v17-latin-700.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+      }
+      /* lato-700italic - latin */
+      @font-face {
+        font-family: 'Body';
+        font-style: italic;
+        font-weight: 700;
+        src: local(''),
+          url('%PUBLIC_URL%/fonts/lato-v17-latin-700italic.woff2')
+            format('woff2'),
+          /* Chrome 26+, Opera 23+, Firefox 39+ */
+            url('%PUBLIC_URL%/fonts/lato-v17-latin-700italic.woff')
+            format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+      }
+    </style>
+    <title>Aphra - Cashflow Engine for the Empire</title>
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+  </body>
 </html>
