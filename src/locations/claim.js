@@ -18,10 +18,11 @@ import {
   Container,
   useDisclosure,
   Checkbox,
-  // Alert,
-  // AlertIcon,
-  // AlertTitle,
-  // AlertDescription,
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription,
+  CloseButton,
   AlertDialog,
   AlertDialogOverlay,
   AlertDialogContent,
@@ -89,52 +90,53 @@ const Claim = props => {
 
   const [hasClaimed, setHasClaimed] = useState(false)
   const claimableAphra = useClaimableAphra()
+  // const claimableAphra = ethers.BigNumber.from('99042421345123412300')
   const [proof, setProof] = useState([])
 
   const submit = () => {
     const provider = new ethers.providers.Web3Provider(wallet.ethereum)
     setWorking(true)
     claim(wallet.account, claimableAphra, proof, provider)
-        .then(tx => {
-          tx.wait(defaults.network.tx.confirmations).then(r => {
-            setWorking(false)
-            setHasClaimed(true)
-            toast({
-              ...vaderclaimed,
-              description: (
-                  <Link
-                      variant="underline"
-                      _focus={{
-                        boxShadow: '0',
-                      }}
-                      href={`${defaults.api.etherscanUrl}/tx/${r.transactionHash}`}
-                      isExternal
-                  >
-                    <Box>
-                      Click here to view transaction on{' '}
-                      <i>
-                        <b>Etherscan</b>
-                      </i>
-                      .
-                    </Box>
-                  </Link>
-              ),
-              duration: defaults.toast.txHashDuration,
-            })
+      .then(tx => {
+        tx.wait(defaults.network.tx.confirmations).then(r => {
+          setWorking(false)
+          setHasClaimed(true)
+          toast({
+            ...vaderclaimed,
+            description: (
+              <Link
+                variant="underline"
+                _focus={{
+                  boxShadow: '0',
+                }}
+                href={`${defaults.api.etherscanUrl}/tx/${r.transactionHash}`}
+                isExternal
+              >
+                <Box>
+                  Click here to view transaction on{' '}
+                  <i>
+                    <b>Etherscan</b>
+                  </i>
+                  .
+                </Box>
+              </Link>
+            ),
+            duration: defaults.toast.txHashDuration,
           })
         })
-        .catch(err => {
-          setWorking(false)
-          if (err.code === 4001) {
-            console.log(
-                'Transaction rejected: Your have decided to reject the transaction..',
-            )
-            toast(rejected)
-          } else {
-            console.log(err)
-            toast(failed)
-          }
-        })
+      })
+      .catch(err => {
+        setWorking(false)
+        if (err.code === 4001) {
+          console.log(
+            'Transaction rejected: Your have decided to reject the transaction..',
+          )
+          toast(rejected)
+        } else {
+          console.log(err)
+          toast(failed)
+        }
+      })
   }
 
   useEffect(() => {
@@ -145,19 +147,14 @@ const Claim = props => {
       const airDrop = formattedAirDrop()
 
       if (airDrop[formattedAddress]) {
-            const merkleProof = getMerkleProofForAccount(
-                formattedAddress,
-                airDrop,
-            )
-            console.log(merkleProof)
-            setProof(merkleProof)
-            console.log(merkleProof)
-            getClaimed(formattedAddress, defaults.network.provider).then(r => {
-                if (r) setHasClaimed(true)
-            })
-
-
-        }
+        const merkleProof = getMerkleProofForAccount(formattedAddress, airDrop)
+        console.log(merkleProof)
+        setProof(merkleProof)
+        console.log(merkleProof)
+        getClaimed(formattedAddress, defaults.network.provider).then(r => {
+          if (r) setHasClaimed(true)
+        })
+      }
     }
   }, [wallet.account, defaults])
 
@@ -201,7 +198,7 @@ const Claim = props => {
                   mb="0.65rem"
                   fontSize={{ base: '0.9rem', md: '1rem' }}
                 >
-                  Claim your airdropped <b>APHRA</b> tokens here.
+                  Claim your airdropped <b>APHRA</b> tokens!
                 </Box>
 
                 <Box
@@ -209,10 +206,9 @@ const Claim = props => {
                   fontSize={{ base: '0.8rem', md: '1rem' }}
                   mb="0.65rem"
                 >
-                  Claiming will go live <i>21 days</i> after the first round of
-                  bonds have issued issued alongside the <b>APHRA</b> LP bonds.
-                  A snapshot of <b>xVADER</b> stakers was taken at block{' '}
-                  <Kbd color="pink.200">13925000</Kbd>, you can use our{' '}
+                  Airdrop eligibility is determined by a snapshot of{' '}
+                  <b>xVADER</b> stakers taken at block{' '}
+                  <Kbd color="pink.200">13925000</Kbd>. You can use our{' '}
                   <Link
                     isExternal
                     href="https://dune.xyz/androolloyd/AphraFinance"
@@ -244,62 +240,100 @@ const Claim = props => {
               Claim
             </Text>
 
+            {!working && claimableAphra <= 0 && (
+              <Alert
+                status="info"
+                variant="subtle"
+                flexDirection="column"
+                alignItems="center"
+                justifyContent="center"
+                textAlign="center"
+                size="small"
+                mt={3}
+              >
+                {/* <AlertIcon boxSize="40px" mr={0} /> */}
+                <AlertTitle mt={3} mb={1} fontSize="lg">
+                  Nothing to Claim
+                </AlertTitle>
+                <AlertDescription maxWidth="sm" mb={3}>
+                  Your address was not found as part of the airdrop snapshot.
+                  Please confirm you are connected with the correct wallet.
+                </AlertDescription>
+              </Alert>
+            )}
+
             <Flex
-              m="1.66rem 0"
-              fontSize={{ base: '1.35rem', md: '1.5rem' }}
-              fontWeight="bolder"
-              justifyContent="center"
-              alignItems="center"
-              flexDir="column"
+              layerStyle="inputLike"
+              cursor={'not-allowed'}
+              m="2rem 1rem 0rem 1rem"
             >
-              {claimableAphra
-                && (
-                <>
-                  {!hasClaimed && (
-                    <>
-                      {prettifyCurrency(
-                        ethers.utils.formatUnits(claimableAphra, 18),
-                        0,
-                        0,
-                        'APHRA',
-                      )}
+              <InputGroup>
+                <Input
+                  variant="transparent"
+                  flex="1"
+                  disabled={true}
+                  _disabled={{
+                    opacity: '0.5',
+                    cursor: 'not-allowed',
+                  }}
+                  fontSize="1.3rem"
+                  fontWeight="bold"
+                  placeholder="0.0"
+                  value={prettifyCurrency(
+                    ethers.utils.formatUnits(claimableAphra, 18),
+                    0,
+                    0,
+                    'APHRA',
+                  )}
+                />
+
+                <InputRightAddon
+                  width="auto"
+                  borderTopLeftRadius="0.375rem"
+                  borderBottomLeftRadius="0.375rem"
+                  paddingInlineStart="0.5rem"
+                  paddingInlineEnd="0.5rem"
+                >
+                  <Flex cursor="default" zIndex="1">
+                    <Box d="flex" alignItems="center">
+                      <Image
+                        width="24px"
+                        height="24px"
+                        // mr="5px"
+                        src={AphraLogo}
+                        alt={`${tokenSelect.name} token`}
+                      />
                       <Box
                         as="h3"
+                        m="0"
+                        fontSize="1.02rem"
                         fontWeight="bold"
-                        textAlign="center"
-                        fontSize="1rem"
+                        textTransform="capitalize"
                       >
-                        <Badge
-                          as="div"
-                          fontSize={{ base: '0.6rem', md: '0.75rem' }}
-                          background="rgb(214, 188, 250)"
-                          color="rgb(128, 41, 251)"
-                        >
-                          What You Get
-                        </Badge>
+                        {tokenSelect.symbol}
                       </Box>
-                    </>
-                  )}
-                </>
-              )}
+                    </Box>
+                  </Flex>
+                </InputRightAddon>
+              </InputGroup>
             </Flex>
 
             <Button
               variant="solidRadial"
-              m="0 auto 2rem"
+              m="1rem auto 2rem"
               size="lg"
               minWidth="230px"
               textTransform="uppercase"
-              disabled={working}
+              disabled={working || claimableAphra <= 0 || hasClaimed}
               onClick={() => submit()}
             >
-              {wallet.account && (
+              {wallet.account ? (
                 <>
                   {!working && (
-                    <>
-                      {!hasClaimed &&
-                      claimableAphra > 0 && <>Claim</>}
-                    </>
+                    <>{!hasClaimed && claimableAphra > 0 && <>Claim</>}</>
+                  )}
+                  {!working && (
+                    <>{claimableAphra <= 0 && <>Nothing to Claim</>}</>
                   )}
                   {working && (
                     <>
@@ -307,8 +341,9 @@ const Claim = props => {
                     </>
                   )}
                 </>
+              ) : (
+                <>Claim</>
               )}
-              {!wallet.account && <>Claim</>}
             </Button>
           </Flex>
         </Flex>

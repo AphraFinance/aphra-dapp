@@ -40,7 +40,7 @@ const App = () => {
               exact
               render={() => <Claim position="relative" zIndex="1" />}
             />
-            <Route
+            {/* <Route
               path="/bond"
               exact
               render={() => <Bonds position="relative" zIndex="1" />}
@@ -54,7 +54,7 @@ const App = () => {
               path="/stake"
               exact
               render={() => <Stake position="relative" zIndex="1" />}
-            />
+            /> */}
             <Route path="*" render={() => <Redirect to={'/'} />} />
           </Switch>
           <Footer
