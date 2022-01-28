@@ -41,8 +41,8 @@ defaults.network.connectors = {
       key: 'injected',
       name: 'MetaMask',
       logo:
-        'https://raw.githubusercontent.com/aphrafinance/' +
-        'aphra-dapp/main/src/assets/svg/icons/' +
+        'https://raw.githubusercontent.com/vetherasset/' +
+        'vader-dapp/main/src/assets/svg/icons/' +
         'metamask.svg',
     },
   },
@@ -55,14 +55,14 @@ defaults.network.connectors = {
         : undefined,
     appName: 'Aphra Finance',
     appLogoUrl:
-      'https://raw.githubusercontent.com/aphrafinance/' +
+      'https://raw.githubusercontent.com/vetherasset/' +
       'branding/main/vader/vader-logo-wo-ring.svg',
     meta: {
       key: 'walletlink',
       name: 'Coinbase Wallet',
       logo:
-        'https://raw.githubusercontent.com/aphrafinance/' +
-        'aphra-dapp/main/src/assets/svg/icons/' +
+        'https://raw.githubusercontent.com/vetherasset/' +
+        'vader-dapp/main/src/assets/svg/icons/' +
         'coinbasewallet.svg',
     },
   },
@@ -79,8 +79,8 @@ defaults.network.connectors = {
       key: 'walletconnect',
       name: 'WalletConnect',
       logo:
-        'https://raw.githubusercontent.com/aphrafinance/' +
-        'aphra-dapp/main/src/assets/svg/icons/' +
+        'https://raw.githubusercontent.com/vetherasset/' +
+        'vader-dapp/main/src/assets/svg/icons/' +
         'walletconnect.svg',
     },
   },
@@ -89,8 +89,8 @@ defaults.network.connectors = {
       key: 'injected',
       name: 'Other',
       logo:
-        'https://raw.githubusercontent.com/aphrafinance/' +
-        'aphra-dapp/main/src/assets/svg/icons/' +
+        'https://raw.githubusercontent.com/vetherasset/' +
+        'vader-dapp/main/src/assets/svg/icons/' +
         'otherwallets.svg',
     },
   },
@@ -206,7 +206,7 @@ defaults.ether = {
   symbol: 'ETH',
   decimals: 18,
   logoURI:
-    'https://raw.githubusercontent.com/aphrafinance/aphra-dapp/main/src/assets/png/eth-diamond-purple-purple.png',
+    'https://raw.githubusercontent.com/vetherasset/vader-dapp/main/src/assets/png/eth-diamond-purple-purple.png',
   isEther: true,
 }
 

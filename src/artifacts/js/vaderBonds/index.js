@@ -23,7 +23,7 @@ module.exports = [
       decimals: 18,
       isEther: true,
       logoURI:
-        'https://raw.githubusercontent.com/aphrafinance//65a55cc1d1e89e1549b3d119d296ac8d701a37ea/src/assets/png/eth-diamond-purple-purple.png',
+        'https://raw.githubusercontent.com/vetherasset/vader-dapp/main/src/assets/png/eth-diamond-purple-purple.png',
     },
     payout: {
       address: '0x2602278ee1882889b946eb11dc0e810075650983',
