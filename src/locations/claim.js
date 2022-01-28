@@ -177,7 +177,7 @@ const Claim = props => {
       <Box
         maxWidth={defaults.layout.container.lg.width}
         m="0 auto"
-        p={{ base: '5rem 1.1rem 0', md: '5rem 0 0' }}
+        p={{ base: '1rem 1.1rem 0', md: '5rem 0 0' }}
         {...props}
       >
         <Flex
@@ -204,14 +204,14 @@ const Claim = props => {
                 <Box
                   as="p"
                   mb="0.65rem"
-                  fontSize={{ base: '0.9rem', md: '1rem' }}
+                  fontSize={{ base: '1rem', md: '1rem' }}
                 >
                   Claim your airdropped <b>APHRA</b> tokens!
                 </Box>
                 <Box
                   as="p"
                   mb="1.3rem"
-                  fontSize={{ base: '0.9rem', md: '1rem' }}
+                  fontSize={{ base: '.9rem', md: '1rem' }}
                 >
                   Airdrop eligibility is determined by snapshots taken at the
                   following block heights:
@@ -219,7 +219,7 @@ const Claim = props => {
 
                 <Box
                   as="p"
-                  fontSize={{ base: '0.8rem', md: '1rem' }}
+                  fontSize={{ base: '0.9rem', md: '1rem' }}
                   mb="0.65rem"
                 >
                   <Table size="sm" mb="1.3rem">
@@ -256,6 +256,12 @@ const Claim = props => {
                       </Tr>
                     </Tbody>
                   </Table>
+                </Box>
+                <Box
+                  as="p"
+                  fontSize={{ base: '0.9rem', md: '1rem' }}
+                  mb="0.65rem"
+                >
                   You can use our{' '}
                   <Link
                     isExternal
