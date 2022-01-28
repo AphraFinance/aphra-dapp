@@ -75,13 +75,11 @@ const overrides = {
     Badge: badge,
     Tooltip: tooltip,
     Select: select,
-    Menu: menu,
     Link: link,
     Spinner: spinner,
     Modal: modal,
     Switch: switchComp,
     Tag: tag,
-    Popover: popover,
   },
   layerStyles: {
     opaque: {

@@ -1,7 +1,7 @@
 [
   {
     "name": "Vader Token List",
-    "url": "https://raw.githubusercontent.com/aphrafinance/vader-tokens/master/index.json",
+    "url": "https://raw.githubusercontent.com/vetherasset/vader-tokens/master/index.json",
     "logoURI": "https://raw.githubusercontent.com/vetherasset/branding/main/vader/vader-symbol-coingecko.png",
     "enabled": true
   }

@@ -60,7 +60,7 @@ export default {
     solidRadial: () => ({
       color: '#fff',
       textTransform: 'uppercase',
-      borderRadius: '9rem',
+      borderRadius: '12px',
       backgroundImage:
         'linear-gradient(90deg, rgb(255, 157, 219) 0%, rgb(38, 164, 254) 100%)',
       _hover: {

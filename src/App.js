@@ -7,7 +7,7 @@ import {
   useLocation,
 } from 'react-router-dom'
 import { ChakraProvider, Box } from '@chakra-ui/react'
-import theme from './themes/vader'
+import theme from './themes/aphra'
 import { UseWalletProvider } from 'use-wallet'
 import { Header } from './components/Header'
 import Claim from './locations/claim'
@@ -40,7 +40,7 @@ const App = () => {
               exact
               render={() => <Claim position="relative" zIndex="1" />}
             />
-            <Route
+            {/* <Route
               path="/bond"
               exact
               render={() => <Bonds position="relative" zIndex="1" />}
@@ -54,7 +54,7 @@ const App = () => {
               path="/stake"
               exact
               render={() => <Stake position="relative" zIndex="1" />}
-            />
+            /> */}
             <Route path="*" render={() => <Redirect to={'/'} />} />
           </Switch>
           <Footer

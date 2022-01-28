@@ -31,7 +31,7 @@ export default {
         background: '#13070e',
         borderStyle: 'solid',
         borderWidth: '2px',
-        borderColor: 'accent.100',
+        borderColor: 'dark.100',
         _placeholder: {
           color: '#fff',
         },

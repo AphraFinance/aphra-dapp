@@ -4,7 +4,8 @@ import { ethers } from 'ethers'
 import tokenListSources from '../tokenListSources'
 import vaderBonds from '../artifacts/js/vaderBonds'
 import vaderTokens from '../artifacts/json/vaderTokens'
-import snapshot from '../artifacts/json/vetherSnapshot'
+import snapshot from '../artifacts/json/aphraSnapshot'
+import AphraLogo from '../assets/png/aphra-token.png'
 
 const defaults = {}
 
@@ -52,7 +53,7 @@ defaults.network.connectors = {
       defaults.network.chainId === 1
         ? `https://eth-mainnet.alchemyapi.io/v2/${process.env.REACT_APP_ALCHEMY_KEY}`
         : undefined,
-    appName: 'Vader Protocol',
+    appName: 'Aphra Finance',
     appLogoUrl:
       'https://raw.githubusercontent.com/aphrafinance/' +
       'branding/main/vader/vader-logo-wo-ring.svg',
@@ -153,6 +154,12 @@ defaults.address.vader =
     : defaults.network.chainId === 42
     ? '0xB46dbd07ce34813623FB0643b21DCC8D0268107D'
     : undefined
+defaults.address.aphra =
+  defaults.network.chainId === 1
+    ? '0xf04847b93612ee9e7327f31906e7710b252ba4a1'
+    : defaults.network.chainId === 42
+    ? '0xf04847b93612ee9e7327f31906e7710b252ba4a1'
+    : undefined
 defaults.address.vether =
   defaults.network.chainId === 1
     ? '0x4Ba6dDd7b89ed838FEd25d208D4f644106E34279'
@@ -212,6 +219,14 @@ defaults.vader = {
   logoURI:
     'https://raw.githubusercontent.com/vetherasset/branding/main/vader/vader-symbol-w-ring.png',
 }
+defaults.aphra = {
+  chainId: defaults.network.chainId,
+  address: defaults.address.aphra,
+  name: 'APHRA',
+  symbol: 'APHRA',
+  decimals: 18,
+  logoURI: AphraLogo,
+}
 
 defaults.vader.conversionRate = 10000
 defaults.xvader = {
@@ -246,25 +261,9 @@ defaults.vether = {
 
 defaults.redeemables = [
   {
-    ...defaults.vether,
-    convertsTo: 'VADER',
+    ...defaults.aphra,
+    convertsTo: 'APHRA',
     snapshot: snapshot,
-    salt:
-      defaults.network.chainId === 1
-        ? '13662469'
-        : defaults.network.chainId === 42
-        ? '13662469'
-        : undefined,
-  },
-  {
-    ...defaults.usdv,
-    convertsTo: 'VADER',
-    disabled: true,
-  },
-  {
-    ...defaults.vader,
-    convertsTo: 'USDV',
-    disabled: true,
   },
 ]
 
