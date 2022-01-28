@@ -53,16 +53,17 @@ const AddTokenItem = props => {
     >
       <Flex gridGap={'7px'}>
         {props.name}
-        <Flex justifyContent="flex-start" fontWeight="bolder">
+        <Flex justifyContent="flex-start" fontWeight="bolder" m="0 2px 0 4px">
           <Image
-            width="24px"
-            height="24px"
-            mr="5px"
+            width="20px"
+            height="20px"
             src={props.token.logoURI}
             alt={`${props.token.name} token`}
+            mr="4px"
           />
-          {`${props.token.symbol} into wallet`}
+          {`${props.token.symbol}`}
         </Flex>
+        to wallet
       </Flex>
     </MenuItem>
   )
