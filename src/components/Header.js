@@ -1,6 +1,6 @@
 import React from 'react'
 import { useLocation } from 'react-router-dom'
-import { Flex, Text, useBreakpointValue } from '@chakra-ui/react'
+import { Tooltip, Flex, Text, useBreakpointValue } from '@chakra-ui/react'
 import defaults from '../common/defaults'
 import { Link } from 'react-router-dom'
 import { Logotype } from './Logotype'
@@ -65,28 +65,19 @@ export const Header = props => {
       >
         {pages.map(p =>
           p.disabled === true ? (
-            <Text
-              key={p.name}
-              to={p.link}
-              style={{
-                color: 'rgb(213, 213, 213)',
-                padding: '0.4rem 0.8rem',
-                ...(location.pathname === '/' && p.name === 'Claim' && current),
-                ...(p.link === location.pathname && current),
-                ...(p.link === '/bond' &&
-                  location.pathname.includes('bond') &&
-                  current),
-                ...(p.link === '/pool' &&
-                  location.pathname.includes('pool') &&
-                  current),
-                ...(p.disabled === true && {
+            <Tooltip key={p.name} label="Coming Soon" fontSize="sm">
+              <Text
+                to={p.link}
+                style={{
                   cursor: 'not-allowed',
                   opacity: '0.5',
-                }),
-              }}
-            >
-              {p.text}
-            </Text>
+                  color: 'rgb(213, 213, 213)',
+                  padding: '0.4rem 0.8rem',
+                }}
+              >
+                {p.text}
+              </Text>
+            </Tooltip>
           ) : (
             <Link
               key={p.name}
@@ -94,14 +85,14 @@ export const Header = props => {
               style={{
                 color: 'rgb(213, 213, 213)',
                 padding: '0.4rem 0.8rem',
-                ...(location.pathname === '/' && p.name === 'Claim' && current),
-                ...(p.link === location.pathname && current),
-                ...(p.link === '/bond' &&
-                  location.pathname.includes('bond') &&
-                  current),
-                ...(p.link === '/pool' &&
-                  location.pathname.includes('pool') &&
-                  current),
+                // ...(location.pathname === '/' && p.name === 'Claim' && current),
+                // ...(p.link === location.pathname && current),
+                // ...(p.link === '/bond' &&
+                //   location.pathname.includes('bond') &&
+                //   current),
+                // ...(p.link === '/pool' &&
+                //   location.pathname.includes('pool') &&
+                //   current),
               }}
             >
               {p.text}
