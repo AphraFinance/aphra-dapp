@@ -262,13 +262,13 @@ const Claim = props => {
                   fontSize={{ base: '0.9rem', md: '1rem' }}
                   mb="0.65rem"
                 >
-                  You can use our{' '}
+                  You can use this{' '}
                   <Link
                     isExternal
-                    href="https://dune.xyz/androolloyd/AphraFinance"
+                    href="https://gist.github.com/androolloyd/246abb48cfec6ab804a3240df637319e"
                     color="bluish.300"
                   >
-                    Dune dashboard <ExternalLinkIcon mx="2px" />
+                    List <ExternalLinkIcon mx="2px" />
                   </Link>
                   to confirm eligibility by searching for your wallet address.
                 </Box>
