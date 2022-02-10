@@ -686,27 +686,6 @@ const Vaults = props => {
                     )}
                   </>
                 )}
-                {!working && tokenSelect && tokenSelect.symbol === 'VETH' && (
-                  <>
-                    {!tokenApproved &&
-                      defaults.redeemables[0].snapshot[wallet.account] &&
-                      Number(defaults.redeemables[0].snapshot[wallet.account]) >
-                        0 &&
-                      !vethAccountLeafClaimed && (
-                        <>Approve {tokenSelect.symbol}</>
-                      )}
-                    {!tokenApproved &&
-                      (!defaults.redeemables[0].snapshot[wallet.account] ||
-                        !Number(
-                          defaults.redeemables[0].snapshot[wallet.account],
-                        ) > 0) && <>Burn</>}
-                    {vethAccountLeafClaimed &&
-                      defaults.redeemables[0].snapshot[wallet.account] &&
-                      Number(defaults.redeemables[0].snapshot[wallet.account]) >
-                        0 && <>Claim</>}
-                    {tokenApproved && !vethAccountLeafClaimed && <>Burn</>}
-                  </>
-                )}
                 {!working && !tokenSelect && <>Burn</>}
                 {working && (
                   <>
