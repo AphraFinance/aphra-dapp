@@ -4,9 +4,11 @@ import converterAbi from '../artifacts/abi/converter'
 import defaults from './defaults'
 import xVaderAbi from '../artifacts/abi/xvader'
 import linearVestingAbi from '../artifacts/abi/linearVesting'
-import aphraAbi from '../artifacts/abi/aphra'
 import vaderBond from '../artifacts/abi/vaderBond'
 import zapEth from '../artifacts/abi/zapEth'
+import uniswapTWAP from '../artifacts/abi/uniswapTWAP'
+import minter from '../artifacts/abi/minter'
+import IUSDV from '../artifacts/abi/IUSDV'
 import airdropSnapshot from '../artifacts/json/aphraSnapshot'
 const formattedAirDrop = () => {
   const airDrop = {}
@@ -119,13 +121,13 @@ const convert = async (proof, amount, minVader, provider) => {
   return await contract.convert(proof, amount, minVader)
 }
 
-const getClaimed = async addr => {
+const getClaimed = async leaf => {
   const contract = new ethers.Contract(
-    defaults.address.aphra,
-    aphraAbi,
+    defaults.address.converter,
+    converterAbi,
     defaults.network.provider,
   )
-  return await contract.hasClaimed(addr)
+  return await contract.claimed(leaf)
 }
 
 const getSalt = async () => {
@@ -138,13 +140,12 @@ const getSalt = async () => {
 }
 
 const getClaim = async account => {
-  account = ethers.utils.getAddress(account)
-  const airDrop = formattedAirDrop()
-  // eslint-disable-next-line no-prototype-builtins
-  const claim = airDrop.hasOwnProperty(account) ? airDrop[account] : 0
-  // eslint-disable-next-line no-debugger
-  console.log(claim)
-  return claim
+  const contract = new ethers.Contract(
+    defaults.address.linearVesting,
+    linearVestingAbi,
+    defaults.network.provider,
+  )
+  return await contract.getClaim(account)
 }
 
 const getVester = async account => {
@@ -156,13 +157,13 @@ const getVester = async account => {
   return await contract.vest(account)
 }
 
-const claim = async (to, amount, proof, provider) => {
+const claim = async provider => {
   const contract = new ethers.Contract(
-    defaults.address.aphra,
-    aphraAbi,
+    defaults.address.linearVesting,
+    linearVestingAbi,
     provider.getSigner(0),
   )
-  return await contract.claim(to, amount, proof)
+  return await contract.claim()
 }
 
 const stakeVader = async (amount, provider) => {
@@ -354,6 +355,133 @@ const zapDeposit = async (zapContractAddress, amount, minPayout, provider) => {
   return await contract.zap(minPayout, options)
 }
 
+const getStaleVaderPrice = async twapAddress => {
+  const contract = new ethers.Contract(
+    twapAddress,
+    uniswapTWAP,
+    defaults.network.provider,
+  )
+  return await contract.getStaleVaderPrice()
+}
+
+const getMinter = async () => {
+  const contract = new ethers.Contract(
+    defaults.usdv.address,
+    IUSDV,
+    defaults.network.provider,
+  )
+  return await contract.minter()
+}
+
+const getCycleMints = async minterAddress => {
+  const contract = new ethers.Contract(
+    minterAddress,
+    minter,
+    defaults.network.provider,
+  )
+  return await contract.cycleMints()
+}
+
+const getCycleBurns = async minterAddress => {
+  const contract = new ethers.Contract(
+    minterAddress,
+    minter,
+    defaults.network.provider,
+  )
+  return await contract.cycleBurns()
+}
+
+const getMinterLbt = async minterAddress => {
+  const contract = new ethers.Contract(
+    minterAddress,
+    minter,
+    defaults.network.provider,
+  )
+  return await contract.lbt()
+}
+
+const minterMint = async (
+  vaderAmount,
+  usdvAmountMinOut,
+  minterAddress,
+  provider,
+) => {
+  const contract = new ethers.Contract(
+    minterAddress,
+    minter,
+    provider.getSigner(0),
+  )
+  return await contract.mint(vaderAmount, usdvAmountMinOut)
+}
+
+const minterBurn = async (
+  usdvAmount,
+  vaderAmountMinOut,
+  minterAddress,
+  provider,
+) => {
+  const contract = new ethers.Contract(
+    minterAddress,
+    minter,
+    provider.getSigner(0),
+  )
+  return await contract.burn(usdvAmount, vaderAmountMinOut)
+}
+
+const getPublicFee = async minterAddress => {
+  const contract = new ethers.Contract(
+    minterAddress,
+    minter,
+    defaults.network.provider,
+  )
+  return await contract.getPublicFee()
+}
+
+const usdvClaim = async (lockIndex, provider) => {
+  const contract = new ethers.Contract(
+    defaults.address.usdv,
+    IUSDV,
+    provider.getSigner(0),
+  )
+  return await contract.claim(lockIndex)
+}
+
+const usdvClaimAll = async provider => {
+  const contract = new ethers.Contract(
+    defaults.address.usdv,
+    IUSDV,
+    provider.getSigner(0),
+  )
+  return await contract.claimAll()
+}
+
+const getMinterDailyLimits = async minterAddress => {
+  const contract = new ethers.Contract(
+    minterAddress,
+    minter,
+    defaults.network.provider,
+  )
+  return await contract.dailyLimits()
+}
+
+const getLockCount = async address => {
+  const contract = new ethers.Contract(
+    defaults.address.usdv,
+    IUSDV,
+    defaults.network.provider,
+  )
+  return await contract.getLockCount(address)
+}
+
+const getLocks = async (address, lockIndex) => {
+  const contract = new ethers.Contract(
+    defaults.address.usdv,
+    IUSDV,
+    defaults.network.provider,
+  )
+  return await contract.locks(address, lockIndex)
+}
+
 export {
   approveERC20ToSpend,
   getERC20BalanceOf,
@@ -385,6 +513,20 @@ export {
   getClaim,
   getVester,
   claim,
+  resolveUnknownERC20 as resolveERC20,
   zapDeposit,
+  getStaleVaderPrice,
+  getMinter,
+  getMinterLbt,
+  minterMint,
+  minterBurn,
+  getPublicFee,
+  usdvClaim,
+  getMinterDailyLimits,
+  usdvClaimAll,
+  getLockCount,
+  getLocks,
+  getCycleMints,
+  getCycleBurns,
   formattedAirDrop,
 }

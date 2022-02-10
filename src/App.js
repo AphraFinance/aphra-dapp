@@ -11,12 +11,14 @@ import theme from './themes/aphra'
 import { UseWalletProvider } from 'use-wallet'
 import { Header } from './components/Header'
 import Claim from './locations/claim'
+
 import Stake from './locations/stake'
 import Bonds from './locations/bonds'
 import Bond from './locations/bond'
 import defaults from './common/defaults'
 import { Footer } from './components/Footer'
 import { Wave } from './assets/svg/effects/Wave'
+import Vaults from './locations/vaults'
 
 const App = () => {
   return (
@@ -40,10 +42,10 @@ const App = () => {
               exact
               render={() => <Claim position="relative" zIndex="1" />}
             />
-            {/* <Route
-              path="/bond"
+            <Route
+              path="/vaults"
               exact
-              render={() => <Bonds position="relative" zIndex="1" />}
+              render={() => <Vaults position="relative" zIndex="1" />}
             />
             <Route
               path="/bond/:address"
@@ -54,7 +56,7 @@ const App = () => {
               path="/stake"
               exact
               render={() => <Stake position="relative" zIndex="1" />}
-            /> */}
+            />
             <Route path="*" render={() => <Redirect to={'/'} />} />
           </Switch>
           <Footer

@@ -148,6 +148,12 @@ defaults.api.etherscanUrl =
     : undefined
 
 defaults.address = {}
+defaults.address.routerModule =
+  defaults.network.chainId === 1
+    ? '0x2602278EE1882889B946eb11DC0E810075650983'
+    : defaults.network.chainId === 42
+    ? '0xB46dbd07ce34813623FB0643b21DCC8D0268107D'
+    : undefined
 defaults.address.vader =
   defaults.network.chainId === 1
     ? '0x2602278EE1882889B946eb11DC0E810075650983'
@@ -174,7 +180,7 @@ defaults.address.xvader =
     : undefined
 ;(defaults.address.usdv =
   defaults.network.chainId === 1
-    ? undefined
+    ? '0xea3Fb6f331735252E7Bfb0b24b3B761301293DBe'
     : defaults.network.chainId === 42
     ? '0xfd87ba583bd2071713fb5CB12086536a26eec18e'
     : undefined),
@@ -248,6 +254,15 @@ defaults.usdv = {
   logoURI:
     'https://raw.githubusercontent.com/vetherasset/branding/main/usdv/usdv-symbol-w-ring.png',
 }
+defaults.usdv3Crv = {
+  chainId: defaults.network.chainId,
+  address: defaults.address.usdv3Crv,
+  name: 'USDV3Crv',
+  symbol: 'USDV3Crv',
+  decimals: 18,
+  logoURI:
+    'https://raw.githubusercontent.com/vetherasset/branding/main/usdv/usdv-symbol-w-ring.png',
+}
 
 defaults.vether = {
   chainId: defaults.network.chainId,
@@ -267,8 +282,16 @@ defaults.redeemables = [
   },
 ]
 
-defaults.stakeable = [...[defaults.vader]]
-
+defaults.stakeable = [...[defaults.usdv3Crv]]
+defaults.vaultable = [...[defaults.vader], ...[defaults.usdv]]
+defaults.vaults = {
+  USDV: {
+    address: defaults.address.usdv,
+  },
+  VADER: {
+    address: defaults.address.vader,
+  },
+}
 defaults.unstakeable = [...[defaults.xvader]]
 
 defaults.bonds = vaderBonds
