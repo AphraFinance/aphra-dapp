@@ -324,340 +324,269 @@ const Vaults = props => {
             </Button>
           </Flex>
 
-          {(!tokenSelect ||
-            (tokenSelect.symbol === 'VETH' && !vethAccountLeafClaimed) ||
-            tokenSelect.symbol !== 'VETH') && (
-            <>
-              <Text
-                as="h4"
-                fontSize="1.1rem"
-                fontWeight="bolder"
-                mr="0.66rem"
-                opacity={
-                  !tokenSelect
-                    ? '0.5'
-                    : tokenSelect.symbol === 'VETH' &&
-                      (!defaults.redeemables[0].snapshot[wallet.account] ||
-                        !Number(
-                          defaults.redeemables[0].snapshot[wallet.account],
-                        ) > 0)
-                    ? '0.5'
-                    : tokenSelect.symbol === 'VETH' && !vethAllowLess
-                    ? '0.5'
-                    : tokenSelect !== 'VETH' && submitOption
-                    ? '0.5'
-                    : '1'
-                }
-              >
-                Amount
-              </Text>
-              <Flex
-                layerStyle="inputLike"
-                cursor={
-                  !tokenSelect
-                    ? 'not-allowed'
-                    : tokenSelect.symbol === 'VETH' &&
-                      (!defaults.redeemables[0].snapshot[wallet.account] ||
-                        !Number(
-                          defaults.redeemables[0].snapshot[wallet.account],
-                        ) > 0)
-                    ? 'not-allowed'
-                    : tokenSelect.symbol === 'VETH' && !vethAllowLess
-                    ? 'not-allowed'
-                    : tokenSelect !== 'VETH' && submitOption
-                    ? 'not-allowed'
-                    : ''
-                }
-                opacity={
-                  !tokenSelect
-                    ? '0.5'
-                    : tokenSelect.symbol === 'VETH' &&
-                      (!defaults.redeemables[0].snapshot[wallet.account] ||
-                        !Number(
-                          defaults.redeemables[0].snapshot[wallet.account],
-                        ) > 0)
-                    ? '0.5'
-                    : tokenSelect.symbol === 'VETH' && !vethAllowLess
-                    ? '0.5'
-                    : tokenSelect !== 'VETH' && submitOption
-                    ? '0.5'
-                    : '1'
-                }
-              >
-                <Box flex="1">
-                  <InputGroup>
-                    <Input
-                      variant="transparent"
-                      flex="1"
-                      disabled={
-                        !tokenSelect
-                          ? true
-                          : tokenSelect.symbol === 'VETH' &&
-                            (!defaults.redeemables[0].snapshot[
-                              wallet.account
-                            ] ||
-                              !Number(
-                                defaults.redeemables[0].snapshot[
-                                  wallet.account
-                                ],
-                              ) > 0)
-                          ? true
-                          : tokenSelect.symbol === 'VETH' && !vethAllowLess
-                          ? true
-                          : tokenSelect !== 'VETH' && submitOption
-                          ? true
-                          : false
-                      }
-                      _disabled={{
-                        opacity: '0.5',
-                        cursor: 'not-allowed',
-                      }}
-                      fontSize="1.3rem"
-                      fontWeight="bold"
-                      placeholder="0.0"
-                      value={inputAmount}
-                      onChange={e => {
-                        if (isNaN(e.target.value)) {
-                          setInputAmount(prev => prev)
+          <>
+            <Text
+              as="h4"
+              fontSize="1.1rem"
+              fontWeight="bolder"
+              mr="0.66rem"
+              opacity={!tokenSelect ? '0.5' : '1'}
+            >
+              Amount
+            </Text>
+            <Flex
+              layerStyle="inputLike"
+              cursor={!tokenSelect ? 'not-allowed' : ''}
+              opacity={!tokenSelect ? '0.5' : '1'}
+            >
+              <Box flex="1">
+                <InputGroup>
+                  <Input
+                    variant="transparent"
+                    flex="1"
+                    disabled={!tokenSelect}
+                    _disabled={{
+                      opacity: '0.5',
+                      cursor: 'not-allowed',
+                    }}
+                    fontSize="1.3rem"
+                    fontWeight="bold"
+                    placeholder="0.0"
+                    value={inputAmount}
+                    onChange={e => {
+                      if (isNaN(e.target.value)) {
+                        setInputAmount(prev => prev)
+                      } else {
+                        setInputAmount(String(e.target.value))
+                        if (Number(e.target.value) > 0) {
+                          setValue(
+                            ethers.utils.parseUnits(String(e.target.value), 18),
+                          )
                         } else {
-                          setInputAmount(String(e.target.value))
-                          if (Number(e.target.value) > 0) {
-                            setValue(
-                              ethers.utils.parseUnits(
-                                String(e.target.value),
-                                18,
-                              ),
-                            )
-                          } else {
-                            setValue(ethers.BigNumber.from('0'))
-                          }
+                          setValue(ethers.BigNumber.from('0'))
                         }
-                      }}
-                    />
-                    {tokenSelect && tokenSelect !== 'VETH' && !submitOption && (
-                      <InputRightAddon
-                        width="auto"
-                        borderTopLeftRadius="0.375rem"
-                        borderBottomLeftRadius="0.375rem"
-                        paddingInlineStart="0.5rem"
-                        paddingInlineEnd="0.5rem"
-                      >
-                        <Flex cursor="default" zIndex="1">
-                          <Box d="flex" alignItems="center">
-                            <Image
-                              width="24px"
-                              height="24px"
-                              mr="5px"
-                              src={tokenSelect.logoURI}
-                              alt={`${tokenSelect.name} token`}
-                            />
-                            <Box
-                              as="h3"
-                              m="0"
-                              fontSize="1.02rem"
-                              fontWeight="bold"
-                              textTransform="capitalize"
-                            >
-                              {tokenSelect.symbol}
-                            </Box>
+                      }
+                    }}
+                  />
+                  {tokenSelect && !submitOption && (
+                    <InputRightAddon
+                      width="auto"
+                      borderTopLeftRadius="0.375rem"
+                      borderBottomLeftRadius="0.375rem"
+                      paddingInlineStart="0.5rem"
+                      paddingInlineEnd="0.5rem"
+                    >
+                      <Flex cursor="default" zIndex="1">
+                        <Box d="flex" alignItems="center">
+                          <Image
+                            width="24px"
+                            height="24px"
+                            mr="5px"
+                            src={tokenSelect.logoURI}
+                            alt={`${tokenSelect.name} token`}
+                          />
+                          <Box
+                            as="h3"
+                            m="0"
+                            fontSize="1.02rem"
+                            fontWeight="bold"
+                            textTransform="capitalize"
+                          >
+                            {tokenSelect.symbol}
                           </Box>
-                        </Flex>
-                      </InputRightAddon>
-                    )}
-                  </InputGroup>
-                </Box>
-              </Flex>
+                        </Box>
+                      </Flex>
+                    </InputRightAddon>
+                  )}
+                </InputGroup>
+              </Box>
+            </Flex>
 
-              {tokenSelect?.symbol !== 'VETH' && (
-                <>
-                  <Flex
-                    mt=".6rem"
-                    justifyContent="flex-end"
-                    flexDir="row"
-                    opacity={!tokenSelect || submitOption ? '0.5' : '1'}
-                    pointerEvents={!tokenSelect || submitOption ? 'none' : ''}
+            {tokenSelect?.symbol !== 'VETH' && (
+              <>
+                <Flex
+                  mt=".6rem"
+                  justifyContent="flex-end"
+                  flexDir="row"
+                  opacity={!tokenSelect || submitOption ? '0.5' : '1'}
+                  pointerEvents={!tokenSelect || submitOption ? 'none' : ''}
+                >
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    mr="0.4rem"
+                    onClick={() => {
+                      setInputAmount(
+                        ethers.utils.formatUnits(
+                          balance?.data?.div(100).mul(25),
+                          tokenSelect.decimals,
+                        ),
+                      )
+                      setValue(balance?.data?.div(100).mul(25))
+                    }}
                   >
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      mr="0.4rem"
-                      onClick={() => {
-                        setInputAmount(
-                          ethers.utils.formatUnits(
-                            balance?.data?.div(100).mul(25),
-                            tokenSelect.decimals,
-                          ),
-                        )
-                        setValue(balance?.data?.div(100).mul(25))
-                      }}
-                    >
-                      25%
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      mr="0.4rem"
-                      onClick={() => {
-                        setInputAmount(
-                          ethers.utils.formatUnits(
-                            balance?.data?.div(100).mul(50),
-                            tokenSelect.decimals,
-                          ),
-                        )
-                        setValue(balance?.data?.div(100).mul(50))
-                      }}
-                    >
-                      50%
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      mr="0.4rem"
-                      onClick={() => {
-                        setInputAmount(
-                          ethers.utils.formatUnits(
-                            balance?.data?.div(100).mul(75),
-                            tokenSelect.decimals,
-                          ),
-                        )
-                        setValue(balance?.data?.div(100).mul(75))
-                      }}
-                    >
-                      75%
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      mr="0.4rem"
-                      onClick={() => {
-                        setInputAmount(
-                          ethers.utils.formatUnits(
-                            balance?.data,
-                            tokenSelect.decimals,
-                          ),
-                        )
-                        setValue(balance?.data)
-                      }}
-                    >
-                      MAX
-                    </Button>
-                  </Flex>
-                  <Flex m=".3rem 0 1.2rem" flexDir="column">
-                    <Flex
-                      pointerEvents={!tokenSelect || submitOption ? 'none' : ''}
-                      opacity={!tokenSelect || submitOption ? '0.5' : '1'}
-                      flexDir="column"
-                    >
-                      <Text as="h4" fontWeight="bolder">
-                        Slippage Tolerance
-                      </Text>
-                      <Flex
-                        mt=".3rem"
-                        justifyContent="flex-start"
-                        flexDir="row"
+                    25%
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    mr="0.4rem"
+                    onClick={() => {
+                      setInputAmount(
+                        ethers.utils.formatUnits(
+                          balance?.data?.div(100).mul(50),
+                          tokenSelect.decimals,
+                        ),
+                      )
+                      setValue(balance?.data?.div(100).mul(50))
+                    }}
+                  >
+                    50%
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    mr="0.4rem"
+                    onClick={() => {
+                      setInputAmount(
+                        ethers.utils.formatUnits(
+                          balance?.data?.div(100).mul(75),
+                          tokenSelect.decimals,
+                        ),
+                      )
+                      setValue(balance?.data?.div(100).mul(75))
+                    }}
+                  >
+                    75%
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    mr="0.4rem"
+                    onClick={() => {
+                      setInputAmount(
+                        ethers.utils.formatUnits(
+                          balance?.data,
+                          tokenSelect.decimals,
+                        ),
+                      )
+                      setValue(balance?.data)
+                    }}
+                  >
+                    MAX
+                  </Button>
+                </Flex>
+                <Flex m=".3rem 0 1.2rem" flexDir="column">
+                  <Flex
+                    pointerEvents={!tokenSelect || submitOption ? 'none' : ''}
+                    opacity={!tokenSelect || submitOption ? '0.5' : '1'}
+                    flexDir="column"
+                  >
+                    <Text as="h4" fontWeight="bolder">
+                      Slippage Tolerance
+                    </Text>
+                    <Flex mt=".3rem" justifyContent="flex-start" flexDir="row">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        mr="0.4rem"
+                        style={{
+                          border:
+                            slippageTol === 2 && !slippageTolAmount
+                              ? '2px solid #3fa3fa'
+                              : '',
+                        }}
+                        onClick={() => {
+                          setSlippageTol(2)
+                          setSlippageTolAmount('')
+                        }}
                       >
-                        <Button
+                        2%
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        mr="0.4rem"
+                        style={{
+                          border:
+                            slippageTol === 3 && !slippageTolAmount
+                              ? '2px solid #3fa3fa'
+                              : '',
+                        }}
+                        onClick={() => {
+                          setSlippageTol(3)
+                          setSlippageTolAmount('')
+                        }}
+                      >
+                        3%
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        mr="0.4rem"
+                        style={{
+                          border:
+                            slippageTol === 4 && !slippageTolAmount
+                              ? '2px solid #3fa3fa'
+                              : '',
+                        }}
+                        onClick={() => {
+                          setSlippageTol(4)
+                          setSlippageTolAmount('')
+                        }}
+                      >
+                        4%
+                      </Button>
+                      <InputGroup size="sm">
+                        <Input
                           variant="outline"
-                          size="sm"
-                          mr="0.4rem"
+                          placeholder="Custom"
                           style={{
                             border:
-                              slippageTol === 2 && !slippageTolAmount
+                              [2, 3, 4].indexOf(slippageTol) === -1 ||
+                              slippageTolAmount
                                 ? '2px solid #3fa3fa'
                                 : '',
                           }}
-                          onClick={() => {
-                            setSlippageTol(2)
-                            setSlippageTolAmount('')
-                          }}
-                        >
-                          2%
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          mr="0.4rem"
-                          style={{
-                            border:
-                              slippageTol === 3 && !slippageTolAmount
-                                ? '2px solid #3fa3fa'
-                                : '',
-                          }}
-                          onClick={() => {
-                            setSlippageTol(3)
-                            setSlippageTolAmount('')
-                          }}
-                        >
-                          3%
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          mr="0.4rem"
-                          style={{
-                            border:
-                              slippageTol === 4 && !slippageTolAmount
-                                ? '2px solid #3fa3fa'
-                                : '',
-                          }}
-                          onClick={() => {
-                            setSlippageTol(4)
-                            setSlippageTolAmount('')
-                          }}
-                        >
-                          4%
-                        </Button>
-                        <InputGroup size="sm">
-                          <Input
-                            variant="outline"
-                            placeholder="Custom"
-                            style={{
-                              border:
-                                [2, 3, 4].indexOf(slippageTol) === -1 ||
-                                slippageTolAmount
-                                  ? '2px solid #3fa3fa'
-                                  : '',
-                            }}
-                            value={slippageTolAmount}
-                            onChange={e => {
-                              if (isNaN(e.target.value)) {
-                                setSlippageTolAmount(prev => prev)
-                              } else {
-                                setSlippageTolAmount(String(e.target.value))
-                                if (Number(e.target.value) >= 0) {
-                                  try {
-                                    setSlippageTol(
-                                      ethers.utils.parseUnits(
-                                        String(e.target.value),
-                                        tokenSelect.decimals,
-                                      ),
-                                    )
-                                  } catch (err) {
-                                    if (err.code === 'NUMERIC_FAULT') {
-                                      console.log('value too small')
-                                    }
+                          value={slippageTolAmount}
+                          onChange={e => {
+                            if (isNaN(e.target.value)) {
+                              setSlippageTolAmount(prev => prev)
+                            } else {
+                              setSlippageTolAmount(String(e.target.value))
+                              if (Number(e.target.value) >= 0) {
+                                try {
+                                  setSlippageTol(
+                                    ethers.utils.parseUnits(
+                                      String(e.target.value),
+                                      tokenSelect.decimals,
+                                    ),
+                                  )
+                                } catch (err) {
+                                  if (err.code === 'NUMERIC_FAULT') {
+                                    console.log('value too small')
                                   }
                                 }
                               }
-                            }}
-                          />
-                          <InputRightElement>
-                            <>%</>
-                          </InputRightElement>
-                        </InputGroup>
-                      </Flex>
+                            }
+                          }}
+                        />
+                        <InputRightElement>
+                          <>%</>
+                        </InputRightElement>
+                      </InputGroup>
                     </Flex>
                   </Flex>
-                  <SubmitOptions
-                    pointerEvents={!tokenSelect ? 'none' : ''}
-                    opacity={!tokenSelect ? '0.5' : '1'}
-                    set={setSubmitOption}
-                    setting={submitOption}
-                  />
-                </>
-              )}
-            </>
-          )}
+                </Flex>
+                <SubmitOptions
+                  pointerEvents={!tokenSelect ? 'none' : ''}
+                  opacity={!tokenSelect ? '0.5' : '1'}
+                  set={setSubmitOption}
+                  setting={submitOption}
+                />
+              </>
+            )}
+          </>
 
           <Button
             variant="solidRadial"
@@ -670,7 +599,7 @@ const Vaults = props => {
           >
             {wallet.account && (
               <>
-                {!working && tokenSelect && tokenSelect.symbol !== 'VETH' && (
+                {!working && tokenSelect && (
                   <>
                     {!tokenApproved && (
                       <>
@@ -680,13 +609,13 @@ const Vaults = props => {
                     )}
                     {tokenApproved && (
                       <>
-                        {submitOption && <>Claim</>}
-                        {!submitOption && <>Burn</>}
+                        {submitOption && <>Withdraw</>}
+                        {!submitOption && <>Deposit</>}
                       </>
                     )}
                   </>
                 )}
-                {!working && !tokenSelect && <>Burn</>}
+                {!working && !tokenSelect && <>Deposit</>}
                 {working && (
                   <>
                     <Spinner />
@@ -694,7 +623,7 @@ const Vaults = props => {
                 )}
               </>
             )}
-            {!wallet.account && <>Burn</>}
+            {!wallet.account && <>Deposit</>}
           </Button>
         </Flex>
       </Box>
@@ -1047,11 +976,11 @@ const SubmitOptions = props => {
     pointerEvents: PropTypes.string,
   }
 
-  const options = ['Burn', 'Claim']
+  const options = ['Deposit', 'Withdraw']
 
   const { getRootProps, getRadioProps } = useRadioGroup({
     name: 'action',
-    value: !props.setting ? 'Burn' : 'Claim',
+    value: !props.setting ? 'Deposit' : 'Withdraw',
     onChange: () => props.set(!props.setting),
   })
   const group = getRootProps()
