@@ -34,6 +34,12 @@ export const Header = props => {
       link: '/stake',
       disabled: true,
     },
+    {
+      name: 'Vaults',
+      text: 'Vaults',
+      link: '/vaults',
+      disabled: false,
+    },
   ]
 
   const current = {

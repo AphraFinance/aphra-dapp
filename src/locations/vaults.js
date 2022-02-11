@@ -40,35 +40,24 @@ import { TokenSelector } from '../components/TokenSelector'
 import { ethers } from 'ethers'
 import defaults from '../common/defaults'
 import { ChevronDownIcon, CheckCircleIcon } from '@chakra-ui/icons'
-import { BsPauseCircleFill } from 'react-icons/bs'
 import {
   getERC20Allowance,
-  convert,
   approveERC20ToSpend,
-  getVester,
-  claim,
-  minterMint,
+  vaultDeposit,
+  vaultWithdraw,
 } from '../common/ethereum'
-import { getMerkleProofForAccount, prettifyCurrency } from '../common/utils'
 import { useWallet } from 'use-wallet'
 import {
   insufficientBalance,
   rejected,
   failed,
-  vethupgraded,
   walletNotConnected,
   noAmount,
   noToken0,
   approved,
-  exception,
-  vaderclaimed,
-  notBurnEligible,
-  nothingtoclaim,
-  vaderconverted,
+  assetDeposited,
 } from '../messages'
 import { useERC20Balance } from '../hooks/useERC20Balance'
-import prettyMilliseconds from 'pretty-ms'
-import TimeAgo from 'react-timeago'
 
 const Vaults = props => {
   const wallet = useWallet()
@@ -77,51 +66,17 @@ const Vaults = props => {
   const [isSelect, setIsSelect] = useState(-1)
   const [tokenSelect, setTokenSelect] = useState(false)
   const [tokenApproved, setTokenApproved] = useState(false)
-  const balance = useERC20Balance(tokenSelect?.address)
-  const [inputAmount, setInputAmount] = useState('')
-  const [value, setValue] = useState(0)
-  const [conversionFactor, setConversionFactor] = useState(
-    ethers.BigNumber.from('0'),
-  )
-  const [working, setWorking] = useState(false)
-
-  const [slippageTolAmount, setSlippageTolAmount] = useSessionStorage(
-    'acquireSlippageTolAmount042334310',
-    '',
-  )
-  const [slippageTol, setSlippageTol] = useSessionStorage(
-    'acquireSlippageTol042434310',
-    3,
-  )
   const [submitOption, setSubmitOption] = useLocalStorage(
     'acquireSubmitOption23049',
     false,
   )
-  const uniswapTWAP = null
-  const minter = null
-  const fee = 0
-  const usdcTWAP = ethers.utils.parseEther(
-    String(
-      1 /
-        Number(
-          ethers.utils.formatUnits(
-            uniswapTWAP?.data ? uniswapTWAP.data : '1',
-            18,
-          ),
-        ),
-    ),
+  const balance = useERC20Balance(
+    !submitOption ? tokenSelect?.address : tokenSelect?.vault,
   )
+  const [inputAmount, setInputAmount] = useState('')
+  const [value, setValue] = useState(0)
 
-  const [releaseTime, setReleaseTime] = useState(new Date())
-  const [now, setNow] = useState(new Date())
-
-  const [mintLimitRemains, mintLimitRemainsRefetch] = []
-  const [burnLimitRemains, burnLimitRemainsRefetch] = []
-
-  useEffect(() => {
-    const id = setInterval(() => setNow(new Date()), 1000)
-    return () => clearInterval(id)
-  }, [])
+  const [working, setWorking] = useState(false)
 
   const submit = () => {
     if (!working) {
@@ -131,96 +86,51 @@ const Vaults = props => {
         toast(noToken0)
       } else if (!tokenApproved && !submitOption) {
         const provider = new ethers.providers.Web3Provider(wallet.ethereum)
-        if (tokenSelect.symbol !== 'USDV' && !submitOption) {
+        setWorking(true)
+        approveERC20ToSpend(
+          tokenSelect.address,
+          defaults.vaults[tokenSelect.symbol].address,
+          defaults.network.erc20.maxApproval,
+          provider,
+        )
+          .then(tx => tx.wait(defaults.network.tx.confirmations))
+          .then(() => {
+            setWorking(false)
+            setTokenApproved(true)
+            toast(approved)
+          })
+          .catch(err => {
+            setWorking(false)
+            if (err.code === 4001) {
+              console.log(
+                'Transaction rejected: Your have decided to reject the transaction..',
+              )
+              toast(rejected)
+            } else {
+              console.log(err)
+              toast(failed)
+            }
+          })
+      } else if ((tokenApproved && value > 0) || submitOption) {
+        const provider = new ethers.providers.Web3Provider(wallet.ethereum)
+        if (balance?.data?.gte(value)) {
           setWorking(true)
-          approveERC20ToSpend(
-            tokenSelect.address,
-            defaults.vaults[tokenSelect.symbol].address,
-            defaults.network.erc20.maxApproval,
-            provider,
-          )
-            .then(tx => {
-              tx.wait(defaults.network.tx.confirmations)
-                .then(() => {
-                  setWorking(false)
-                  setTokenApproved(true)
-                  toast(approved)
-                })
-                .catch(e => {
-                  setWorking(false)
-                  if (e.code === 4001) toast(rejected)
-                  if (e.code === -32016) toast(exception)
-                })
-            })
-            .catch(err => {
-              setWorking(false)
-              if (err.code === 4001) {
-                console.log(
-                  'Transaction rejected: Your have decided to reject the transaction..',
-                )
-                toast(rejected)
-              } else {
-                console.log(err)
-                toast(failed)
-              }
-            })
-        }
-      } else if (!submitOption) {
-        if (value > 0) {
-          // if (balance?.data?.gte(value)) {
-          //   const provider = new ethers.providers.Web3Provider(wallet.ethereum)
-          //   if (tokenSelect.symbol === 'USDV') {
-          //     // if (burnLimitRemains && burnLimitRemains.gt(0)) {
-          //     //   setWorking(true)
-          //     //   minterBurn(value, minValue, minter, provider)
-          //     //     .then(tx => {
-          //     //       tx.wait(defaults.network.tx.confirmations).then(r => {
-          //     //         balance?.refetch()
-          //     //         setWorking(false)
-          //     //         toast({
-          //     //           ...usdvredeemed,
-          //     //           description: (
-          //     //             <Link
-          //     //               variant="underline"
-          //     //               _focus={{
-          //     //                 boxShadow: '0',
-          //     //               }}
-          //     //               href={`${defaults.api.etherscanUrl}/tx/${r.transactionHash}`}
-          //     //               isExternal
-          //     //             >
-          //     //               <Box>
-          //     //                 Click here to view transaction on{' '}
-          //     //                 <i>
-          //     //                   <b>Etherscan</b>
-          //     //                 </i>
-          //     //                 .
-          //     //               </Box>
-          //     //             </Link>
-          //     //           ),
-          //     //           duration: defaults.toast.txHashDuration,
-          //     //         })
-          //     //       })
-          //     //     })
-          //     //     .catch(err => {
-          //     //       setWorking(false)
-          //     //       if (err.code === 4001) {
-          //     //         console.log(
-          //     //           'Transaction rejected: You have decided to reject the transaction..',
-          //     //         )
-          //     //         toast(rejected)
-          //     //       } else {
-          //     //         console.log(err)
-          //     //         toast(failed)
-          //     //       }
-          //     //     })
-          //     // }
-          //   }
-          // } else {
-          //   toast(insufficientBalance)
-          // }
+
+          const executor = new Promise(resolve => {
+            if (!submitOption) {
+              resolve(vaultDeposit(value, tokenSelect.vault, provider))
+            } else {
+              resolve(vaultWithdraw(inputAmount))
+            }
+          })
+          executor().then(tx => {
+            return tx.wait(defaults.network.tx.confirmations).then(r => {})
+          })
         } else {
-          toast(noAmount)
+          toast(insufficientBalance)
         }
+      } else {
+        toast(noAmount)
       }
     }
   }
@@ -236,13 +146,8 @@ const Vaults = props => {
         defaults.network.provider,
       ).then(n => {
         setWorking(false)
-        if (tokenSelect.symbol !== 'USDV') {
-          if (n.gt(0)) setTokenApproved(true)
-        }
-        if (tokenSelect.symbol === 'USDV') {
-          setTokenApproved(true)
-        }
         setTokenApproved(false)
+        if (n.gt(0)) setTokenApproved(true)
       })
     }
     return () => {
@@ -372,7 +277,7 @@ const Vaults = props => {
                       }
                     }}
                   />
-                  {tokenSelect && !submitOption && (
+                  {tokenSelect && (
                     <InputRightAddon
                       width="auto"
                       borderTopLeftRadius="0.375rem"

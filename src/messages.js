@@ -116,6 +116,14 @@ const usdvredeemed = {
   isClosable: defaults.toast.closable,
   position: defaults.toast.position,
 }
+const assetDeposited = {
+  title: 'Deposit Success',
+  description: 'Your tokens were successfully deposited in the vault.',
+  status: 'success',
+  duration: defaults.toast.duration,
+  isClosable: defaults.toast.closable,
+  position: defaults.toast.position,
+}
 
 const vethupgraded = {
   title: 'VETH burnt for VADER Token',

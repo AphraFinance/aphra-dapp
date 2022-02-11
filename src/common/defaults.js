@@ -217,6 +217,7 @@ defaults.ether = {
 }
 
 defaults.vader = {
+  vault: defaults.address.vader,
   chainId: defaults.network.chainId,
   address: defaults.address.vader,
   name: 'VADER',
@@ -244,8 +245,8 @@ defaults.xvader = {
   logoURI:
     'https://raw.githubusercontent.com/vetherasset/branding/main/xvader/xvader-symbol-w-ring.png',
 }
-
 defaults.usdv = {
+  vault: defaults.address.vader,
   chainId: defaults.network.chainId,
   address: defaults.address.usdv,
   name: 'USDV',

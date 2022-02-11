@@ -8,6 +8,7 @@ import vaderBond from '../artifacts/abi/vaderBond'
 import zapEth from '../artifacts/abi/zapEth'
 import uniswapTWAP from '../artifacts/abi/uniswapTWAP'
 import minter from '../artifacts/abi/minter'
+import vault from '../artifacts/abi/aphraVault'
 import IUSDV from '../artifacts/abi/IUSDV'
 import airdropSnapshot from '../artifacts/json/aphraSnapshot'
 const formattedAirDrop = () => {
@@ -400,6 +401,24 @@ const getMinterLbt = async minterAddress => {
   return await contract.lbt()
 }
 
+const vaultDeposit = async (amountIn, vaultAddress, provider) => {
+  const contract = new ethers.Contract(
+    vaultAddress,
+    vault,
+    provider.getSigner(0),
+  )
+  return await contract.deposit(amountIn)
+}
+
+const vaultWithdraw = async (amountIn, vaultAddress, provider) => {
+  const contract = new ethers.Contract(
+    vaultAddress,
+    vault,
+    provider.getSigner(0),
+  )
+  return await contract.deposit(amountIn)
+}
+
 const minterMint = async (
   vaderAmount,
   usdvAmountMinOut,
@@ -529,4 +548,6 @@ export {
   getCycleMints,
   getCycleBurns,
   formattedAirDrop,
+  vaultDeposit,
+  vaultWithdraw,
 }
