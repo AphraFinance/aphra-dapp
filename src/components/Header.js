@@ -12,33 +12,25 @@ export const Header = props => {
   const location = useLocation()
   const pages = [
     {
-      name: 'Claim',
-      text: 'Claim',
-      link: '/',
-    },
-    {
-      name: 'Bond',
-      text: 'Bond',
-      link: '/bond',
-      disabled: true,
-    },
-    {
-      name: 'Farm',
-      text: 'Farm',
-      link: '/farm',
-      disabled: true,
+      name: 'Vaults',
+      text: 'Vaults',
+      link: '/vaults',
     },
     {
       name: 'Stake',
       text: 'Stake',
       link: '/stake',
-      disabled: true,
     },
     {
-      name: 'Vaults',
-      text: 'Vaults',
-      link: '/vaults',
-      disabled: false,
+      name: 'Claim',
+      text: 'Claim',
+      link: '/',
+    },
+    {
+      name: 'Vote',
+      text: 'Vote',
+      link: '/vote',
+      disabled: true,
     },
   ]
 

@@ -35,6 +35,15 @@ import {
   Tag,
   TagLabel,
   TagLeftIcon,
+  Heading,
+  ScaleFade,
+  Tooltip,
+  Fade,
+  Tabs,
+  TabList,
+  Tab,
+  TabPanels,
+  TabPanel,
 } from '@chakra-ui/react'
 import { TokenSelector } from '../components/TokenSelector'
 import { ethers } from 'ethers'
@@ -58,6 +67,8 @@ import {
   assetDeposited,
 } from '../messages'
 import { useERC20Balance } from '../hooks/useERC20Balance'
+import { getPercentage, prettifyNumber } from '../common/utils'
+import Stake from './stake'
 
 const Vaults = props => {
   const wallet = useWallet()
@@ -159,269 +170,306 @@ const Vaults = props => {
   return (
     <>
       <Box
-        maxWidth={defaults.layout.container.sm.width}
+        minHeight="634.95px"
+        maxWidth={defaults.layout.container.lg.width}
         m="0 auto"
-        p={{ base: '5rem .4rem 0', md: '5rem 0 0' }}
+        p={{ base: '5rem 1.2rem 0', md: '5rem 1.2rem 0' }}
         {...props}
       >
-        <Flex
-          w="100%"
-          maxW="49ch"
-          m="0 auto"
-          minH={{ base: 'auto', md: '478.65px' }}
-          p={{ base: '2rem 0.9rem', md: '2rem 2.6rem' }}
-          layerStyle="colorful"
-          flexDir="column"
-        >
-          <Text
-            align="center"
-            fontSize={{ base: '1.25rem', md: '1.55rem' }}
-            fontWeight="bolder"
+        <Flex flexDir={{ base: 'column', md: 'row' }}>
+          <Flex
+            flexDir="column"
+            w="100%"
+            paddingRight={{ base: '0', md: '2rem' }}
+            paddingTop={{ base: '0', md: '2.33rem' }}
+            justifyContent="flex-start"
           >
-            Aphra Vaults
-          </Text>
-          <Text
-            align="center"
-            fontSize={{ base: '0.91rem', md: '1.12rem' }}
-            display="block"
-            mb="2rem"
-          >
-            Deposit Asset&apos;s into the Vaults
-          </Text>
+            <Flex marginBottom={{ base: '1.2rem', md: '0' }}>
+              <Container mb="23px" p="0">
+                <>
+                  <Heading
+                    as="h1"
+                    size="md"
+                    fontSize={{ base: '1.10rem', md: '1.25rem' }}
+                  >
+                    Aphra Vaults
+                  </Heading>
 
-          <Text as="h4" fontSize="1.24rem" fontWeight="bolder">
-            Token
-          </Text>
-          <Flex marginBottom="0.7rem">
-            <Button
-              variant="outline"
-              w="100%"
-              size="lg"
-              textTransform="none"
-              leftIcon={
-                tokenSelect ? (
-                  <Image
-                    width="24px"
-                    height="24px"
-                    src={tokenSelect.logoURI}
-                    alt={`${tokenSelect.name} token`}
-                  />
-                ) : (
-                  ''
-                )
-              }
-              rightIcon={<ChevronDownIcon />}
-              onClick={() => {
-                if (wallet.account) {
-                  onOpen()
-                  setIsSelect(0)
-                } else {
-                  toast(walletNotConnected)
-                }
-              }}
+                  <Box as="p" fontSize={{ base: '0.9rem', md: '1rem' }}>
+                    <b>Aphra vaults</b> accept deposits in assets that are
+                  </Box>
+                  <Box as="p" fontSize={{ base: '0.9rem', md: '1rem' }}>
+                    <i>Aphra Vaults</i> continuously compounds, and when you
+                    unstake your <i>vault token</i>, you&lsquo;ll receive your
+                    original deposited <b>asset</b> plus any additional{' '}
+                    <i>yield</i> accrued.
+                  </Box>
+                </>
+              </Container>
+            </Flex>
+          </Flex>
+          <Flex
+            w="100%"
+            maxW="49ch"
+            m="0 auto"
+            minH={{ base: 'auto', md: '478.65px' }}
+            p={{ base: '2rem 0.9rem', md: '2rem 2.6rem' }}
+            layerStyle="colorful"
+            flexDir="column"
+          >
+            <Text
+              align="center"
+              fontSize={{ base: '1.25rem', md: '1.55rem' }}
+              fontWeight="bolder"
             >
-              {tokenSelect && <>{tokenSelect.symbol}</>}
-              {!tokenSelect && <>Select a token</>}
+              Aphra Vaults
+            </Text>
+            <Text
+              align="center"
+              fontSize={{ base: '0.91rem', md: '1.12rem' }}
+              display="block"
+              mb="2rem"
+            >
+              Deposit Asset&apos;s into the Vaults
+            </Text>
+
+            <Text as="h4" fontSize="1.24rem" fontWeight="bolder">
+              Token
+            </Text>
+            <Flex marginBottom="0.7rem">
+              <Button
+                variant="outline"
+                w="100%"
+                size="lg"
+                textTransform="none"
+                leftIcon={
+                  tokenSelect ? (
+                    <Image
+                      width="24px"
+                      height="24px"
+                      src={tokenSelect.logoURI}
+                      alt={`${tokenSelect.name} token`}
+                    />
+                  ) : (
+                    ''
+                  )
+                }
+                rightIcon={<ChevronDownIcon />}
+                onClick={() => {
+                  if (wallet.account) {
+                    onOpen()
+                    setIsSelect(0)
+                  } else {
+                    toast(walletNotConnected)
+                  }
+                }}
+              >
+                {tokenSelect && <>{tokenSelect.symbol}</>}
+                {!tokenSelect && <>Select a token</>}
+              </Button>
+            </Flex>
+
+            <>
+              <GagueActiveTag />
+              <SubmitOptions
+                pointerEvents={!tokenSelect ? 'none' : ''}
+                opacity={!tokenSelect ? '0.5' : '1'}
+                set={setSubmitOption}
+                setting={submitOption}
+              />
+              <Text
+                mt="2rem"
+                as="h4"
+                fontSize="1.1rem"
+                fontWeight="bolder"
+                mr="0.66rem"
+                opacity={!tokenSelect ? '0.5' : '1'}
+              >
+                Amount
+              </Text>
+              <Flex
+                layerStyle="inputLike"
+                cursor={!tokenSelect ? 'not-allowed' : ''}
+                opacity={!tokenSelect ? '0.5' : '1'}
+              >
+                <Box flex="1">
+                  <InputGroup>
+                    <Input
+                      variant="transparent"
+                      flex="1"
+                      disabled={!tokenSelect}
+                      _disabled={{
+                        opacity: '0.5',
+                        cursor: 'not-allowed',
+                      }}
+                      fontSize="1.3rem"
+                      fontWeight="bold"
+                      placeholder="0.0"
+                      value={inputAmount}
+                      onChange={e => {
+                        if (isNaN(e.target.value)) {
+                          setInputAmount(prev => prev)
+                        } else {
+                          setInputAmount(String(e.target.value))
+                          if (Number(e.target.value) > 0) {
+                            setValue(
+                              ethers.utils.parseUnits(
+                                String(e.target.value),
+                                18,
+                              ),
+                            )
+                          } else {
+                            setValue(ethers.BigNumber.from('0'))
+                          }
+                        }
+                      }}
+                    />
+                    {tokenSelect && (
+                      <InputRightAddon
+                        width="auto"
+                        borderTopLeftRadius="0.375rem"
+                        borderBottomLeftRadius="0.375rem"
+                        paddingInlineStart="0.5rem"
+                        paddingInlineEnd="0.5rem"
+                      >
+                        <Flex cursor="default" zIndex="1">
+                          <Box d="flex" alignItems="center">
+                            <Image
+                              width="24px"
+                              height="24px"
+                              mr="5px"
+                              src={tokenSelect.logoURI}
+                              alt={`${tokenSelect.name} token`}
+                            />
+                            <Box
+                              as="h3"
+                              m="0"
+                              fontSize="1.02rem"
+                              fontWeight="bold"
+                              textTransform="capitalize"
+                            >
+                              {tokenSelect.symbol}
+                            </Box>
+                          </Box>
+                        </Flex>
+                      </InputRightAddon>
+                    )}
+                  </InputGroup>
+                </Box>
+              </Flex>
+
+              <Flex
+                mt=".6rem"
+                justifyContent="flex-end"
+                flexDir="row"
+                opacity={!tokenSelect || submitOption ? '0.5' : '1'}
+                pointerEvents={!tokenSelect || submitOption ? 'none' : ''}
+              >
+                <Button
+                  variant="outline"
+                  size="sm"
+                  mr="0.4rem"
+                  onClick={() => {
+                    setInputAmount(
+                      ethers.utils.formatUnits(
+                        balance?.data?.div(100).mul(25),
+                        tokenSelect.decimals,
+                      ),
+                    )
+                    setValue(balance?.data?.div(100).mul(25))
+                  }}
+                >
+                  25%
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  mr="0.4rem"
+                  onClick={() => {
+                    setInputAmount(
+                      ethers.utils.formatUnits(
+                        balance?.data?.div(100).mul(50),
+                        tokenSelect.decimals,
+                      ),
+                    )
+                    setValue(balance?.data?.div(100).mul(50))
+                  }}
+                >
+                  50%
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  mr="0.4rem"
+                  onClick={() => {
+                    setInputAmount(
+                      ethers.utils.formatUnits(
+                        balance?.data?.div(100).mul(75),
+                        tokenSelect.decimals,
+                      ),
+                    )
+                    setValue(balance?.data?.div(100).mul(75))
+                  }}
+                >
+                  75%
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  mr="0.4rem"
+                  onClick={() => {
+                    setInputAmount(
+                      ethers.utils.formatUnits(
+                        balance?.data,
+                        tokenSelect.decimals,
+                      ),
+                    )
+                    setValue(balance?.data)
+                  }}
+                >
+                  MAX
+                </Button>
+              </Flex>
+            </>
+
+            <Button
+              variant="solidRadial"
+              mt="1rem"
+              size="lg"
+              minWidth="230px"
+              textTransform="uppercase"
+              disabled={working}
+              onClick={() => submit()}
+            >
+              {wallet.account && (
+                <>
+                  {!working && tokenSelect && (
+                    <>
+                      {!tokenApproved && (
+                        <>
+                          {submitOption && <>Withdraw</>}
+                          {!submitOption && <>Approve {tokenSelect.symbol}</>}
+                        </>
+                      )}
+                      {tokenApproved && (
+                        <>
+                          {submitOption && <>Withdraw</>}
+                          {!submitOption && <>Deposit</>}
+                        </>
+                      )}
+                    </>
+                  )}
+                  {!working && !tokenSelect && <>Deposit</>}
+                  {working && (
+                    <>
+                      <Spinner />
+                    </>
+                  )}
+                </>
+              )}
+              {!wallet.account && <>Deposit</>}
             </Button>
           </Flex>
-
-          <>
-            <GagueActiveTag />
-            <SubmitOptions
-              pointerEvents={!tokenSelect ? 'none' : ''}
-              opacity={!tokenSelect ? '0.5' : '1'}
-              set={setSubmitOption}
-              setting={submitOption}
-            />
-            <Text
-              mt="2rem"
-              as="h4"
-              fontSize="1.1rem"
-              fontWeight="bolder"
-              mr="0.66rem"
-              opacity={!tokenSelect ? '0.5' : '1'}
-            >
-              Amount
-            </Text>
-            <Flex
-              layerStyle="inputLike"
-              cursor={!tokenSelect ? 'not-allowed' : ''}
-              opacity={!tokenSelect ? '0.5' : '1'}
-            >
-              <Box flex="1">
-                <InputGroup>
-                  <Input
-                    variant="transparent"
-                    flex="1"
-                    disabled={!tokenSelect}
-                    _disabled={{
-                      opacity: '0.5',
-                      cursor: 'not-allowed',
-                    }}
-                    fontSize="1.3rem"
-                    fontWeight="bold"
-                    placeholder="0.0"
-                    value={inputAmount}
-                    onChange={e => {
-                      if (isNaN(e.target.value)) {
-                        setInputAmount(prev => prev)
-                      } else {
-                        setInputAmount(String(e.target.value))
-                        if (Number(e.target.value) > 0) {
-                          setValue(
-                            ethers.utils.parseUnits(String(e.target.value), 18),
-                          )
-                        } else {
-                          setValue(ethers.BigNumber.from('0'))
-                        }
-                      }
-                    }}
-                  />
-                  {tokenSelect && (
-                    <InputRightAddon
-                      width="auto"
-                      borderTopLeftRadius="0.375rem"
-                      borderBottomLeftRadius="0.375rem"
-                      paddingInlineStart="0.5rem"
-                      paddingInlineEnd="0.5rem"
-                    >
-                      <Flex cursor="default" zIndex="1">
-                        <Box d="flex" alignItems="center">
-                          <Image
-                            width="24px"
-                            height="24px"
-                            mr="5px"
-                            src={tokenSelect.logoURI}
-                            alt={`${tokenSelect.name} token`}
-                          />
-                          <Box
-                            as="h3"
-                            m="0"
-                            fontSize="1.02rem"
-                            fontWeight="bold"
-                            textTransform="capitalize"
-                          >
-                            {tokenSelect.symbol}
-                          </Box>
-                        </Box>
-                      </Flex>
-                    </InputRightAddon>
-                  )}
-                </InputGroup>
-              </Box>
-            </Flex>
-
-            <Flex
-              mt=".6rem"
-              justifyContent="flex-end"
-              flexDir="row"
-              opacity={!tokenSelect || submitOption ? '0.5' : '1'}
-              pointerEvents={!tokenSelect || submitOption ? 'none' : ''}
-            >
-              <Button
-                variant="outline"
-                size="sm"
-                mr="0.4rem"
-                onClick={() => {
-                  setInputAmount(
-                    ethers.utils.formatUnits(
-                      balance?.data?.div(100).mul(25),
-                      tokenSelect.decimals,
-                    ),
-                  )
-                  setValue(balance?.data?.div(100).mul(25))
-                }}
-              >
-                25%
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                mr="0.4rem"
-                onClick={() => {
-                  setInputAmount(
-                    ethers.utils.formatUnits(
-                      balance?.data?.div(100).mul(50),
-                      tokenSelect.decimals,
-                    ),
-                  )
-                  setValue(balance?.data?.div(100).mul(50))
-                }}
-              >
-                50%
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                mr="0.4rem"
-                onClick={() => {
-                  setInputAmount(
-                    ethers.utils.formatUnits(
-                      balance?.data?.div(100).mul(75),
-                      tokenSelect.decimals,
-                    ),
-                  )
-                  setValue(balance?.data?.div(100).mul(75))
-                }}
-              >
-                75%
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                mr="0.4rem"
-                onClick={() => {
-                  setInputAmount(
-                    ethers.utils.formatUnits(
-                      balance?.data,
-                      tokenSelect.decimals,
-                    ),
-                  )
-                  setValue(balance?.data)
-                }}
-              >
-                MAX
-              </Button>
-            </Flex>
-          </>
-
-          <Button
-            variant="solidRadial"
-            mt="1rem"
-            size="lg"
-            minWidth="230px"
-            textTransform="uppercase"
-            disabled={working}
-            onClick={() => submit()}
-          >
-            {wallet.account && (
-              <>
-                {!working && tokenSelect && (
-                  <>
-                    {!tokenApproved && (
-                      <>
-                        {submitOption && <>Withdraw</>}
-                        {!submitOption && <>Approve {tokenSelect.symbol}</>}
-                      </>
-                    )}
-                    {tokenApproved && (
-                      <>
-                        {submitOption && <>Withdraw</>}
-                        {!submitOption && <>Deposit</>}
-                      </>
-                    )}
-                  </>
-                )}
-                {!working && !tokenSelect && <>Deposit</>}
-                {working && (
-                  <>
-                    <Spinner />
-                  </>
-                )}
-              </>
-            )}
-            {!wallet.account && <>Deposit</>}
-          </Button>
         </Flex>
       </Box>
       <TokenSelector

@@ -166,6 +166,12 @@ defaults.address.aphra =
     : defaults.network.chainId === 42
     ? '0xf04847b93612ee9e7327f31906e7710b252ba4a1'
     : undefined
+defaults.address.usdv3Crv =
+  defaults.network.chainId === 1
+    ? '0x7abd51bba7f9f6ae87ac77e1ea1c5783ada56e5c'
+    : defaults.network.chainId === 42
+    ? '0x7abd51bba7f9f6ae87ac77e1ea1c5783ada56e5c'
+    : undefined
 defaults.address.vether =
   defaults.network.chainId === 1
     ? '0x4Ba6dDd7b89ed838FEd25d208D4f644106E34279'
@@ -284,6 +290,7 @@ defaults.redeemables = [
 ]
 
 defaults.stakeable = [...[defaults.usdv3Crv]]
+defaults.unstakeable = [...[defaults.usdv3Crv]]
 defaults.vaultable = [...[defaults.vader], ...[defaults.usdv]]
 defaults.vaults = {
   USDV: {
@@ -293,7 +300,6 @@ defaults.vaults = {
     address: defaults.address.vader,
   },
 }
-defaults.unstakeable = [...[defaults.xvader]]
 
 defaults.bonds = vaderBonds
 defaults.bondConsideredSoldOutMinVader = ethers.BigNumber.from(

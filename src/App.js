@@ -40,7 +40,7 @@ const App = () => {
             <Route
               path="/"
               exact
-              render={() => <Claim position="relative" zIndex="1" />}
+              render={() => <Vaults position="relative" zIndex="1" />}
             />
             <Route
               path="/vaults"
@@ -48,9 +48,9 @@ const App = () => {
               render={() => <Vaults position="relative" zIndex="1" />}
             />
             <Route
-              path="/bond/:address"
+              path="/stake/:address"
               exact
-              render={() => <Bond position="relative" zIndex="1" />}
+              render={() => <Stake position="relative" zIndex="1" />}
             />
             <Route
               path="/stake"
