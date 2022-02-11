@@ -124,6 +124,14 @@ const assetDeposited = {
   isClosable: defaults.toast.closable,
   position: defaults.toast.position,
 }
+const assetWithdrawn = {
+  title: 'Withdraw Success',
+  description: 'Your tokens were successfully withdrawn from the vault.',
+  status: 'success',
+  duration: defaults.toast.duration,
+  isClosable: defaults.toast.closable,
+  position: defaults.toast.position,
+}
 
 const vethupgraded = {
   title: 'VETH burnt for VADER Token',
@@ -269,4 +277,6 @@ export {
   bondPurchaseValueExceeds,
   bondSoldOut,
   bondAmountTooSmall,
+  assetDeposited,
+  assetWithdrawn,
 }

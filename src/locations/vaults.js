@@ -65,6 +65,8 @@ import {
   noToken0,
   approved,
   assetDeposited,
+  assetWithdrawn,
+  staked,
 } from '../messages'
 import { useERC20Balance } from '../hooks/useERC20Balance'
 import { getPercentage, prettifyNumber } from '../common/utils'
@@ -105,10 +107,31 @@ const Vaults = props => {
           provider,
         )
           .then(tx => tx.wait(defaults.network.tx.confirmations))
-          .then(() => {
+          .then(r => {
             setWorking(false)
             setTokenApproved(true)
-            toast(approved)
+            toast({
+              ...approved,
+              description: (
+                <Link
+                  variant="underline"
+                  _focus={{
+                    boxShadow: '0',
+                  }}
+                  href={`${defaults.api.etherscanUrl}/tx/${r.transactionHash}`}
+                  isExternal
+                >
+                  <Box>
+                    Click here to view transaction on{' '}
+                    <i>
+                      <b>Etherscan</b>
+                    </i>
+                    .
+                  </Box>
+                </Link>
+              ),
+              duration: defaults.toast.txHashDuration,
+            })
           })
           .catch(err => {
             setWorking(false)
@@ -127,15 +150,40 @@ const Vaults = props => {
         if (balance?.data?.gte(value)) {
           setWorking(true)
 
-          const executor = new Promise(resolve => {
+          new Promise(resolve => {
             if (!submitOption) {
               resolve(vaultDeposit(value, tokenSelect.vault, provider))
             } else {
-              resolve(vaultWithdraw(inputAmount))
+              resolve(vaultWithdraw(inputAmount, tokenSelect.vault, provider))
             }
-          })
-          executor().then(tx => {
-            return tx.wait(defaults.network.tx.confirmations).then(r => {})
+          }).then(tx => {
+            return tx.wait(defaults.network.tx.confirmations).then(r => {
+              setWorking(false)
+              setTokenApproved(true)
+              const message = !submitOption ? assetDeposited : assetWithdrawn
+              toast({
+                ...message,
+                description: (
+                  <Link
+                    variant="underline"
+                    _focus={{
+                      boxShadow: '0',
+                    }}
+                    href={`${defaults.api.etherscanUrl}/tx/${r.transactionHash}`}
+                    isExternal
+                  >
+                    <Box>
+                      Click here to view transaction on{' '}
+                      <i>
+                        <b>Etherscan</b>
+                      </i>
+                      .
+                    </Box>
+                  </Link>
+                ),
+                duration: defaults.toast.txHashDuration,
+              })
+            })
           })
         } else {
           toast(insufficientBalance)
@@ -358,13 +406,7 @@ const Vaults = props => {
                 </Box>
               </Flex>
 
-              <Flex
-                mt=".6rem"
-                justifyContent="flex-end"
-                flexDir="row"
-                opacity={!tokenSelect || submitOption ? '0.5' : '1'}
-                pointerEvents={!tokenSelect || submitOption ? 'none' : ''}
-              >
+              <Flex mt=".6rem" justifyContent="flex-end" flexDir="row">
                 <Button
                   variant="outline"
                   size="sm"

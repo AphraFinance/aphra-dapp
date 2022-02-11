@@ -39,23 +39,24 @@ export default {
           background: '#13070e',
         },
         _focus: {
-          borderColor: '#ff8ac0',
+          borderColor: '#ffffff91',
           background: '#13070e',
         },
       },
     }),
     blank: () => ({
       field: {
+        color: 'black',
         borderRadius: '0.8rem',
         background: 'white',
         borderStyle: 'solid',
         borderWidth: '2px',
-        borderColor: 'accent.100',
+        borderColor: '#ffffff91',
         _hover: {
           background: 'white',
         },
         _focus: {
-          borderColor: '#ff8ac0',
+          borderColor: '#ffffff91',
           background: 'white',
         },
       },

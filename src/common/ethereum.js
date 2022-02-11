@@ -416,7 +416,7 @@ const vaultWithdraw = async (amountIn, vaultAddress, provider) => {
     vault,
     provider.getSigner(0),
   )
-  return await contract.deposit(amountIn)
+  return await contract.withdraw(amountIn)
 }
 
 const minterMint = async (
