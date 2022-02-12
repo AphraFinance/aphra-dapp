@@ -162,9 +162,15 @@ defaults.address.vader =
     : undefined
 defaults.address.aphra =
   defaults.network.chainId === 1
-    ? '0xf04847b93612ee9e7327f31906e7710b252ba4a1'
+    ? ''
     : defaults.network.chainId === 42
-    ? '0xf04847b93612ee9e7327f31906e7710b252ba4a1'
+    ? ''
+    : undefined
+defaults.address.veAphra =
+  defaults.network.chainId === 1
+    ? ''
+    : defaults.network.chainId === 42
+    ? ''
     : undefined
 defaults.address.usdv3Crv =
   defaults.network.chainId === 1
@@ -172,30 +178,18 @@ defaults.address.usdv3Crv =
     : defaults.network.chainId === 42
     ? '0x7abd51bba7f9f6ae87ac77e1ea1c5783ada56e5c'
     : undefined
-defaults.address.vether =
-  defaults.network.chainId === 1
-    ? '0x4Ba6dDd7b89ed838FEd25d208D4f644106E34279'
-    : defaults.network.chainId === 42
-    ? '0x4402a7c8829489705852e54da50ebec60c8c86a8'
-    : undefined
 defaults.address.xvader =
   defaults.network.chainId === 1
     ? '0x665ff8fAA06986Bd6f1802fA6C1D2e7d780a7369'
     : defaults.network.chainId === 42
     ? '0x0AA1056Ee563C14484fCC530625cA74575C97512'
     : undefined
-;(defaults.address.usdv =
+defaults.address.usdv =
   defaults.network.chainId === 1
     ? '0xea3Fb6f331735252E7Bfb0b24b3B761301293DBe'
     : defaults.network.chainId === 42
     ? '0xfd87ba583bd2071713fb5CB12086536a26eec18e'
-    : undefined),
-  (defaults.address.converter =
-    defaults.network.chainId === 1
-      ? '0x6D4a43Ee4770a2Bab97460d3a3B783641D85d108'
-      : defaults.network.chainId === 42
-      ? '0x8A313Fa0cb3ed92bE4Cae3a4deF7C32c78181E09'
-      : undefined)
+    : undefined
 defaults.address.linearVesting =
   defaults.network.chainId === 1
     ? '0xb3C600C04AaF603b0f422b73Db244216C2e491f6'
@@ -213,6 +207,41 @@ defaults.tokenList = {}
 defaults.tokenList.default = vaderTokens
 defaults.tokenList.sources = tokenListSources
 
+defaults.aphra = {
+  chainId: defaults.network.chainId,
+  address: defaults.address.aphra,
+  name: 'APHRA',
+  symbol: 'APHRA',
+  decimals: 18,
+  logoURI: AphraLogo,
+}
+defaults.factoryAddresses = {
+  gauge: '',
+  bribe: '',
+  vault: '',
+}
+defaults.voter = {
+  address: '',
+}
+defaults.vaults = {
+  USDV3Crv: {
+    gauge: '0x2602278EE1882889B946eb11DC0E810075650983',
+    address: '0x2602278EE1882889B946eb11DC0E810075650983',
+  },
+  USDV: {
+    gauge: '0x2602278EE1882889B946eb11DC0E810075650983',
+    address: '0x2602278EE1882889B946eb11DC0E810075650983',
+  },
+  VADER: {
+    gauge: '0x2602278EE1882889B946eb11DC0E810075650983',
+    address: '0x2602278EE1882889B946eb11DC0E810075650983',
+  },
+  XVader: {
+    gauge: '',
+    bribe: '',
+    address: '0x2602278EE1882889B946eb11DC0E810075650983',
+  },
+}
 defaults.ether = {
   name: 'ETHER',
   symbol: 'ETH',
@@ -223,7 +252,7 @@ defaults.ether = {
 }
 
 defaults.vader = {
-  vault: defaults.address.vader,
+  vault: defaults.vaults.VADER,
   chainId: defaults.network.chainId,
   address: defaults.address.vader,
   name: 'VADER',
@@ -232,17 +261,9 @@ defaults.vader = {
   logoURI:
     'https://raw.githubusercontent.com/vetherasset/branding/main/vader/vader-symbol-w-ring.png',
 }
-defaults.aphra = {
-  chainId: defaults.network.chainId,
-  address: defaults.address.aphra,
-  name: 'APHRA',
-  symbol: 'APHRA',
-  decimals: 18,
-  logoURI: AphraLogo,
-}
-
 defaults.vader.conversionRate = 10000
 defaults.xvader = {
+  vault: null,
   chainId: defaults.network.chainId,
   address: defaults.address.xvader,
   name: 'xVADER',
@@ -252,7 +273,7 @@ defaults.xvader = {
     'https://raw.githubusercontent.com/vetherasset/branding/main/xvader/xvader-symbol-w-ring.png',
 }
 defaults.usdv = {
-  vault: defaults.address.vader,
+  vault: defaults.vaults.USDV,
   chainId: defaults.network.chainId,
   address: defaults.address.usdv,
   name: 'USDV',
@@ -261,24 +282,24 @@ defaults.usdv = {
   logoURI:
     'https://raw.githubusercontent.com/vetherasset/branding/main/usdv/usdv-symbol-w-ring.png',
 }
+defaults.veAphra = {
+  vault: null,
+  chainId: defaults.network.chainId,
+  address: defaults.address.veAphra,
+  name: 'USDV',
+  symbol: 'USDV',
+  decimals: 18,
+  logoURI:
+    'https://raw.githubusercontent.com/vetherasset/branding/main/usdv/usdv-symbol-w-ring.png',
+}
 defaults.usdv3Crv = {
+  vault: defaults.vaults.USDV3Crv,
   chainId: defaults.network.chainId,
   address: defaults.address.usdv3Crv,
   name: 'USDV3Crv',
   symbol: 'USDV3Crv',
   decimals: 18,
-  logoURI:
-    'https://raw.githubusercontent.com/vetherasset/branding/main/usdv/usdv-symbol-w-ring.png',
-}
-
-defaults.vether = {
-  chainId: defaults.network.chainId,
-  address: defaults.address.vether,
-  name: 'VETHER',
-  symbol: 'VETH',
-  decimals: 18,
-  logoURI:
-    'https://raw.githubusercontent.com/vetherasset/branding/main/vether/vether-symbol-w-ring.png',
+  logoURI: '/curvefi.svg',
 }
 
 defaults.redeemables = [
@@ -291,15 +312,11 @@ defaults.redeemables = [
 
 defaults.stakeable = [...[defaults.usdv3Crv]]
 defaults.unstakeable = [...[defaults.usdv3Crv]]
-defaults.vaultable = [...[defaults.vader], ...[defaults.usdv]]
-defaults.vaults = {
-  USDV: {
-    address: defaults.address.usdv,
-  },
-  VADER: {
-    address: defaults.address.vader,
-  },
-}
+defaults.vaultable = [
+  ...[defaults.vader],
+  ...[defaults.usdv],
+  ...[defaults.usdv3Crv],
+]
 
 defaults.bonds = vaderBonds
 defaults.bondConsideredSoldOutMinVader = ethers.BigNumber.from(
