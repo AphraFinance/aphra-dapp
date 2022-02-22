@@ -798,7 +798,7 @@ const GagueActiveTag = () => {
         background="rgb(214, 188, 250)"
         color="rgb(128, 41, 251)"
       >
-        Gague Active
+        Gauge Active
       </Badge>
     </Box>
   )
