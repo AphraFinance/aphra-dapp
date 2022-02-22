@@ -250,6 +250,23 @@ const unstaked = {
   position: defaults.toast.position,
 }
 
+const gaugeWithdrawMessage = asset => ({
+  title: `${asset.symbol} tokens withdrawn`,
+  description: `Your ${asset.name} tokens have been withdrawn succesfully.`,
+  status: 'success',
+  duration: defaults.toast.duration,
+  isClosable: defaults.toast.closable,
+  position: defaults.toast.position,
+})
+const gaugeDepositMessage = asset => ({
+  title: `${asset.symbol} tokens deposited`,
+  description: `Your ${asset.name} tokens have been deposited succesfully.`,
+  status: 'success',
+  duration: defaults.toast.duration,
+  isClosable: defaults.toast.closable,
+  position: defaults.toast.position,
+})
+
 export {
   approved,
   connected,
@@ -279,4 +296,6 @@ export {
   bondAmountTooSmall,
   assetDeposited,
   assetWithdrawn,
+  gaugeWithdrawMessage,
+  gaugeDepositMessage,
 }
