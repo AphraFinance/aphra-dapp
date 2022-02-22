@@ -19,7 +19,7 @@
 
 Find out more on [docs.aphra.finance](https://docs.aphra.finance)
 
-<!-- ![credit:@viccccx1](https://raw.githubusercontent.com/vetherasset/branding/main/materials/vader-liquidity-protocol-infograph.png) -->
+<!-- ![credit:@viccccx1](https://raw.githubusercontent.com/aphrafinance/branding/main/materials/vader-liquidity-protocol-infograph.png) -->
 
 ### Requirements
 

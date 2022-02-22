@@ -12,8 +12,11 @@ import {
   Image,
   useToast,
   MenuDivider,
+  Link,
 } from '@chakra-ui/react'
-import { AddIcon, CloseIcon } from '@chakra-ui/icons'
+import { Link as RouterLink } from 'react-router-dom'
+
+import { AddIcon, CloseIcon, SpinnerIcon } from '@chakra-ui/icons'
 import { prettifyAddress } from '../common/utils'
 import Jazzicon from '@metamask/jazzicon'
 import { connected } from '../messages'
@@ -144,6 +147,12 @@ export const WalletConnectionToggle = props => {
               wallet={wallet}
               token={defaults.aphra}
             />
+
+            <Link as={RouterLink} to={`/claim`}>
+              <MenuItem icon={<SpinnerIcon layerStyle="menuIcon" />}>
+                Claim Airdrop
+              </MenuItem>
+            </Link>
             <MenuItem
               icon={<CloseIcon layerStyle="menuIcon" />}
               onClick={() => wallet?.reset()}

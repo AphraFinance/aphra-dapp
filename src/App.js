@@ -57,6 +57,16 @@ const App = () => {
               exact
               render={() => <Stake position="relative" zIndex="1" />}
             />
+            <Route
+              path="/claim"
+              exact
+              render={() => <Claim position="relative" zIndex="1" />}
+            />
+            <Route
+              path="/airdrop"
+              exact
+              render={() => <Claim position="relative" zIndex="1" />}
+            />
             <Route path="*" render={() => <Redirect to={'/'} />} />
           </Switch>
           <Footer

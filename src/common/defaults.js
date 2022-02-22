@@ -6,9 +6,9 @@ import vaderBonds from '../artifacts/js/vaderBonds'
 import vaderTokens from '../artifacts/json/vaderTokens'
 import snapshot from '../artifacts/json/aphraSnapshot'
 import AphraLogo from '../assets/png/aphra-token.png'
-
+import v0 from '../artifacts/json/v0.json'
 const defaults = {}
-
+defaults.aphraContracts = v0
 defaults.network = {}
 defaults.network.chainId = Number(process.env.REACT_APP_CHAIN_ID)
 defaults.network.provider = new ethers.providers.FallbackProvider(
@@ -36,6 +36,32 @@ defaults.network.provider = new ethers.providers.FallbackProvider(
 )
 
 defaults.network.connectors = {
+  frame: {
+    meta: {
+      key: 'injected',
+      name: 'Frame',
+      logo: 'https://raw.githubusercontent.com/floating/frame/0.5/asset/png/FrameLogo512.png',
+    },
+  },
+  walletconnect: {
+    rpc: {
+      [defaults.network.chainId]:
+        defaults.network.chainId === 1
+          ? `https://eth-mainnet.alchemyapi.io/v2/${process.env.REACT_APP_ALCHEMY_KEY}`
+          : defaults.network.chainId === 42
+          ? `https://eth-kovan.alchemyapi.io/v2/${process.env.REACT_APP_ALCHEMY_KEY}` //eslint-disable-line
+          : undefined, //eslint-disable-line
+    },
+    meta: {
+      key: 'walletconnect',
+      name: 'WalletConnect',
+      logo:
+        'https://raw.githubusercontent.com/vetherasset/' +
+        'vader-dapp/main/src/assets/svg/icons/' +
+        'walletconnect.svg',
+    },
+  },
+
   metamask: {
     meta: {
       key: 'injected',
@@ -64,24 +90,6 @@ defaults.network.connectors = {
         'https://raw.githubusercontent.com/vetherasset/' +
         'vader-dapp/main/src/assets/svg/icons/' +
         'coinbasewallet.svg',
-    },
-  },
-  walletconnect: {
-    rpc: {
-      [defaults.network.chainId]:
-        defaults.network.chainId === 1
-          ? `https://eth-mainnet.alchemyapi.io/v2/${process.env.REACT_APP_ALCHEMY_KEY}`
-          : defaults.network.chainId === 42
-          ? `https://eth-kovan.alchemyapi.io/v2/${process.env.REACT_APP_ALCHEMY_KEY}` //eslint-disable-line
-          : undefined, //eslint-disable-line
-    },
-    meta: {
-      key: 'walletconnect',
-      name: 'WalletConnect',
-      logo:
-        'https://raw.githubusercontent.com/vetherasset/' +
-        'vader-dapp/main/src/assets/svg/icons/' +
-        'walletconnect.svg',
     },
   },
   other: {
@@ -148,6 +156,7 @@ defaults.api.etherscanUrl =
     : undefined
 
 defaults.address = {}
+defaults.address.airdrop = v0.AirdropClaim.address
 defaults.address.routerModule =
   defaults.network.chainId === 1
     ? '0x2602278EE1882889B946eb11DC0E810075650983'
@@ -162,13 +171,13 @@ defaults.address.vader =
     : undefined
 defaults.address.aphra =
   defaults.network.chainId === 1
-    ? ''
+    ? v0.AphraToken.address
     : defaults.network.chainId === 42
-    ? ''
+    ? undefined
     : undefined
 defaults.address.veAphra =
   defaults.network.chainId === 1
-    ? ''
+    ? v0.veAPHRA.address
     : defaults.network.chainId === 42
     ? ''
     : undefined
@@ -190,12 +199,6 @@ defaults.address.usdv =
     : defaults.network.chainId === 42
     ? '0xfd87ba583bd2071713fb5CB12086536a26eec18e'
     : undefined
-defaults.address.linearVesting =
-  defaults.network.chainId === 1
-    ? '0xb3C600C04AaF603b0f422b73Db244216C2e491f6'
-    : defaults.network.chainId === 42
-    ? '0xDaA4B82D5Bdd315a3191B080E26ff7A88eb8034E'
-    : undefined
 
 defaults.address.uniswapV2 = {}
 defaults.address.uniswapV2.vaderEthPair =
@@ -216,30 +219,23 @@ defaults.aphra = {
   logoURI: AphraLogo,
 }
 defaults.factoryAddresses = {
-  gauge: '',
-  bribe: '',
-  vault: '',
+  gauge: v0.GaugeFactory.address,
+  bribe: v0.BribeFactory.address,
+  vault: v0.VaultFactory.address,
 }
 defaults.voter = {
-  address: '',
+  address: v0.Voter.address,
 }
+
 defaults.vaults = {
-  USDV3Crv: {
-    gauge: '0x2602278EE1882889B946eb11DC0E810075650983',
-    address: '0x2602278EE1882889B946eb11DC0E810075650983',
-  },
   USDV: {
-    gauge: '0x2602278EE1882889B946eb11DC0E810075650983',
-    address: '0x2602278EE1882889B946eb11DC0E810075650983',
+    gauge: v0.avVADERGauge.address,
+    bribe: v0.avVADERGauge.address,
+    address: v0.avUSDV.address,
   },
   VADER: {
     gauge: '0x2602278EE1882889B946eb11DC0E810075650983',
-    address: '0x2602278EE1882889B946eb11DC0E810075650983',
-  },
-  XVader: {
-    gauge: '',
-    bribe: '',
-    address: '0x2602278EE1882889B946eb11DC0E810075650983',
+    address: v0.avVADER.address,
   },
 }
 defaults.ether = {
@@ -252,7 +248,9 @@ defaults.ether = {
 }
 
 defaults.vader = {
-  vault: defaults.vaults.VADER,
+  vault: v0.avVADER.address,
+  gauge: v0.avVADERGauge.address,
+  bribe: v0.avVADERBribe.address,
   chainId: defaults.network.chainId,
   address: defaults.address.vader,
   name: 'VADER',
@@ -261,7 +259,6 @@ defaults.vader = {
   logoURI:
     'https://raw.githubusercontent.com/vetherasset/branding/main/vader/vader-symbol-w-ring.png',
 }
-defaults.vader.conversionRate = 10000
 defaults.xvader = {
   vault: null,
   chainId: defaults.network.chainId,
@@ -272,8 +269,11 @@ defaults.xvader = {
   logoURI:
     'https://raw.githubusercontent.com/vetherasset/branding/main/xvader/xvader-symbol-w-ring.png',
 }
+
 defaults.usdv = {
-  vault: defaults.vaults.USDV,
+  vault: v0.avVADER.address,
+  gauge: v0.avVADERGauge.address,
+  bribe: v0.avVADERBribe.address,
   chainId: defaults.network.chainId,
   address: defaults.address.usdv,
   name: 'USDV',
@@ -282,18 +282,21 @@ defaults.usdv = {
   logoURI:
     'https://raw.githubusercontent.com/vetherasset/branding/main/usdv/usdv-symbol-w-ring.png',
 }
+
 defaults.veAphra = {
   vault: null,
   chainId: defaults.network.chainId,
   address: defaults.address.veAphra,
-  name: 'USDV',
-  symbol: 'USDV',
+  name: 'veAPHRA',
+  symbol: 'veAPHRA',
   decimals: 18,
   logoURI:
     'https://raw.githubusercontent.com/vetherasset/branding/main/usdv/usdv-symbol-w-ring.png',
 }
 defaults.usdv3Crv = {
-  vault: defaults.vaults.USDV3Crv,
+  vault: v0.avVADER.address,
+  gauge: v0.avVADERGauge.address,
+  bribe: v0.avVADERBribe.address,
   chainId: defaults.network.chainId,
   address: defaults.address.usdv3Crv,
   name: 'USDV3Crv',
@@ -302,15 +305,44 @@ defaults.usdv3Crv = {
   logoURI: '/curvefi.svg',
 }
 
+defaults.avUSDV = {
+  isVault: true,
+  vault: defaults.vaults.USDV,
+  chainId: defaults.network.chainId,
+  address: v0.avVADER.address,
+  name: 'avUSDV',
+  symbol: 'avUSDV',
+  decimals: 18,
+  logoURI:
+    'https://raw.githubusercontent.com/vetherasset/branding/main/usdv/usdv-symbol-w-ring.png',
+}
+
+defaults.avVader = {
+  isVault: true,
+  vault: defaults.vaults.VADER,
+  chainId: defaults.network.chainId,
+  address: v0.avVADER.address,
+  name: 'avVADER',
+  symbol: 'avVADER',
+  decimals: 18,
+  logoURI:
+    'https://raw.githubusercontent.com/vetherasset/branding/main/vader/vader-symbol-w-ring.png',
+}
+
 defaults.redeemables = [
   {
     ...defaults.aphra,
-    convertsTo: 'APHRA',
+    convertsTo: 'veAPHRA',
     snapshot: snapshot,
   },
 ]
 
 defaults.stakeable = [...[defaults.usdv3Crv]]
+defaults.gauges = [
+  ...[defaults.usdv3Crv],
+  ...[defaults.avUSDV],
+  ...[defaults.avVADER],
+]
 defaults.unstakeable = [...[defaults.usdv3Crv]]
 defaults.vaultable = [
   ...[defaults.vader],

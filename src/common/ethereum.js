@@ -1,6 +1,7 @@
 import { ethers } from 'ethers'
 import humanStandardTokenAbi from '../artifacts/abi/humanStandardToken'
 import converterAbi from '../artifacts/abi/converter'
+import aphraAirdropClaim from '../artifacts/abi/aphraAirdropClaim'
 import defaults from './defaults'
 import xVaderAbi from '../artifacts/abi/xvader'
 import linearVestingAbi from '../artifacts/abi/linearVesting'
@@ -9,15 +10,16 @@ import zapEth from '../artifacts/abi/zapEth'
 import uniswapTWAP from '../artifacts/abi/uniswapTWAP'
 import minter from '../artifacts/abi/minter'
 import vault from '../artifacts/abi/aphraVault'
+import gauge from '../artifacts/abi/aphraGauge'
 import IUSDV from '../artifacts/abi/IUSDV'
 import airdropSnapshot from '../artifacts/json/aphraSnapshot'
-const formattedAirDrop = () => {
+const formattedAirDrop = (() => {
   const airDrop = {}
   for (const x in airdropSnapshot)
     airDrop[ethers.utils.getAddress(x)] = airdropSnapshot[x]
 
   return airDrop
-}
+})()
 const approveERC20ToSpend = async (
   tokenAddress,
   spenderAddress,
@@ -122,13 +124,13 @@ const convert = async (proof, amount, minVader, provider) => {
   return await contract.convert(proof, amount, minVader)
 }
 
-const getClaimed = async leaf => {
+const getClaimed = async activeWallet => {
   const contract = new ethers.Contract(
-    defaults.address.converter,
-    converterAbi,
+    defaults.address.airdrop,
+    aphraAirdropClaim,
     defaults.network.provider,
   )
-  return await contract.claimed(leaf)
+  return await contract.hasClaimed(activeWallet)
 }
 
 const getSalt = async () => {
@@ -141,12 +143,7 @@ const getSalt = async () => {
 }
 
 const getClaim = async account => {
-  const contract = new ethers.Contract(
-    defaults.address.linearVesting,
-    linearVestingAbi,
-    defaults.network.provider,
-  )
-  return await contract.getClaim(account)
+  return formattedAirDrop[account] || 0
 }
 
 const getVester = async account => {
@@ -158,13 +155,13 @@ const getVester = async account => {
   return await contract.vest(account)
 }
 
-const claim = async provider => {
+const claim = async (activeWallet, claimableAphra, proof, provider) => {
   const contract = new ethers.Contract(
-    defaults.address.linearVesting,
-    linearVestingAbi,
+    defaults.address.airdrop,
+    aphraAirdropClaim,
     provider.getSigner(0),
   )
-  return await contract.claim()
+  return await contract.claim(activeWallet, claimableAphra, proof)
 }
 
 const stakeVader = async (amount, provider) => {
@@ -410,6 +407,15 @@ const vaultDeposit = async (amountIn, vaultAddress, provider) => {
   return await contract.deposit(amountIn)
 }
 
+const gaugeDeposit = async (amountIn, gaugeAddress, veNFT, provider) => {
+  const contract = new ethers.Contract(
+    gaugeAddress,
+    gauge,
+    provider.getSigner(0),
+  )
+  return await contract.deposit(amountIn, veNFT)
+}
+
 const vaultWithdraw = async (amountIn, vaultAddress, provider) => {
   const contract = new ethers.Contract(
     vaultAddress,
@@ -550,4 +556,5 @@ export {
   formattedAirDrop,
   vaultDeposit,
   vaultWithdraw,
+  gaugeDeposit,
 }

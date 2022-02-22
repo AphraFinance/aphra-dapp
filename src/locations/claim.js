@@ -68,17 +68,12 @@ import {
   insufficientBalance,
   rejected,
   failed,
-  vethupgraded,
   walletNotConnected,
   noAmount,
   tokenValueTooSmall,
-  noToken0,
   approved,
   exception,
   vaderclaimed,
-  notBurnEligible,
-  nothingtoclaim,
-  nomorethaneligible,
 } from '../messages'
 import { useClaimableAphra } from '../hooks/useClaimableAphra'
 const Claim = props => {
@@ -91,9 +86,6 @@ const Claim = props => {
   const [tokenBalance, setTokenBalance] = useState(ethers.BigNumber.from('0'))
   const [inputAmount, setInputAmount] = useState('')
   const [value, setValue] = useState(0)
-  const [conversionFactor, setConversionFactor] = useState(
-    ethers.BigNumber.from(String(defaults.vader.conversionRate)),
-  )
   const [working, setWorking] = useState(false)
 
   const [hasClaimed, setHasClaimed] = useState(false)
@@ -150,16 +142,14 @@ const Claim = props => {
   useEffect(() => {
     if (wallet.account) {
       const formattedAddress = ethers.utils.getAddress(wallet.account)
-      console.log(formattedAddress)
-      console.log(defaults)
-      const airDrop = formattedAirDrop()
 
-      if (airDrop[formattedAddress]) {
-        const merkleProof = getMerkleProofForAccount(formattedAddress, airDrop)
-        console.log(merkleProof)
+      if (formattedAirDrop[formattedAddress]) {
+        const merkleProof = getMerkleProofForAccount(
+          formattedAddress,
+          formattedAirDrop,
+        )
         setProof(merkleProof)
-        console.log(merkleProof)
-        getClaimed(formattedAddress, defaults.network.provider).then(r => {
+        getClaimed(formattedAddress).then(r => {
           if (r) setHasClaimed(true)
         })
       }

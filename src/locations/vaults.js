@@ -46,7 +46,7 @@ import {
   TabPanel,
 } from '@chakra-ui/react'
 import { TokenSelector } from '../components/TokenSelector'
-import { ethers } from 'ethers'
+import { BigNumber, ethers } from 'ethers'
 import defaults from '../common/defaults'
 import { ChevronDownIcon, CheckCircleIcon } from '@chakra-ui/icons'
 import {
@@ -54,6 +54,7 @@ import {
   approveERC20ToSpend,
   vaultDeposit,
   vaultWithdraw,
+  gaugeDeposit,
 } from '../common/ethereum'
 import { useWallet } from 'use-wallet'
 import {
@@ -86,12 +87,74 @@ const Vaults = props => {
     false,
   )
   const balance = useERC20Balance(
-    !submitOption ? tokenSelect?.address : tokenSelect?.vault?.address,
+    !submitOption ? tokenSelect?.address : tokenSelect?.vault,
   )
+  const balanceVault = useERC20Balance(tokenSelect?.vault)
   const [inputAmount, setInputAmount] = useState('')
+  const [inputAmountGauge, setInputAmountGauge] = useState('')
   const [value, setValue] = useState(0)
+  const [valueGauge, setValueGauge] = useState(0)
 
   const [working, setWorking] = useState(false)
+
+  const submitGauge = () => {
+    if (!working) {
+      if (!wallet.account) {
+        toast(walletNotConnected)
+      } else if (!tokenSelect) {
+        toast(noToken0)
+      } else if (gaugeApproved && depositGaugeEnabled) {
+        const provider = new ethers.providers.Web3Provider(wallet.ethereum)
+        setWorking(true)
+        // need to fetch any active veNFT's they might have to let them choose which one to deposit into for boosting when enabled
+        gaugeDeposit(valueGauge, tokenSelect.gauge, 0, provider)
+          .then(tx =>
+            txnHandler(tx, approved, () => {
+              setVaultApproved(true)
+            }),
+          )
+          .catch(err => errHandler(err))
+      }
+    }
+  }
+  const errHandler = async err => {
+    setWorking(false)
+    if (err.code === 4001) {
+      console.log(
+        'Transaction rejected: Your have decided to reject the transaction..',
+      )
+      toast(rejected)
+    } else {
+      console.log(err)
+      toast(failed)
+    }
+  }
+  const txnHandler = async (tx, messageObj, cb) => {
+    const r = await tx.wait(defaults.network.tx.confirmations)
+    cb(r)
+    toast({
+      ...messageObj,
+      description: (
+        <Link
+          variant="underline"
+          _focus={{
+            boxShadow: '0',
+          }}
+          href={`${defaults.api.etherscanUrl}/tx/${r.transactionHash}`}
+          isExternal
+        >
+          <Box>
+            Click here to view transaction on{' '}
+            <i>
+              <b>Etherscan</b>
+            </i>
+            .
+          </Box>
+        </Link>
+      ),
+      duration: defaults.toast.txHashDuration,
+    })
+  }
 
   const submit = () => {
     if (!working) {
@@ -106,38 +169,12 @@ const Vaults = props => {
         const provider = new ethers.providers.Web3Provider(wallet.ethereum)
         setWorking(true)
 
-        const txnHandler = async (tx, messageObj, cb) => {
-          const r = await tx.wait(defaults.network.tx.confirmations)
-          cb(r)
-          toast({
-            ...messageObj,
-            description: (
-              <Link
-                variant="underline"
-                _focus={{
-                  boxShadow: '0',
-                }}
-                href={`${defaults.api.etherscanUrl}/tx/${r.transactionHash}`}
-                isExternal
-              >
-                <Box>
-                  Click here to view transaction on{' '}
-                  <i>
-                    <b>Etherscan</b>
-                  </i>
-                  .
-                </Box>
-              </Link>
-            ),
-            duration: defaults.toast.txHashDuration,
-          })
-        }
         const approves = []
         if (!vaultApproved) {
           approves.push(
             approveERC20ToSpend(
               tokenSelect.address,
-              tokenSelect.vault.address,
+              tokenSelect.vault,
               defaults.network.erc20.maxApproval,
               provider,
             ).then(tx =>
@@ -148,11 +185,15 @@ const Vaults = props => {
           )
         }
 
+        // need to have a toggle to deposit into the gauge as well on a single deposit
+        // withdraw comes from the gauge landing page
         if (!gaugeApproved && depositGaugeEnabled) {
+          //
+          debugger
           approves.push(
             approveERC20ToSpend(
-              tokenSelect.vault.address,
-              tokenSelect.vault.gauge,
+              tokenSelect.vault,
+              tokenSelect.gauge,
               defaults.network.erc20.maxApproval,
               provider,
             ).then(txGauge =>
@@ -168,45 +209,7 @@ const Vaults = props => {
           .then(() => {
             setWorking(false)
           })
-          .catch(err => {
-            setWorking(false)
-            if (err.code === 4001) {
-              console.log(
-                'Transaction rejected: Your have decided to reject the transaction..',
-              )
-              toast(rejected)
-            } else {
-              console.log(err)
-              toast(failed)
-            }
-          })
-        // .then(tx => tx.wait(defaults.network.tx.confirmations))
-        // .then(r => {
-        //   setWorking(false)
-        //   setVaultApproved(true)
-        //   toast({
-        //     ...approved,
-        //     description: (
-        //       <Link
-        //         variant="underline"
-        //         _focus={{
-        //           boxShadow: '0',
-        //         }}
-        //         href={`${defaults.api.etherscanUrl}/tx/${r.transactionHash}`}
-        //         isExternal
-        //       >
-        //         <Box>
-        //           Click here to view transaction on{' '}
-        //           <i>
-        //             <b>Etherscan</b>
-        //           </i>
-        //           .
-        //         </Box>
-        //       </Link>
-        //     ),
-        //     duration: defaults.toast.txHashDuration,
-        //   })
-        // })
+          .catch(err => errHandler(err))
       } else if ((vaultApproved && value > 0) || submitOption) {
         const provider = new ethers.providers.Web3Provider(wallet.ethereum)
         if (balance?.data?.gte(value)) {
@@ -214,41 +217,43 @@ const Vaults = props => {
 
           new Promise(resolve => {
             if (!submitOption) {
-              resolve(vaultDeposit(value, tokenSelect.vault.address, provider))
+              // handle also depositing to the gauge in single user action
+              resolve(vaultDeposit(value, tokenSelect.vault, provider))
             } else {
-              resolve(
-                vaultWithdraw(inputAmount, tokenSelect.vault.address, provider),
-              )
+              // remove from gauge is done on the gauge page.
+              resolve(vaultWithdraw(value, tokenSelect.vault, provider))
             }
-          }).then(tx => {
-            return tx.wait(defaults.network.tx.confirmations).then(r => {
-              setWorking(false)
-              setVaultApproved(true)
-              const message = !submitOption ? assetDeposited : assetWithdrawn
-              toast({
-                ...message,
-                description: (
-                  <Link
-                    variant="underline"
-                    _focus={{
-                      boxShadow: '0',
-                    }}
-                    href={`${defaults.api.etherscanUrl}/tx/${r.transactionHash}`}
-                    isExternal
-                  >
-                    <Box>
-                      Click here to view transaction on{' '}
-                      <i>
-                        <b>Etherscan</b>
-                      </i>
-                      .
-                    </Box>
-                  </Link>
-                ),
-                duration: defaults.toast.txHashDuration,
+          })
+            .then(tx => {
+              return tx.wait(defaults.network.tx.confirmations).then(r => {
+                setWorking(false)
+                setVaultApproved(true)
+                const message = !submitOption ? assetDeposited : assetWithdrawn
+                toast({
+                  ...message,
+                  description: (
+                    <Link
+                      variant="underline"
+                      _focus={{
+                        boxShadow: '0',
+                      }}
+                      href={`${defaults.api.etherscanUrl}/tx/${r.transactionHash}`}
+                      isExternal
+                    >
+                      <Box>
+                        Click here to view transaction on{' '}
+                        <i>
+                          <b>Etherscan</b>
+                        </i>
+                        .
+                      </Box>
+                    </Link>
+                  ),
+                  duration: defaults.toast.txHashDuration,
+                })
               })
             })
-          })
+            .catch(err => errHandler(err))
         } else {
           toast(insufficientBalance)
         }
@@ -265,7 +270,7 @@ const Vaults = props => {
         getERC20Allowance(
           tokenSelect.address,
           wallet.account,
-          tokenSelect.vault.address,
+          tokenSelect.vault,
           defaults.network.provider,
         ).then(n => {
           setVaultApproved(false)
@@ -273,9 +278,9 @@ const Vaults = props => {
         }),
 
         getERC20Allowance(
-          tokenSelect.vault.address,
+          tokenSelect.vault,
           wallet.account,
-          tokenSelect.vault.gauge,
+          tokenSelect.gauge,
           defaults.network.provider,
         ).then(n => {
           setGaugeApproved(false)
@@ -395,7 +400,6 @@ const Vaults = props => {
             </Flex>
 
             <>
-              {tokenSelect?.vault?.gauge !== '' && <GagueActiveTag />}
               <SubmitOptions
                 pointerEvents={!tokenSelect ? 'none' : ''}
                 opacity={!tokenSelect ? '0.5' : '1'}
@@ -410,7 +414,7 @@ const Vaults = props => {
                 mr="0.66rem"
                 opacity={!tokenSelect ? '0.5' : '1'}
               >
-                Amount
+                Deposit Amount
               </Text>
               <Flex
                 layerStyle="inputLike"
@@ -554,7 +558,6 @@ const Vaults = props => {
                 </Button>
               </Flex>
             </>
-
             <Button
               variant="solidRadial"
               mt="1rem"
@@ -592,6 +595,185 @@ const Vaults = props => {
               )}
               {!wallet.account && <>Deposit</>}
             </Button>
+            <>
+              {tokenSelect?.vault?.gauge !== '' && (
+                <>
+                  <GagueActiveTag mt={'2rem'} />
+                  <Text
+                    as="h4"
+                    fontSize="1.1rem"
+                    fontWeight="bolder"
+                    mr="0.66rem"
+                    opacity={!tokenSelect ? '0.5' : '1'}
+                  >
+                    Vault Shares
+                  </Text>
+                  <Flex
+                    layerStyle="inputLike"
+                    cursor={!tokenSelect ? 'not-allowed' : ''}
+                    opacity={!tokenSelect ? '0.5' : '1'}
+                  >
+                    <Box flex="1">
+                      <InputGroup>
+                        <Input
+                          variant="transparent"
+                          flex="1"
+                          disabled={!tokenSelect}
+                          _disabled={{
+                            opacity: '0.5',
+                            cursor: 'not-allowed',
+                          }}
+                          fontSize="1.3rem"
+                          fontWeight="bold"
+                          placeholder="0.0"
+                          value={inputAmountGauge}
+                          onChange={e => {
+                            if (isNaN(e.target.value)) {
+                              setInputAmountGauge(prev => prev)
+                            } else {
+                              setInputAmountGauge(String(e.target.value))
+                              if (Number(e.target.value) > 0) {
+                                setValueGauge(
+                                  ethers.utils.parseUnits(
+                                    String(e.target.value),
+                                    18,
+                                  ),
+                                )
+                              } else {
+                                setValueGauge(ethers.BigNumber.from('0'))
+                              }
+                            }
+                          }}
+                        />
+                        {tokenSelect && (
+                          <InputRightAddon
+                            width="auto"
+                            borderTopLeftRadius="0.375rem"
+                            borderBottomLeftRadius="0.375rem"
+                            paddingInlineStart="0.5rem"
+                            paddingInlineEnd="0.5rem"
+                          >
+                            <Flex cursor="default" zIndex="1">
+                              <Box d="flex" alignItems="center">
+                                <Image
+                                  width="24px"
+                                  height="24px"
+                                  mr="5px"
+                                  src={tokenSelect.logoURI}
+                                  alt={`${tokenSelect.name} token`}
+                                />
+                                <Box
+                                  as="h3"
+                                  m="0"
+                                  fontSize="1.02rem"
+                                  fontWeight="bold"
+                                >
+                                  <>av</>
+                                  {tokenSelect.symbol}
+                                </Box>
+                              </Box>
+                            </Flex>
+                          </InputRightAddon>
+                        )}
+                      </InputGroup>
+                    </Box>
+                  </Flex>
+
+                  <Flex mt=".6rem" justifyContent="flex-end" flexDir="row">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      mr="0.4rem"
+                      onClick={() => {
+                        let localAmount = balanceVault?.data?.div(100).mul(25)
+                        if (!localAmount) {
+                          localAmount = '0;'
+                        }
+                        setInputAmountGauge(
+                          ethers.utils.formatUnits(
+                            balanceVault?.data?.div(100).mul(25),
+                            tokenSelect.decimals,
+                          ),
+                        )
+                        setValueGauge(balanceVault?.data?.div(100).mul(25))
+                      }}
+                    >
+                      25%
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      mr="0.4rem"
+                      onClick={() => {
+                        setInputAmountGauge(
+                          ethers.utils.formatUnits(
+                            balanceVault?.data?.div(100).mul(50),
+                            tokenSelect.decimals,
+                          ),
+                        )
+                        setValueGauge(balanceVault?.data?.div(100).mul(50))
+                      }}
+                    >
+                      50%
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      mr="0.4rem"
+                      onClick={() => {
+                        setInputAmountGauge(
+                          ethers.utils.formatUnits(
+                            balanceVault?.data?.div(100).mul(75),
+                            tokenSelect.decimals,
+                          ),
+                        )
+                        setValueGauge(balanceVault?.data?.div(100).mul(75))
+                      }}
+                    >
+                      75%
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      mr="0.4rem"
+                      onClick={() => {
+                        setInputAmountGauge(
+                          ethers.utils.formatUnits(
+                            balanceVault?.data,
+                            tokenSelect.decimals,
+                          ),
+                        )
+                        setValueGauge(balanceVault?.data)
+                      }}
+                    >
+                      MAX
+                    </Button>
+                  </Flex>
+                </>
+              )}
+            </>
+
+            <Button
+              variant="solidRadial"
+              mt="1rem"
+              size="lg"
+              minWidth="230px"
+              textTransform="uppercase"
+              disabled={valueGauge === 0 || working}
+              onClick={() => submitGauge()}
+            >
+              {wallet.account && (
+                <>
+                  {!working && <>Gauge Deposit</>}
+                  {working && (
+                    <>
+                      <Spinner />
+                    </>
+                  )}
+                </>
+              )}
+              {!wallet.account && <>Gauge Deposit</>}
+            </Button>
           </Flex>
         </Flex>
       </Box>
@@ -609,7 +791,7 @@ const Vaults = props => {
 
 const GagueActiveTag = () => {
   return (
-    <Box as="h3" fontWeight="bold" textAlign="center" fontSize="1rem">
+    <Box mt="2rem" as="h3" fontWeight="bold" textAlign="center" fontSize="1rem">
       <Badge
         as="div"
         fontSize={{ base: '0.6rem', md: '0.75rem' }}

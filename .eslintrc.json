@@ -25,6 +25,7 @@
     "max-nested-callbacks": ["error", { "max": 4 }],
     "max-statements-per-line": ["error", { "max": 2 }],
     "no-console": "off",
+    "no-debugger": "off",
     "no-empty-function": "warn",
     "no-floating-decimal": "error",
     "no-inline-comments": "error",

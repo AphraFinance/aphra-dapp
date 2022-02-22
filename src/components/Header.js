@@ -22,9 +22,9 @@ export const Header = props => {
       link: '/stake',
     },
     {
-      name: 'Claim',
-      text: 'Claim',
-      link: '/',
+      name: 'Airdrop',
+      text: 'Airdrop',
+      link: '/claim',
     },
     {
       name: 'Vote',
