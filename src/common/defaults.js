@@ -238,6 +238,7 @@ defaults.ether = {
 
 defaults.vader = {
   vault: v0.avVADER.address,
+  gaugeAsset: null,
   gauge: v0.avVADERGauge.address,
   bribe: v0.avVADERBribe.address,
   chainId: defaults.network.chainId,
@@ -261,6 +262,7 @@ defaults.xvader = {
 
 defaults.usdv = {
   vault: v0.avUSDV.address,
+  gaugeAsset: defaults.avUSDV,
   gauge: v0.avUSDVGauge.address,
   bribe: v0.avUSDVBribe.address,
   chainId: defaults.network.chainId,
@@ -281,7 +283,7 @@ defaults.veAphra = {
   logoURI: defaults.aphra.logoURI,
 }
 defaults.usdv3Crv = {
-  vault: v0.avVADER.address,
+  vault: null,
   gauge: v0.avVADERGauge.address,
   bribe: v0.avVADERBribe.address,
   chainId: defaults.network.chainId,
@@ -291,7 +293,9 @@ defaults.usdv3Crv = {
   decimals: 18,
   logoURI: '/curvefi.svg',
 }
+defaults.usdv3Crv['gaugeAsset'] = defaults.usdv3Crv
 defaults.avVADER = {
+  isVault: true,
   gauge: v0.avVADERGauge.address,
   bribe: v0.avVADERBribe.address,
   chainId: defaults.network.chainId,
@@ -301,7 +305,9 @@ defaults.avVADER = {
   decimals: 18,
   logoURI: defaults.vader.logoURI,
 }
+defaults.vader['gaugeAsset'] = defaults.avVADER
 defaults.avUSDV = {
+  isVault: true,
   gauge: v0.avUSDVGauge.address,
   bribe: v0.avUSDVBribe.address,
   chainId: defaults.network.chainId,

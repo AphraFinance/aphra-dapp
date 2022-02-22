@@ -17,34 +17,12 @@ import {
   useToast,
   Container,
   useDisclosure,
-  Checkbox,
-  Alert,
-  AlertIcon,
-  AlertTitle,
-  AlertDescription,
-  AlertDialog,
-  AlertDialogOverlay,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogBody,
-  AlertDialogFooter,
-  useBreakpointValue,
   useRadio,
   useRadioGroup,
   HStack,
-  Tag,
-  TagLabel,
-  TagLeftIcon,
   Heading,
-  ScaleFade,
-  Tooltip,
-  Fade,
-  Tabs,
-  TabList,
-  Tab,
-  TabPanels,
-  TabPanel,
 } from '@chakra-ui/react'
+import { GaugeItem } from './gauges'
 import { TokenSelector } from '../components/TokenSelector'
 import { BigNumber, ethers } from 'ethers'
 import defaults from '../common/defaults'
@@ -79,6 +57,7 @@ const Vaults = props => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [isSelect, setIsSelect] = useState(-1)
   const [tokenSelect, setTokenSelect] = useState(false)
+  console.log(tokenSelect)
   const [vaultApproved, setVaultApproved] = useState(false)
   const [gaugeApproved, setGaugeApproved] = useState(false)
   const [setDepositGauge, depositGaugeEnabled] = useState(false)
@@ -264,36 +243,25 @@ const Vaults = props => {
   }
 
   useEffect(() => {
-    if (wallet.account && tokenSelect) {
+    if (wallet.account && tokenSelect?.vault) {
       setWorking(true)
-      Promise.all([
-        getERC20Allowance(
-          tokenSelect.address,
-          wallet.account,
-          tokenSelect.vault,
-          defaults.network.provider,
-        ).then(n => {
+      getERC20Allowance(
+        tokenSelect.address,
+        wallet.account,
+        tokenSelect.vault,
+        defaults.network.provider,
+      )
+        .then(n => {
           setVaultApproved(false)
           if (n.gt(0)) setVaultApproved(true)
-        }),
-
-        getERC20Allowance(
-          tokenSelect.vault,
-          wallet.account,
-          tokenSelect.gauge,
-          defaults.network.provider,
-        ).then(n => {
-          setGaugeApproved(false)
-          if (n.gt(0)) setGaugeApproved(true)
-        }),
-      ]).then(() => {
-        setWorking(false)
-      })
+        })
+        .then(() => {
+          setWorking(false)
+        })
     }
     return () => {
       setWorking(false)
       setVaultApproved(false)
-      setGaugeApproved(false)
     }
   }, [wallet.account, tokenSelect])
 
@@ -399,214 +367,24 @@ const Vaults = props => {
               </Button>
             </Flex>
 
-            <>
-              <SubmitOptions
-                pointerEvents={!tokenSelect ? 'none' : ''}
-                opacity={!tokenSelect ? '0.5' : '1'}
-                set={setSubmitOption}
-                setting={submitOption}
-              />
-              <Text
-                mt="2rem"
-                as="h4"
-                fontSize="1.1rem"
-                fontWeight="bolder"
-                mr="0.66rem"
-                opacity={!tokenSelect ? '0.5' : '1'}
-              >
-                Amount
-              </Text>
-              <Flex
-                layerStyle="inputLike"
-                cursor={!tokenSelect ? 'not-allowed' : ''}
-                opacity={!tokenSelect ? '0.5' : '1'}
-              >
-                <Box flex="1">
-                  <InputGroup>
-                    <Input
-                      variant="transparent"
-                      flex="1"
-                      disabled={!tokenSelect}
-                      _disabled={{
-                        opacity: '0.5',
-                        cursor: 'not-allowed',
-                      }}
-                      fontSize="1.3rem"
-                      fontWeight="bold"
-                      placeholder="0.0"
-                      value={inputAmount}
-                      onChange={e => {
-                        if (isNaN(e.target.value)) {
-                          setInputAmount(prev => prev)
-                        } else {
-                          setInputAmount(String(e.target.value))
-                          if (Number(e.target.value) > 0) {
-                            setValue(
-                              ethers.utils.parseUnits(
-                                String(e.target.value),
-                                18,
-                              ),
-                            )
-                          } else {
-                            setValue(ethers.BigNumber.from('0'))
-                          }
-                        }
-                      }}
-                    />
-                    {tokenSelect && (
-                      <InputRightAddon
-                        width="auto"
-                        borderTopLeftRadius="0.375rem"
-                        borderBottomLeftRadius="0.375rem"
-                        paddingInlineStart="0.5rem"
-                        paddingInlineEnd="0.5rem"
-                      >
-                        <Flex cursor="default" zIndex="1">
-                          <Box d="flex" alignItems="center">
-                            <Image
-                              width="24px"
-                              height="24px"
-                              mr="5px"
-                              src={tokenSelect.logoURI}
-                              alt={`${tokenSelect.name} token`}
-                            />
-                            <Box
-                              as="h3"
-                              m="0"
-                              fontSize="1.02rem"
-                              fontWeight="bold"
-                            >
-                              {submitOption && <>av</>}
-                              {tokenSelect.symbol}
-                            </Box>
-                          </Box>
-                        </Flex>
-                      </InputRightAddon>
-                    )}
-                  </InputGroup>
-                </Box>
-              </Flex>
-
-              <Flex mt=".6rem" justifyContent="flex-end" flexDir="row">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  mr="0.4rem"
-                  onClick={() => {
-                    let localAmount = balance?.data?.div(100).mul(25)
-                    if (!localAmount) {
-                      localAmount = '0;'
-                    }
-                    setInputAmount(
-                      ethers.utils.formatUnits(
-                        balance?.data?.div(100).mul(25),
-                        tokenSelect.decimals,
-                      ),
-                    )
-                    setValue(balance?.data?.div(100).mul(25))
-                  }}
-                >
-                  25%
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  mr="0.4rem"
-                  onClick={() => {
-                    setInputAmount(
-                      ethers.utils.formatUnits(
-                        balance?.data?.div(100).mul(50),
-                        tokenSelect.decimals,
-                      ),
-                    )
-                    setValue(balance?.data?.div(100).mul(50))
-                  }}
-                >
-                  50%
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  mr="0.4rem"
-                  onClick={() => {
-                    setInputAmount(
-                      ethers.utils.formatUnits(
-                        balance?.data?.div(100).mul(75),
-                        tokenSelect.decimals,
-                      ),
-                    )
-                    setValue(balance?.data?.div(100).mul(75))
-                  }}
-                >
-                  75%
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  mr="0.4rem"
-                  onClick={() => {
-                    setInputAmount(
-                      ethers.utils.formatUnits(
-                        balance?.data,
-                        tokenSelect.decimals,
-                      ),
-                    )
-                    setValue(balance?.data)
-                  }}
-                >
-                  MAX
-                </Button>
-              </Flex>
-            </>
-            <Button
-              variant="solidRadial"
-              mt="1rem"
-              size="lg"
-              minWidth="230px"
-              textTransform="uppercase"
-              disabled={working}
-              onClick={() => submit()}
-            >
-              {wallet.account && (
+            {(tokenSelect?.vault !== null || !tokenSelect) && (
+              <>
                 <>
-                  {!working && tokenSelect && (
-                    <>
-                      {!vaultApproved && (
-                        <>
-                          {submitOption && <>Withdraw</>}
-                          {!submitOption && <>Approve {tokenSelect.symbol}</>}
-                        </>
-                      )}
-                      {vaultApproved && (
-                        <>
-                          {submitOption && <>Withdraw</>}
-                          {!submitOption && <>Deposit</>}
-                        </>
-                      )}
-                    </>
-                  )}
-                  {!working && !tokenSelect && <>Deposit</>}
-                  {working && (
-                    <>
-                      <Spinner />
-                    </>
-                  )}
-                </>
-              )}
-              {!wallet.account && <>Deposit</>}
-            </Button>
-            <>
-              {tokenSelect?.vault?.gauge !== '' && (
-                <>
-                  <GagueActiveTag mt={'2rem'} />
+                  <SubmitOptions
+                    pointerEvents={!tokenSelect ? 'none' : ''}
+                    opacity={!tokenSelect ? '0.5' : '1'}
+                    set={setSubmitOption}
+                    setting={submitOption}
+                  />
                   <Text
+                    mt="2rem"
                     as="h4"
                     fontSize="1.1rem"
                     fontWeight="bolder"
                     mr="0.66rem"
                     opacity={!tokenSelect ? '0.5' : '1'}
                   >
-                    Vault Shares
+                    Amount
                   </Text>
                   <Flex
                     layerStyle="inputLike"
@@ -626,21 +404,21 @@ const Vaults = props => {
                           fontSize="1.3rem"
                           fontWeight="bold"
                           placeholder="0.0"
-                          value={inputAmountGauge}
+                          value={inputAmount}
                           onChange={e => {
                             if (isNaN(e.target.value)) {
-                              setInputAmountGauge(prev => prev)
+                              setInputAmount(prev => prev)
                             } else {
-                              setInputAmountGauge(String(e.target.value))
+                              setInputAmount(String(e.target.value))
                               if (Number(e.target.value) > 0) {
-                                setValueGauge(
+                                setValue(
                                   ethers.utils.parseUnits(
                                     String(e.target.value),
                                     18,
                                   ),
                                 )
                               } else {
-                                setValueGauge(ethers.BigNumber.from('0'))
+                                setValue(ethers.BigNumber.from('0'))
                               }
                             }
                           }}
@@ -668,7 +446,7 @@ const Vaults = props => {
                                   fontSize="1.02rem"
                                   fontWeight="bold"
                                 >
-                                  <>av</>
+                                  {submitOption && <>av</>}
                                   {tokenSelect.symbol}
                                 </Box>
                               </Box>
@@ -685,17 +463,17 @@ const Vaults = props => {
                       size="sm"
                       mr="0.4rem"
                       onClick={() => {
-                        let localAmount = balanceVault?.data?.div(100).mul(25)
+                        let localAmount = balance?.data?.div(100).mul(25)
                         if (!localAmount) {
                           localAmount = '0;'
                         }
-                        setInputAmountGauge(
+                        setInputAmount(
                           ethers.utils.formatUnits(
-                            balanceVault?.data?.div(100).mul(25),
+                            balance?.data?.div(100).mul(25),
                             tokenSelect.decimals,
                           ),
                         )
-                        setValueGauge(balanceVault?.data?.div(100).mul(25))
+                        setValue(balance?.data?.div(100).mul(25))
                       }}
                     >
                       25%
@@ -705,13 +483,13 @@ const Vaults = props => {
                       size="sm"
                       mr="0.4rem"
                       onClick={() => {
-                        setInputAmountGauge(
+                        setInputAmount(
                           ethers.utils.formatUnits(
-                            balanceVault?.data?.div(100).mul(50),
+                            balance?.data?.div(100).mul(50),
                             tokenSelect.decimals,
                           ),
                         )
-                        setValueGauge(balanceVault?.data?.div(100).mul(50))
+                        setValue(balance?.data?.div(100).mul(50))
                       }}
                     >
                       50%
@@ -721,13 +499,13 @@ const Vaults = props => {
                       size="sm"
                       mr="0.4rem"
                       onClick={() => {
-                        setInputAmountGauge(
+                        setInputAmount(
                           ethers.utils.formatUnits(
-                            balanceVault?.data?.div(100).mul(75),
+                            balance?.data?.div(100).mul(75),
                             tokenSelect.decimals,
                           ),
                         )
-                        setValueGauge(balanceVault?.data?.div(100).mul(75))
+                        setValue(balance?.data?.div(100).mul(75))
                       }}
                     >
                       75%
@@ -737,43 +515,66 @@ const Vaults = props => {
                       size="sm"
                       mr="0.4rem"
                       onClick={() => {
-                        setInputAmountGauge(
+                        setInputAmount(
                           ethers.utils.formatUnits(
-                            balanceVault?.data,
+                            balance?.data,
                             tokenSelect.decimals,
                           ),
                         )
-                        setValueGauge(balanceVault?.data)
+                        setValue(balance?.data)
                       }}
                     >
                       MAX
                     </Button>
                   </Flex>
                 </>
-              )}
-            </>
-
-            <Button
-              variant="solidRadial"
-              mt="1rem"
-              size="lg"
-              minWidth="230px"
-              textTransform="uppercase"
-              disabled={valueGauge === 0 || working}
-              onClick={() => submitGauge()}
-            >
-              {wallet.account && (
-                <>
-                  {!working && <>Gauge Deposit</>}
-                  {working && (
+                <Button
+                  variant="solidRadial"
+                  mt="1rem"
+                  size="lg"
+                  minWidth="230px"
+                  textTransform="uppercase"
+                  disabled={working}
+                  onClick={() => submit()}
+                >
+                  {wallet.account && (
                     <>
-                      <Spinner />
+                      {!working && tokenSelect && (
+                        <>
+                          {!vaultApproved && (
+                            <>
+                              {submitOption && <>Withdraw</>}
+                              {!submitOption && (
+                                <>Approve {tokenSelect.symbol}</>
+                              )}
+                            </>
+                          )}
+                          {vaultApproved && (
+                            <>
+                              {submitOption && <>Withdraw</>}
+                              {!submitOption && <>Deposit</>}
+                            </>
+                          )}
+                        </>
+                      )}
+                      {!working && !tokenSelect && <>Deposit</>}
+                      {working && (
+                        <>
+                          <Spinner />
+                        </>
+                      )}
                     </>
                   )}
-                </>
-              )}
-              {!wallet.account && <>Gauge Deposit</>}
-            </Button>
+                  {!wallet.account && <>Deposit</>}
+                </Button>
+              </>
+            )}
+            {tokenSelect && tokenSelect?.gaugeAsset !== '' && (
+              <>
+                <GagueActiveTag mt={'2rem'} />
+                <GaugeItem asset={tokenSelect.gaugeAsset} />
+              </>
+            )}
           </Flex>
         </Flex>
       </Box>

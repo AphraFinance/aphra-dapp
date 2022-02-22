@@ -65,7 +65,7 @@ const Gauge = props => {
   )
 }
 
-const GaugeItem = props => {
+export const GaugeItem = props => {
   GaugeItem.propTypes = {
     asset: PropTypes.object,
   }
@@ -587,13 +587,7 @@ const WithdrawPanel = props => {
                     src={token0.logoURI}
                     alt={`${token0.name} token`}
                   />
-                  <Box
-                    as="h3"
-                    m="0"
-                    fontSize="1.02rem"
-                    fontWeight="bold"
-                    textTransform="capitalize"
-                  >
+                  <Box as="h3" m="0" fontSize="1.02rem" fontWeight="bold">
                     {token0.symbol}
                   </Box>
                 </Box>
