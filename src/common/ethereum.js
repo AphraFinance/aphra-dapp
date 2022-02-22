@@ -57,6 +57,10 @@ const getERC20BalanceOf = async (tokenAddress, address, provider) => {
   )
   return await contract.balanceOf(address)
 }
+const getGaugeBalanceOf = async (gaugeAddress, activeWallet, provider) => {
+  const contract = new ethers.Contract(gaugeAddress, gauge, provider)
+  return await contract.balanceOf(activeWallet)
+}
 const getVeBalanceOfNFT = async (tokenAddress, activeWallet, provider) => {
   const contract = new ethers.Contract(tokenAddress, veAPHRA, provider)
   const veNFT = await contract.tokenOfOwnerByIndex(activeWallet, 0)
@@ -567,4 +571,5 @@ export {
   vaultWithdraw,
   gaugeDeposit,
   getVeBalanceOfNFT,
+  getGaugeBalanceOf,
 }

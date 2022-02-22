@@ -13,8 +13,9 @@ import { Header } from './components/Header'
 import Claim from './locations/claim'
 
 import Stake from './locations/stake'
-import Bonds from './locations/bonds'
-import Bond from './locations/bond'
+import Gauge from './locations/gauges'
+// import Bonds from './locations/bonds'
+// import Bond from './locations/bond'
 import defaults from './common/defaults'
 import { Footer } from './components/Footer'
 import { Wave } from './assets/svg/effects/Wave'
@@ -48,14 +49,14 @@ const App = () => {
               render={() => <Vaults position="relative" zIndex="1" />}
             />
             <Route
-              path="/stake/:address"
+              path="/gauge/:address"
               exact
-              render={() => <Stake position="relative" zIndex="1" />}
+              render={() => <Gauge position="relative" zIndex="1" />}
             />
             <Route
-              path="/stake"
+              path="/gauges"
               exact
-              render={() => <Stake position="relative" zIndex="1" />}
+              render={() => <Gauge position="relative" zIndex="1" />}
             />
             <Route
               path="/claim"

@@ -17,9 +17,9 @@ export const Header = props => {
       link: '/vaults',
     },
     {
-      name: 'Stake',
-      text: 'Stake',
-      link: '/stake',
+      name: 'Gauges',
+      text: 'Gauges',
+      link: '/gauges',
     },
     {
       name: 'Airdrop',

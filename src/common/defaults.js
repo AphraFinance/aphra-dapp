@@ -291,6 +291,26 @@ defaults.usdv3Crv = {
   decimals: 18,
   logoURI: '/curvefi.svg',
 }
+defaults.avVADER = {
+  gauge: v0.avVADERGauge.address,
+  bribe: v0.avVADERBribe.address,
+  chainId: defaults.network.chainId,
+  address: v0.avVADER.address,
+  name: 'avVADER',
+  symbol: 'avVADER',
+  decimals: 18,
+  logoURI: defaults.vader.logoURI,
+}
+defaults.avUSDV = {
+  gauge: v0.avUSDVGauge.address,
+  bribe: v0.avUSDVBribe.address,
+  chainId: defaults.network.chainId,
+  address: v0.avUSDV.address,
+  name: 'avUSDV',
+  symbol: 'avUSDV',
+  decimals: 18,
+  logoURI: defaults.usdv.logoURI,
+}
 
 defaults.redeemables = [
   {
