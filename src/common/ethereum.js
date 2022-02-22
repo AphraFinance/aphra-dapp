@@ -1,7 +1,8 @@
-import { ethers } from 'ethers'
+import { BigNumber, ethers } from 'ethers'
 import humanStandardTokenAbi from '../artifacts/abi/humanStandardToken'
 import converterAbi from '../artifacts/abi/converter'
 import aphraAirdropClaim from '../artifacts/abi/aphraAirdropClaim'
+import veAPHRA from '../artifacts/abi/aphraVeAPHRA'
 import defaults from './defaults'
 import xVaderAbi from '../artifacts/abi/xvader'
 import linearVestingAbi from '../artifacts/abi/linearVesting'
@@ -55,6 +56,14 @@ const getERC20BalanceOf = async (tokenAddress, address, provider) => {
     provider,
   )
   return await contract.balanceOf(address)
+}
+const getVeBalanceOfNFT = async (tokenAddress, activeWallet, provider) => {
+  const contract = new ethers.Contract(tokenAddress, veAPHRA, provider)
+  const veNFT = await contract.tokenOfOwnerByIndex(activeWallet, 0)
+
+  const balance = await contract.balanceOfNFT(veNFT)
+
+  return BigNumber.from(balance)
 }
 
 const resolveUnknownERC20 = async (tokenAddress, logoURI = '') => {
@@ -557,4 +566,5 @@ export {
   vaultDeposit,
   vaultWithdraw,
   gaugeDeposit,
+  getVeBalanceOfNFT,
 }

@@ -227,17 +227,6 @@ defaults.voter = {
   address: v0.Voter.address,
 }
 
-defaults.vaults = {
-  USDV: {
-    gauge: v0.avVADERGauge.address,
-    bribe: v0.avVADERGauge.address,
-    address: v0.avUSDV.address,
-  },
-  VADER: {
-    gauge: '0x2602278EE1882889B946eb11DC0E810075650983',
-    address: v0.avVADER.address,
-  },
-}
 defaults.ether = {
   name: 'ETHER',
   symbol: 'ETH',
@@ -271,9 +260,9 @@ defaults.xvader = {
 }
 
 defaults.usdv = {
-  vault: v0.avVADER.address,
-  gauge: v0.avVADERGauge.address,
-  bribe: v0.avVADERBribe.address,
+  vault: v0.avUSDV.address,
+  gauge: v0.avUSDVGauge.address,
+  bribe: v0.avUSDVBribe.address,
   chainId: defaults.network.chainId,
   address: defaults.address.usdv,
   name: 'USDV',
@@ -284,14 +273,12 @@ defaults.usdv = {
 }
 
 defaults.veAphra = {
-  vault: null,
   chainId: defaults.network.chainId,
-  address: defaults.address.veAphra,
+  address: v0.veAPHRA.address,
   name: 'veAPHRA',
   symbol: 'veAPHRA',
   decimals: 18,
-  logoURI:
-    'https://raw.githubusercontent.com/vetherasset/branding/main/usdv/usdv-symbol-w-ring.png',
+  logoURI: defaults.aphra.logoURI,
 }
 defaults.usdv3Crv = {
   vault: v0.avVADER.address,
@@ -303,30 +290,6 @@ defaults.usdv3Crv = {
   symbol: 'USDV3Crv',
   decimals: 18,
   logoURI: '/curvefi.svg',
-}
-
-defaults.avUSDV = {
-  isVault: true,
-  vault: defaults.vaults.USDV,
-  chainId: defaults.network.chainId,
-  address: v0.avVADER.address,
-  name: 'avUSDV',
-  symbol: 'avUSDV',
-  decimals: 18,
-  logoURI:
-    'https://raw.githubusercontent.com/vetherasset/branding/main/usdv/usdv-symbol-w-ring.png',
-}
-
-defaults.avVader = {
-  isVault: true,
-  vault: defaults.vaults.VADER,
-  chainId: defaults.network.chainId,
-  address: v0.avVADER.address,
-  name: 'avVADER',
-  symbol: 'avVADER',
-  decimals: 18,
-  logoURI:
-    'https://raw.githubusercontent.com/vetherasset/branding/main/vader/vader-symbol-w-ring.png',
 }
 
 defaults.redeemables = [

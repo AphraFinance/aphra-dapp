@@ -414,7 +414,7 @@ const Vaults = props => {
                 mr="0.66rem"
                 opacity={!tokenSelect ? '0.5' : '1'}
               >
-                Deposit Amount
+                Amount
               </Text>
               <Flex
                 layerStyle="inputLike"

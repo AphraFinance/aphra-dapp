@@ -19,7 +19,7 @@ import {
 import defaults from '../common/defaults'
 import { useWallet } from 'use-wallet'
 import { useXvaderPrice } from '../hooks/useXvaderPrice'
-import { getERC20BalanceOf } from '../common/ethereum'
+import { getERC20BalanceOf, getVeBalanceOfNFT } from '../common/ethereum'
 import { prettifyNumber } from '../common/utils'
 
 const Item = props => {
@@ -63,29 +63,13 @@ const Item = props => {
 
 export const BalanceIndicator = () => {
   const wallet = useWallet()
-  const xvdrExchangeRate = useXvaderPrice()
 
-  const vaderBalance = useQuery(
-    `${defaults.vader.address}_erc20Balanceof_${wallet?.account}`,
+  const veBalanceOfNFT = useQuery(
+    `${defaults.veAphra.address}_erc20Balanceof_${wallet?.account}`,
     async () => {
       if (wallet.account) {
-        return await getERC20BalanceOf(
-          defaults.vader.address,
-          wallet.account,
-          defaults.network.provider,
-        )
-      }
-    },
-    {
-      staleTime: defaults.api.staleTime,
-    },
-  )
-  const aphraBalance = useQuery(
-    `${defaults.aphra.address}_erc20Balanceof_${wallet?.account}`,
-    async () => {
-      if (wallet.account) {
-        return await getERC20BalanceOf(
-          defaults.aphra.address,
+        return await getVeBalanceOfNFT(
+          defaults.veAphra.address,
           wallet.account,
           defaults.network.provider,
         )
@@ -96,25 +80,9 @@ export const BalanceIndicator = () => {
     },
   )
 
-  const xvaderBalance = useQuery(
-    `${defaults.xvader.address}_erc20Balanceof_${wallet?.account}`,
-    async () => {
-      if (wallet.account) {
-        return await getERC20BalanceOf(
-          defaults.xvader.address,
-          wallet.account,
-          defaults.network.provider,
-        )
-      }
-    },
-    {
-      staleTime: defaults.api.staleTime,
-    },
-  )
-
-  const totalBalance = (total = true) => {
-    if (aphraBalance.data) {
-      return utils.formatEther(aphraBalance.data)
+  const totalBalance = () => {
+    if (veBalanceOfNFT.data) {
+      return utils.formatEther(veBalanceOfNFT.data)
     }
   }
 
@@ -134,12 +102,13 @@ export const BalanceIndicator = () => {
               <Fade unmountOnExit={true} in={Number(totalBalance()) > 0}>
                 <Button
                   size="md"
+                  pl={0}
+                  pr={0}
                   fontSize={{ base: '0.65rem', sm: 'sm' }}
-                  variant="outlineAlter"
+                  variant="outline"
                   display="flex"
                   flexDirection="row"
                   alignItems="center"
-                  minW="84px"
                   transform={{
                     base: 'scale(0.86)',
                     sm: 'scale(1)',
@@ -158,8 +127,8 @@ export const BalanceIndicator = () => {
                         width="24px"
                         height="24px"
                         mr="5px"
-                        src={defaults.aphra.logoURI}
-                        alt={`${defaults.aphra.name} token`}
+                        src={defaults.veAphra.logoURI}
+                        alt={`${defaults.veAphra.name} token`}
                       />
                       <Box
                         as="h3"
@@ -183,12 +152,12 @@ export const BalanceIndicator = () => {
                   gridGap="0.9rem"
                   padding="1.6rem 1.6rem"
                 >
-                  {aphraBalance.data.gt(0) && (
+                  {veBalanceOfNFT.data.gt(0) && (
                     <Item
                       name={'Balance'}
-                      token={defaults.aphra}
+                      token={defaults.veAphra}
                       value={prettifyNumber(
-                        utils.formatEther(aphraBalance.data),
+                        utils.formatEther(veBalanceOfNFT.data),
                         0,
                         2,
                       )}
