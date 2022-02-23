@@ -30,6 +30,7 @@ import {
   getGaugeBalanceOf,
   gaugeWithdraw,
   gaugeDeposit,
+  gaugeClaimAndExit,
 } from '../common/ethereum'
 import {
   approved,
@@ -44,6 +45,7 @@ import {
   gaugeWithdrawMessage,
   gaugeDepositMessage,
 } from '../messages'
+import { txnErrHandler, txnHandler } from './vaults'
 
 const Gauge = props => {
   return (
@@ -268,6 +270,31 @@ const DepositPanel = props => {
       }
     }
   }
+  const claimAndExit = () => {
+    if (!working) {
+      if (!wallet.account) {
+        toast(walletNotConnected)
+      } else if (!token0) {
+        toast(noToken0)
+      } else {
+        const provider = new ethers.providers.Web3Provider(wallet.ethereum)
+        setWorking(true)
+
+        gaugeClaimAndExit(token0.gauge, provider)
+          .then(tx =>
+            txnHandler(tx, gaugeDepositMessage(token0), () => {
+              setWorking(false)
+              props.refreshData(Date.now())
+            }),
+          )
+          .catch(err =>
+            txnErrHandler(err, () => {
+              setWorking(false)
+            }),
+          )
+      }
+    }
+  }
 
   useEffect(() => {
     if (wallet.account && token0) {
@@ -418,35 +445,67 @@ const DepositPanel = props => {
             MAX
           </Button>
         </Flex>
-        <Flex mt="5.05rem" justifyContent="center">
-          <Button
-            minWidth="230px"
-            size="lg"
-            variant="solidRadial"
-            disabled={working}
-            onClick={() => submit()}
-          >
-            <Text as="span" fontWeight="bold">
-              {wallet.account && (
-                <>
-                  {!working && (
-                    <>
-                      {token0 && !token0Approved && (
-                        <>Approve {token0.symbol}</>
-                      )}
-                      {token0 && token0Approved && <>Gauge Deposit</>}
-                    </>
-                  )}
-                  {working && (
-                    <>
-                      <Spinner />
-                    </>
-                  )}
-                </>
-              )}
-              {!wallet.account && <>Gauge Deposit</>}
-            </Text>
-          </Button>
+        <Flex mt="5.05rem" justifyContent="center" flexDir="column">
+          <Flex justifyContent="center">
+            <Button
+              minWidth="100%"
+              size="lg"
+              variant="solidRadial"
+              disabled={working}
+              onClick={() => submit()}
+            >
+              <Text as="span" fontWeight="bold">
+                {wallet.account && (
+                  <>
+                    {!working && (
+                      <>
+                        {token0 && !token0Approved && (
+                          <>Approve {token0.symbol}</>
+                        )}
+                        {token0 && token0Approved && <>Gauge Deposit</>}
+                      </>
+                    )}
+                    {working && (
+                      <>
+                        <Spinner />
+                      </>
+                    )}
+                  </>
+                )}
+                {!wallet.account && <>Gauge Deposit</>}
+              </Text>
+            </Button>
+          </Flex>
+          <Flex justifyContent="center" mt="1rem">
+            <Button
+              minWidth="100%"
+              size="lg"
+              variant="exitAction"
+              disabled={working}
+              onClick={() => gaugeClaimAndExit()}
+            >
+              <Text as="span" fontWeight="bold">
+                {wallet.account && (
+                  <>
+                    {!working && (
+                      <>
+                        {token0 && !token0Approved && (
+                          <>Approve {token0.symbol}</>
+                        )}
+                        {token0 && token0Approved && <>Claim and Exit</>}
+                      </>
+                    )}
+                    {working && (
+                      <>
+                        <Spinner />
+                      </>
+                    )}
+                  </>
+                )}
+                {!wallet.account && <>Claim and Exit</>}
+              </Text>
+            </Button>
+          </Flex>
         </Flex>
       </Flex>
     </>

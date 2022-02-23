@@ -45,19 +45,58 @@ import {
   approved,
   assetDeposited,
   assetWithdrawn,
-  staked,
 } from '../messages'
 import { useERC20Balance } from '../hooks/useERC20Balance'
-import { getPercentage, prettifyNumber } from '../common/utils'
-import Stake from './stake'
+
+export const txnErrHandler = async (err, cb) => {
+  const toast = useToast()
+  if (cb) cb()
+  if (err.code === 4001) {
+    console.log(
+      'Transaction rejected: Your have decided to reject the transaction..',
+    )
+    toast(rejected)
+  } else {
+    console.log(err)
+    toast(failed)
+  }
+}
+export const txnHandler = async (tx, messageObj, cb) => {
+  const toast = useToast()
+
+  const r = await tx.wait(defaults.network.tx.confirmations)
+  cb(r)
+  toast({
+    ...messageObj,
+    description: (
+      <Link
+        variant="underline"
+        _focus={{
+          boxShadow: '0',
+        }}
+        href={`${defaults.api.etherscanUrl}/tx/${r.transactionHash}`}
+        isExternal
+      >
+        <Box>
+          Click here to view transaction on{' '}
+          <i>
+            <b>Etherscan</b>
+          </i>
+          .
+        </Box>
+      </Link>
+    ),
+    duration: defaults.toast.txHashDuration,
+  })
+}
 
 const Vaults = props => {
   const wallet = useWallet()
   const toast = useToast()
+
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [isSelect, setIsSelect] = useState(-1)
   const [tokenSelect, setTokenSelect] = useState(false)
-  console.log(tokenSelect)
   const [vaultApproved, setVaultApproved] = useState(false)
   const [gaugeApproved, setGaugeApproved] = useState(false)
   const [setDepositGauge, depositGaugeEnabled] = useState(false)
@@ -68,72 +107,10 @@ const Vaults = props => {
   const balance = useERC20Balance(
     !submitOption ? tokenSelect?.address : tokenSelect?.vault,
   )
-  const balanceVault = useERC20Balance(tokenSelect?.vault)
   const [inputAmount, setInputAmount] = useState('')
-  const [inputAmountGauge, setInputAmountGauge] = useState('')
   const [value, setValue] = useState(0)
-  const [valueGauge, setValueGauge] = useState(0)
 
   const [working, setWorking] = useState(false)
-
-  const submitGauge = () => {
-    if (!working) {
-      if (!wallet.account) {
-        toast(walletNotConnected)
-      } else if (!tokenSelect) {
-        toast(noToken0)
-      } else if (gaugeApproved && depositGaugeEnabled) {
-        const provider = new ethers.providers.Web3Provider(wallet.ethereum)
-        setWorking(true)
-        // need to fetch any active veNFT's they might have to let them choose which one to deposit into for boosting when enabled
-        gaugeDeposit(valueGauge, tokenSelect.gauge, 0, provider)
-          .then(tx =>
-            txnHandler(tx, approved, () => {
-              setVaultApproved(true)
-            }),
-          )
-          .catch(err => errHandler(err))
-      }
-    }
-  }
-  const errHandler = async err => {
-    setWorking(false)
-    if (err.code === 4001) {
-      console.log(
-        'Transaction rejected: Your have decided to reject the transaction..',
-      )
-      toast(rejected)
-    } else {
-      console.log(err)
-      toast(failed)
-    }
-  }
-  const txnHandler = async (tx, messageObj, cb) => {
-    const r = await tx.wait(defaults.network.tx.confirmations)
-    cb(r)
-    toast({
-      ...messageObj,
-      description: (
-        <Link
-          variant="underline"
-          _focus={{
-            boxShadow: '0',
-          }}
-          href={`${defaults.api.etherscanUrl}/tx/${r.transactionHash}`}
-          isExternal
-        >
-          <Box>
-            Click here to view transaction on{' '}
-            <i>
-              <b>Etherscan</b>
-            </i>
-            .
-          </Box>
-        </Link>
-      ),
-      duration: defaults.toast.txHashDuration,
-    })
-  }
 
   const submit = () => {
     if (!working) {
@@ -163,37 +140,19 @@ const Vaults = props => {
             ),
           )
         }
-
-        // need to have a toggle to deposit into the gauge as well on a single deposit
-        // withdraw comes from the gauge landing page
-        if (!gaugeApproved && depositGaugeEnabled) {
-          //
-          debugger
-          approves.push(
-            approveERC20ToSpend(
-              tokenSelect.vault,
-              tokenSelect.gauge,
-              defaults.network.erc20.maxApproval,
-              provider,
-            ).then(txGauge =>
-              txnHandler(txGauge, approved, () => {
-                setGaugeApproved(true)
-                setWorking(false)
-              }),
-            ),
-          )
-        }
-
         Promise.all(approves)
           .then(() => {
             setWorking(false)
           })
-          .catch(err => errHandler(err))
+          .catch(err =>
+            txnErrHandler(err, () => {
+              setWorking(false)
+            }),
+          )
       } else if ((vaultApproved && value > 0) || submitOption) {
         const provider = new ethers.providers.Web3Provider(wallet.ethereum)
         if (balance?.data?.gte(value)) {
           setWorking(true)
-
           new Promise(resolve => {
             if (!submitOption) {
               // handle also depositing to the gauge in single user action
@@ -203,36 +162,22 @@ const Vaults = props => {
               resolve(vaultWithdraw(value, tokenSelect.vault, provider))
             }
           })
-            .then(tx => {
-              return tx.wait(defaults.network.tx.confirmations).then(r => {
+            .then(tx =>
+              txnHandler(
+                tx,
+                !submitOption ? assetDeposited : assetWithdrawn,
+                () => {
+                  setWorking(false)
+                  setVaultApproved(true)
+                },
+              ),
+            )
+            .catch(err =>
+              txnErrHandler(err, () => {
                 setWorking(false)
                 setVaultApproved(true)
-                const message = !submitOption ? assetDeposited : assetWithdrawn
-                toast({
-                  ...message,
-                  description: (
-                    <Link
-                      variant="underline"
-                      _focus={{
-                        boxShadow: '0',
-                      }}
-                      href={`${defaults.api.etherscanUrl}/tx/${r.transactionHash}`}
-                      isExternal
-                    >
-                      <Box>
-                        Click here to view transaction on{' '}
-                        <i>
-                          <b>Etherscan</b>
-                        </i>
-                        .
-                      </Box>
-                    </Link>
-                  ),
-                  duration: defaults.toast.txHashDuration,
-                })
-              })
-            })
-            .catch(err => errHandler(err))
+              }),
+            )
         } else {
           toast(insufficientBalance)
         }

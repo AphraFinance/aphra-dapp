@@ -32,6 +32,11 @@ export default {
           'linear-gradient(90deg, rgb(128, 79, 110) 0%, rgb(4, 54, 89) 100%)',
       },
     }),
+    exitAction: () => ({
+      color: '#fff',
+      textTransform: 'uppercase',
+      backgroundColor: 'red',
+    }),
     solidRounded: () => ({
       color: '#fff',
       textTransform: 'uppercase',

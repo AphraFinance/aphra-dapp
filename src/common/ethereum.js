@@ -437,6 +437,15 @@ const gaugeWithdraw = async (amountOut, gaugeAddress, provider) => {
   return await contract.withdraw(amountOut)
 }
 
+const gaugeClaimAndExit = async (gaugeAddress, provider) => {
+  const contract = new ethers.Contract(
+    gaugeAddress,
+    gauge,
+    provider.getSigner(0),
+  )
+  return await contract.withdrawAll()
+}
+
 const vaultWithdraw = async (amountIn, vaultAddress, provider) => {
   const contract = new ethers.Contract(
     vaultAddress,
@@ -581,4 +590,5 @@ export {
   gaugeWithdraw,
   getVeBalanceOfNFT,
   getGaugeBalanceOf,
+  gaugeClaimAndExit,
 }
