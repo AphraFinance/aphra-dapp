@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { useQuery } from 'react-query'
-import { BigNumber, utils } from 'ethers'
+import { BigNumber, ethers, utils } from 'ethers'
 import {
   Button,
   Box,
@@ -68,10 +68,11 @@ export const BalanceIndicator = () => {
     `${defaults.veAphra.address}_erc20Balanceof_${wallet?.account}`,
     async () => {
       if (wallet.account) {
+        const provider = new ethers.providers.Web3Provider(wallet.ethereum)
         return await getVeBalanceOfNFT(
           defaults.veAphra.address,
           wallet.account,
-          defaults.network.provider,
+          provider,
         )
       }
     },

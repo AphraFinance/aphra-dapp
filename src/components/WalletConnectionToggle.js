@@ -22,6 +22,7 @@ import Jazzicon from '@metamask/jazzicon'
 import { connected } from '../messages'
 import { WalletConnectionModal } from './WalletConnectionModal'
 import defaults from '../common/defaults'
+import { ethers } from 'ethers'
 
 const AddTokenItem = props => {
   AddTokenItem.propTypes = {
@@ -87,9 +88,16 @@ export const WalletConnectionToggle = props => {
     else setIsMenuOpen(true)
   }
 
-  useEffect(() => {
+  useEffect(async () => {
     if (wallet.account !== null) {
-      setText(prettifyAddress(wallet.account))
+      const ens = await defaults.network.provider.lookupAddress(wallet.account)
+
+      if (ens) {
+        setText(ens)
+      } else {
+        setText(prettifyAddress(wallet.account))
+      }
+
       ref.current.appendChild(
         Jazzicon(16, parseInt(wallet.account.slice(2, 10), 16)),
       ).style.marginLeft = '7px'

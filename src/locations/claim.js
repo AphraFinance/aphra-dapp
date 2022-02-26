@@ -82,9 +82,6 @@ const Claim = props => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [isSelect] = useState(-1)
   const [tokenSelect, setTokenSelect] = useState(false)
-  const [tokenApproved, setTokenApproved] = useState(false)
-  const [tokenBalance, setTokenBalance] = useState(ethers.BigNumber.from('0'))
-  const [inputAmount, setInputAmount] = useState('')
   const [value, setValue] = useState(0)
   const [working, setWorking] = useState(false)
 
@@ -150,6 +147,7 @@ const Claim = props => {
         )
         setProof(merkleProof)
         getClaimed(formattedAddress).then(r => {
+          console.log(r)
           if (r) setHasClaimed(true)
         })
       }
@@ -368,7 +366,7 @@ const Claim = props => {
               size="lg"
               minWidth="230px"
               textTransform="uppercase"
-              disabled={working || claimableAphra <= 0 || hasClaimed}
+              disabled={hasClaimed || working || claimableAphra <= 0}
               onClick={() => submit()}
             >
               {wallet.account ? (
@@ -395,12 +393,6 @@ const Claim = props => {
       <TokenSelector
         isSelect={isSelect}
         setToken0={setTokenSelect}
-        tokenList={
-          !defaults.redeemables[0].snapshot[wallet.account] ||
-          !Number(defaults.redeemables[0].snapshot[wallet.account]) > 0
-            ? defaults.redeemables.slice(1)
-            : defaults.redeemables
-        }
         isOpen={isOpen}
         onOpen={onOpen}
         onClose={onClose}

@@ -63,11 +63,13 @@ const getGaugeBalanceOf = async (gaugeAddress, activeWallet, provider) => {
 }
 const getVeBalanceOfNFT = async (tokenAddress, activeWallet, provider) => {
   const contract = new ethers.Contract(tokenAddress, veAPHRA, provider)
-  const veNFT = await contract.tokenOfOwnerByIndex(activeWallet, 0)
-
-  const balance = await contract.balanceOfNFT(veNFT)
-
-  return BigNumber.from(balance)
+  try {
+    const veNFT = await contract.tokenOfOwnerByIndex(activeWallet, 0)
+    const balance = await contract.balanceOfNFT(veNFT)
+    return BigNumber.from(balance)
+  } catch (e) {
+    return BigNumber.from('0')
+  }
 }
 
 const resolveUnknownERC20 = async (tokenAddress, logoURI = '') => {

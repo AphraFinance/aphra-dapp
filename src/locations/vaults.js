@@ -109,7 +109,6 @@ const Vaults = props => {
   )
   const [inputAmount, setInputAmount] = useState('')
   const [value, setValue] = useState(0)
-
   const [working, setWorking] = useState(false)
 
   const submit = () => {
@@ -512,12 +511,12 @@ const Vaults = props => {
                   )}
                   {!wallet.account && <>Deposit</>}
                 </Button>
-              </>
-            )}
-            {tokenSelect && tokenSelect?.gaugeAsset !== '' && (
-              <>
-                <GagueActiveTag mt={'2rem'} />
-                <GaugeItem asset={tokenSelect.gaugeAsset} />
+                {!working && tokenSelect && (
+                  <>
+                    <GagueActiveTag mt={'2rem'} />
+                    <GaugeItem asset={tokenSelect.gaugeAsset} />
+                  </>
+                )}
               </>
             )}
           </Flex>

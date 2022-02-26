@@ -45,9 +45,37 @@ import {
   gaugeWithdrawMessage,
   gaugeDepositMessage,
 } from '../messages'
+import {
+  Slider,
+  SliderTrack,
+  SliderFilledTrack,
+  SliderThumb,
+  SliderMark,
+} from '@chakra-ui/react'
+import {
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  NumberIncrementStepper,
+  NumberDecrementStepper,
+} from '@chakra-ui/react'
 import { txnErrHandler, txnHandler } from './vaults'
 
+const totalPowerUsed = voteValues => {
+  console.log(voteValues)
+  if (!voteValues) return 0
+  return Object.values(voteValues).reduce(
+    (totalVal, val) => totalVal + parseInt(val),
+    0,
+  )
+}
+
 const Gauge = props => {
+  const [assets] = useState(defaults.gauges)
+  const voteDefaults = 0
+  const [voteValues, setVoteValue] = useState({})
+  const [remainingPerGauge, setRemainingPerGauge] = useState({})
+
   return (
     <Box
       minHeight="634.95px"
@@ -58,10 +86,70 @@ const Gauge = props => {
     >
       <Flex flexDir={{ base: 'column', md: 'row' }}>
         <HStack spacing={'2rem'}>
-          <GaugeItem asset={defaults.usdv3Crv} />
-          <GaugeItem asset={defaults.avVADER} />
-          <GaugeItem asset={defaults.avUSDV} />
+          {assets.map(el => (
+            <Flex key={`flex-${el.gauge}`} flexDir={'column'}>
+              <GaugeItem asset={el} />
+              <Flex justifyContent={'center'} mt={'2rem'}>
+                <NumberInput
+                  size={'lg'}
+                  onChange={value => {
+                    if (
+                      Object.entries(voteValues).length > 1 &&
+                      value > remainingPerGauge
+                    )
+                      value = remainingPerGauge
+                    setVoteValue(old => ({
+                      ...old,
+                      [`${el.gaugeAsset.address}`]: value,
+                    }))
+                    setRemainingPerGauge(
+                      (100 - totalPowerUsed(voteValues)) /
+                        (Object.keys(assets).length -
+                          Object.entries(voteValues).length),
+                    )
+                  }}
+                  value={voteValues[el.gaugeAsset?.address] || 0}
+                  defaultValue={voteDefaults}
+                  max={100}
+                >
+                  <NumberInputField />
+                  <NumberInputStepper>
+                    <NumberIncrementStepper />
+                    <NumberDecrementStepper />
+                  </NumberInputStepper>
+                </NumberInput>
+              </Flex>
+            </Flex>
+          ))}
         </HStack>
+      </Flex>
+      <Flex mt={'2rem'} justifyContent={'center'} flexDir={'row'}>
+        <Flex justifyContent={'center'} flexDir={'row'}>
+          <HStack>
+            <Flex>
+              <Button
+                onClick={() => {
+                  setVoteValue({})
+                }}
+              >
+                Reset
+              </Button>
+            </Flex>
+            <Spacer />
+
+            <Flex>Voting Power Used {totalPowerUsed(voteValues)}%</Flex>
+            <Spacer />
+            <Flex>
+              <Button
+                onClick={() => {
+                  console.log(voteValues)
+                }}
+              >
+                Vote
+              </Button>
+            </Flex>
+          </HStack>
+        </Flex>
       </Flex>
     </Box>
   )
@@ -79,8 +167,10 @@ export const GaugeItem = props => {
   const [refreshDataToken, setRefreshDataToken] = useState(Date.now())
 
   useEffect(() => {
-    if (wallet?.account) {
-      getGaugeBalanceOf(asset.gauge, wallet.account, defaults.network.provider)
+    if (wallet?.account && asset) {
+      const provider = new ethers.providers.Web3Provider(wallet.ethereum)
+
+      getGaugeBalanceOf(asset.gauge, wallet.account, provider)
         .then(data => {
           setToken1balance(data)
         })
@@ -177,6 +267,7 @@ const DepositPanel = props => {
       } else if (token0 && !token0Approved) {
         const provider = new ethers.providers.Web3Provider(wallet.ethereum)
         setWorking(true)
+        debugger
         approveERC20ToSpend(
           token0.address,
           token0.gauge,
@@ -267,31 +358,6 @@ const DepositPanel = props => {
         }
       } else {
         toast(noAmount)
-      }
-    }
-  }
-  const claimAndExit = () => {
-    if (!working) {
-      if (!wallet.account) {
-        toast(walletNotConnected)
-      } else if (!token0) {
-        toast(noToken0)
-      } else {
-        const provider = new ethers.providers.Web3Provider(wallet.ethereum)
-        setWorking(true)
-
-        gaugeClaimAndExit(token0.gauge, provider)
-          .then(tx =>
-            txnHandler(tx, gaugeDepositMessage(token0), () => {
-              setWorking(false)
-              props.refreshData(Date.now())
-            }),
-          )
-          .catch(err =>
-            txnErrHandler(err, () => {
-              setWorking(false)
-            }),
-          )
       }
     }
   }
@@ -476,36 +542,6 @@ const DepositPanel = props => {
               </Text>
             </Button>
           </Flex>
-          <Flex justifyContent="center" mt="1rem">
-            <Button
-              minWidth="100%"
-              size="lg"
-              variant="exitAction"
-              disabled={working}
-              onClick={() => gaugeClaimAndExit()}
-            >
-              <Text as="span" fontWeight="bold">
-                {wallet.account && (
-                  <>
-                    {!working && (
-                      <>
-                        {token0 && !token0Approved && (
-                          <>Approve {token0.symbol}</>
-                        )}
-                        {token0 && token0Approved && <>Claim and Exit</>}
-                      </>
-                    )}
-                    {working && (
-                      <>
-                        <Spinner />
-                      </>
-                    )}
-                  </>
-                )}
-                {!wallet.account && <>Claim and Exit</>}
-              </Text>
-            </Button>
-          </Flex>
         </Flex>
       </Flex>
     </>
@@ -586,7 +622,6 @@ const WithdrawPanel = props => {
       }
     }
   }
-
   return (
     <>
       <Flex mt="4.2rem" flexDir="column">
@@ -719,7 +754,7 @@ const WithdrawPanel = props => {
         </Flex>
         <Flex mt="5.05rem" justifyContent="center">
           <Button
-            minWidth="230px"
+            minWidth="100%"
             size="lg"
             variant="solidRadial"
             disabled={working}

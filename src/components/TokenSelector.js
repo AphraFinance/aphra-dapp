@@ -60,7 +60,6 @@ const TokenSelectButton = ({ data, index, style }) => {
         }
         data.onClose()
       }}
-      key={index}
     >
       {data.tokenList && (
         <>

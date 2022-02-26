@@ -238,9 +238,6 @@ defaults.ether = {
 
 defaults.vader = {
   vault: v0.avVADER.address,
-  gaugeAsset: null,
-  gauge: v0.avVADERGauge.address,
-  bribe: v0.avVADERBribe.address,
   chainId: defaults.network.chainId,
   address: defaults.address.vader,
   name: 'VADER',
@@ -249,51 +246,6 @@ defaults.vader = {
   logoURI:
     'https://raw.githubusercontent.com/vetherasset/branding/main/vader/vader-symbol-w-ring.png',
 }
-defaults.xvader = {
-  vault: null,
-  chainId: defaults.network.chainId,
-  address: defaults.address.xvader,
-  name: 'xVADER',
-  symbol: 'xVADER',
-  decimals: 18,
-  logoURI:
-    'https://raw.githubusercontent.com/vetherasset/branding/main/xvader/xvader-symbol-w-ring.png',
-}
-
-defaults.usdv = {
-  vault: v0.avUSDV.address,
-  gaugeAsset: defaults.avUSDV,
-  gauge: v0.avUSDVGauge.address,
-  bribe: v0.avUSDVBribe.address,
-  chainId: defaults.network.chainId,
-  address: defaults.address.usdv,
-  name: 'USDV',
-  symbol: 'USDV',
-  decimals: 18,
-  logoURI:
-    'https://raw.githubusercontent.com/vetherasset/branding/main/usdv/usdv-symbol-w-ring.png',
-}
-
-defaults.veAphra = {
-  chainId: defaults.network.chainId,
-  address: v0.veAPHRA.address,
-  name: 'veAPHRA',
-  symbol: 'veAPHRA',
-  decimals: 18,
-  logoURI: defaults.aphra.logoURI,
-}
-defaults.usdv3Crv = {
-  vault: null,
-  gauge: v0.avVADERGauge.address,
-  bribe: v0.avVADERBribe.address,
-  chainId: defaults.network.chainId,
-  address: defaults.address.usdv3Crv,
-  name: 'USDV3Crv',
-  symbol: 'USDV3Crv',
-  decimals: 18,
-  logoURI: '/curvefi.svg',
-}
-defaults.usdv3Crv['gaugeAsset'] = defaults.usdv3Crv
 defaults.avVADER = {
   isVault: true,
   gauge: v0.avVADERGauge.address,
@@ -305,7 +257,53 @@ defaults.avVADER = {
   decimals: 18,
   logoURI: defaults.vader.logoURI,
 }
+defaults.xvader = {
+  vault: null,
+  gauge: v0.xVADERGauge.address,
+  bribe: v0.xVADERBribe.address,
+  chainId: defaults.network.chainId,
+  address: defaults.address.xvader,
+  name: 'xVADER',
+  symbol: 'xVADER',
+  decimals: 18,
+  logoURI:
+    'https://raw.githubusercontent.com/vetherasset/branding/main/xvader/xvader-symbol-w-ring.png',
+}
+defaults.xvader['gaugeAsset'] = defaults.xvader
+
+defaults.veAphra = {
+  chainId: defaults.network.chainId,
+  address: v0.veAPHRA.address,
+  name: 'veAPHRA',
+  symbol: 'veAPHRA',
+  decimals: 18,
+  logoURI: defaults.aphra.logoURI,
+}
+defaults.usdv3Crv = {
+  vault: null,
+  // gauge: v0.USDV3CrvGauge.address,
+  // bribe: v0.USDV3CrvBribe.address,
+  chainId: defaults.network.chainId,
+  address: defaults.address.usdv3Crv,
+  name: 'USDV3Crv',
+  symbol: 'USDV3Crv',
+  decimals: 18,
+  logoURI: '/curvefi.svg',
+}
+defaults.usdv3Crv['gaugeAsset'] = defaults.usdv3Crv
+
 defaults.vader['gaugeAsset'] = defaults.avVADER
+defaults.usdv = {
+  vault: v0.avUSDV.address,
+  chainId: defaults.network.chainId,
+  address: defaults.address.usdv,
+  name: 'USDV',
+  symbol: 'USDV',
+  decimals: 18,
+  logoURI:
+    'https://raw.githubusercontent.com/vetherasset/branding/main/usdv/usdv-symbol-w-ring.png',
+}
+
 defaults.avUSDV = {
   isVault: true,
   gauge: v0.avUSDVGauge.address,
@@ -317,6 +315,7 @@ defaults.avUSDV = {
   decimals: 18,
   logoURI: defaults.usdv.logoURI,
 }
+defaults.usdv['gaugeAsset'] = defaults.avUSDV
 
 defaults.redeemables = [
   {
@@ -326,23 +325,15 @@ defaults.redeemables = [
   },
 ]
 
-defaults.stakeable = [...[defaults.usdv3Crv]]
 defaults.gauges = [
-  ...[defaults.usdv3Crv],
+  ...[defaults.xvader],
   ...[defaults.avUSDV],
   ...[defaults.avVADER],
 ]
-defaults.unstakeable = [...[defaults.usdv3Crv]]
-defaults.vaultable = [
-  ...[defaults.vader],
-  ...[defaults.usdv],
-  ...[defaults.usdv3Crv],
-]
+defaults.vaultable = [...[defaults.vader], ...[defaults.usdv]]
+console.log(defaults.vaultable)
 
 defaults.bonds = vaderBonds
-defaults.bondConsideredSoldOutMinVader = ethers.BigNumber.from(
-  '300000000000000000000',
-)
 defaults.bondZapMinPayoutAllowed = '10000000000000000'
 
 defaults.xVaderAPRBasedNumberOfRecords = 14
