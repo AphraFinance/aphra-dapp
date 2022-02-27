@@ -260,6 +260,18 @@ const Claim = props => {
                   </Link>
                   to confirm eligibility by searching for your wallet address.
                 </Box>
+                <Box
+                  as="p"
+                  fontSize={{ base: '0.9rem', md: '1rem' }}
+                  mb="0.65rem"
+                >
+                  After claiming your airdrop, head over to the bottom of the{' '}
+                  <Link to="/gauges" style={{ fontWeight: 'bold' }}>
+                    Gauges
+                  </Link>{' '}
+                  tab, where our temporary voting mechanism is located. Select a
+                  percentage you want to allocate per Gauge and press vote.
+                </Box>
               </>
             </Container>
           </Flex>

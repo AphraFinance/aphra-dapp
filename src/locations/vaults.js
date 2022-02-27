@@ -87,6 +87,38 @@ export const txnHandler = async (tx, messageObj, toast, cb) => {
   })
 }
 
+const VaultText = () => {
+  return (
+    <Container mb="23px" p="0">
+      <>
+        <Heading
+          as="h1"
+          size="md"
+          fontSize={{ base: '1.10rem', md: '1.25rem' }}
+        >
+          Aphra Vaults
+        </Heading>
+
+        <Box as="p" mb="3" fontSize={{ base: '0.9rem', md: '1rem' }}>
+          After you have deposited an Asset in one of the Aphra Vaults, you’ll
+          receive a vault token. Next, head over to the{' '}
+          <Link to="/gauges" style={{ fontColor: 'white', fontWeight: 'bold' }}>
+            Gauges
+          </Link>{' '}
+          tab to stake this Vault Token to earn rewards.
+        </Box>
+
+        <Box as="p" fontSize={{ base: '0.9rem', md: '1rem' }}>
+          If you want to deposit your xVader, head straight to the Gauges tab.
+          Deposits in Aphra Vaults are continuously compounded. When you
+          withdraw your Vault Token, you&apos;ll receive your original Asset
+          plus any additional Yield that accrued.
+        </Box>
+      </>
+    </Container>
+  )
+}
+
 const Vaults = props => {
   const wallet = useWallet()
   const toast = useToast()
@@ -222,27 +254,7 @@ const Vaults = props => {
             justifyContent="flex-start"
           >
             <Flex marginBottom={{ base: '1.2rem', md: '0' }}>
-              <Container mb="23px" p="0">
-                <>
-                  <Heading
-                    as="h1"
-                    size="md"
-                    fontSize={{ base: '1.10rem', md: '1.25rem' }}
-                  >
-                    Aphra Vaults
-                  </Heading>
-
-                  <Box as="p" fontSize={{ base: '0.9rem', md: '1rem' }}>
-                    <b>Aphra vaults</b> accept deposits in assets that are
-                  </Box>
-                  <Box as="p" fontSize={{ base: '0.9rem', md: '1rem' }}>
-                    <i>Aphra Vaults</i> continuously compounds, and when you
-                    unstake your <i>vault token</i>, you&lsquo;ll receive your
-                    original deposited <b>asset</b> plus any additional{' '}
-                    <i>yield</i> accrued.
-                  </Box>
-                </>
-              </Container>
+              <VaultText />
             </Flex>
           </Flex>
           <Flex
