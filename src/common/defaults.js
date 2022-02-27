@@ -281,7 +281,7 @@ defaults.veAphra = {
   logoURI: defaults.aphra.logoURI,
 }
 defaults.USDV3CRV = {
-  vault: v0.avVADER.address,
+  vault: v0.avUSDV3CRV.address,
   chainId: defaults.network.chainId,
   address: defaults.address.USDV3CRV,
   name: 'USDV3CRV',
