@@ -62,7 +62,7 @@ export const txnErrHandler = async (err, toast, cb) => {
 }
 export const txnHandler = async (tx, messageObj, toast, cb) => {
   const r = await tx.wait(defaults.network.tx.confirmations)
-  cb(r)
+  if (cb) cb(r)
   toast({
     ...messageObj,
     description: (

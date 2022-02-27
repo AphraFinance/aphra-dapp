@@ -91,7 +91,6 @@ const Gauge = props => {
         toast(walletNotConnected)
       } else if (voteValues) {
         // format vote values
-
         const assetVotes = []
         const assetWeights = []
         for (const [asset, weight] of Object.entries(voteValues)) {
@@ -99,11 +98,10 @@ const Gauge = props => {
           assetWeights.push(BigNumber.from(weight.toString()))
         }
         const provider = new ethers.providers.Web3Provider(wallet.ethereum)
-        debugger
         setVotesForNFT(activeTokenId, assetVotes, assetWeights, provider).then(
           tx =>
-            txnHandler(tx, votedSuccessfully, toast, () => {}).catch(err =>
-              txnErrHandler(err, toast, () => {}),
+            txnHandler(tx, votedSuccessfully, toast, null).catch(err =>
+              txnErrHandler(err, toast, null),
             ),
         )
       } else {

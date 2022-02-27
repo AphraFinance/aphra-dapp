@@ -156,7 +156,7 @@ export const WalletConnectionToggle = props => {
               token={defaults.aphra}
             />
 
-            <Link as={RouterLink} to={`/claim`}>
+            <Link as={RouterLink} to={'/claim'}>
               <MenuItem icon={<SpinnerIcon layerStyle="menuIcon" />}>
                 Claim Airdrop
               </MenuItem>
