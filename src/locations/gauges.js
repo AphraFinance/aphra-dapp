@@ -94,8 +94,11 @@ const Gauge = props => {
         const assetVotes = []
         const assetWeights = []
         for (const [asset, weight] of Object.entries(voteValues)) {
-          assetVotes.push(asset)
-          assetWeights.push(BigNumber.from(weight.toString()))
+          if (parseInt(weight) > 0) {
+            assetVotes.push(asset)
+
+            assetWeights.push(BigNumber.from(weight.toString()))
+          }
         }
         const provider = new ethers.providers.Web3Provider(wallet.ethereum)
         setVotesForNFT(activeTokenId, assetVotes, assetWeights, provider).then(
@@ -121,10 +124,9 @@ const Gauge = props => {
         if (votes) {
           setVoteValues(old => ({
             ...old,
-            [`${el.gaugeAsset.address}`]: votes
-              .mul(100)
-              .div(totalVotes)
-              .toNumber(),
+            [`${el.gaugeAsset.address}`]: Math.floor(
+              votes.mul(100).div(totalVotes).toNumber(),
+            ),
           }))
         }
         setRemainingVotePower(100 - totalPowerUsed(voteValues))
@@ -312,6 +314,7 @@ const DepositPanel = props => {
   const toast = useToast()
   const [value, setValue] = useState(0)
   const [inputAmount, setInputAmount] = useState('')
+  const [activeTokenId, setActiveTokenId] = useState(null)
   const [token0] = useState(asset)
   const [token0Approved, setToken0Approved] = useState(false)
   const [working, setWorking] = useState(false)
@@ -366,7 +369,7 @@ const DepositPanel = props => {
           const provider = new ethers.providers.Web3Provider(wallet.ethereum)
           setWorking(true)
 
-          // TODO: associate their veNFT
+          // TODO: associate their veNFT, no boost atm so no associations.
           gaugeDeposit(value, token0.gauge, 0, provider)
             .then(tx => {
               tx.wait(defaults.network.tx.confirmations).then(r => {
@@ -418,7 +421,12 @@ const DepositPanel = props => {
       }
     }
   }
-
+  useEffect(async () => {
+    if (wallet.account) {
+      const nfts = await getVeNFTsOfAddress(wallet.account)
+      setActiveTokenId(nfts[0])
+    }
+  }, [wallet.account, setActiveTokenId])
   useEffect(() => {
     if (wallet.account && token0) {
       setWorking(true)
