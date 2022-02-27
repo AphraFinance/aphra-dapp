@@ -325,7 +325,6 @@ const DepositPanel = props => {
       } else if (token0 && !token0Approved) {
         const provider = new ethers.providers.Web3Provider(wallet.ethereum)
         setWorking(true)
-        debugger
         approveERC20ToSpend(
           token0.address,
           token0.gauge,

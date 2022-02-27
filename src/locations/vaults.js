@@ -109,7 +109,6 @@ const Vaults = props => {
   const [working, setWorking] = useState(false)
 
   const submit = () => {
-    debugger
     if (!working) {
       if (!wallet.account) {
         toast(walletNotConnected)
