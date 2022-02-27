@@ -22,7 +22,7 @@ import {
 } from '@chakra-ui/react'
 import defaults from '../common/defaults'
 import { useWallet } from 'use-wallet'
-import { ethers } from 'ethers'
+import { BigNumber, ethers } from 'ethers'
 import {
   getERC20BalanceOf,
   getERC20Allowance,
@@ -31,6 +31,10 @@ import {
   gaugeWithdraw,
   gaugeDeposit,
   gaugeClaimAndExit,
+  getVeBalanceOfNFT,
+  getVeNFTsOfAddress,
+  getVotesForNFT,
+  setVotesForNFT,
 } from '../common/ethereum'
 import {
   approved,
@@ -44,6 +48,7 @@ import {
   insufficientBalance,
   gaugeWithdrawMessage,
   gaugeDepositMessage,
+  votedSuccessfully,
 } from '../messages'
 import {
   Slider,
@@ -73,9 +78,65 @@ const totalPowerUsed = voteValues => {
 const Gauge = props => {
   const [assets] = useState(defaults.gauges)
   const voteDefaults = 0
-  const [voteValues, setVoteValue] = useState({})
-  const [remainingVotePower, setRemainingVotePower] = useState(100)
+  const wallet = useWallet()
+  const [voteValues, setVoteValues] = useState({})
+  const [activeTokenId, setActiveTokenId] = useState({})
+  const [remainingVotePower, setRemainingVotePower] = useState(0)
+  const [working, setWorking] = useState(false)
+  const toast = useToast()
 
+  const submitVote = () => {
+    if (!working) {
+      if (!wallet.account) {
+        toast(walletNotConnected)
+      } else if (voteValues) {
+        // format vote values
+
+        const assetVotes = []
+        const assetWeights = []
+        for (const [asset, weight] of Object.entries(voteValues)) {
+          assetVotes.push(asset)
+          assetWeights.push(BigNumber.from(weight.toString()))
+        }
+        const provider = new ethers.providers.Web3Provider(wallet.ethereum)
+        debugger
+        setVotesForNFT(activeTokenId, assetVotes, assetWeights, provider).then(
+          tx =>
+            txnHandler(tx, votedSuccessfully, toast, () => {}).catch(err =>
+              txnErrHandler(err, toast, () => {}),
+            ),
+        )
+      } else {
+        toast(noAmount)
+      }
+    }
+  }
+
+  useEffect(async () => {
+    if (wallet.account) {
+      const nfts = await getVeNFTsOfAddress(wallet.account)
+      const totalVotes = await getVeBalanceOfNFT(nfts[0])
+      console.log(totalVotes.toString())
+      setActiveTokenId(nfts[0])
+      defaults.gauges.map(async el => {
+        const votes = await getVotesForNFT(
+          nfts[0],
+          el.gaugeAsset.address,
+        ).catch(err => console.log(err))
+        console.log(votes.mul(100).div(totalVotes).toNumber())
+        if (votes) {
+          setVoteValues(old => ({
+            ...old,
+            [`${el.gaugeAsset.address}`]: votes
+              .mul(100)
+              .div(totalVotes)
+              .toNumber(),
+          }))
+        }
+        setRemainingVotePower(100 - totalPowerUsed(voteValues))
+      })
+    }
+  }, [wallet.account, setRemainingVotePower, setVoteValues, setActiveTokenId])
   return (
     <Box
       minHeight="634.95px"
@@ -100,7 +161,7 @@ const Gauge = props => {
                     ) {
                       newState[`${el.gaugeAsset.address}`] = value
                     }
-                    setVoteValue(old => ({
+                    setVoteValues(old => ({
                       ...old,
                       ...newState,
                     }))
@@ -127,7 +188,7 @@ const Gauge = props => {
             <Flex>
               <Button
                 onClick={() => {
-                  setVoteValue({})
+                  setVoteValues({})
                 }}
               >
                 Reset
@@ -138,13 +199,7 @@ const Gauge = props => {
             <Flex>Voting Power Used {totalPowerUsed(voteValues)}%</Flex>
             <Spacer />
             <Flex>
-              <Button
-                onClick={() => {
-                  console.log(voteValues)
-                }}
-              >
-                Vote
-              </Button>
+              <Button onClick={() => submitVote()}>Vote</Button>
             </Flex>
           </HStack>
         </Flex>

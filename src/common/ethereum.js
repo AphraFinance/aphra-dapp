@@ -3,6 +3,7 @@ import humanStandardTokenAbi from '../artifacts/abi/humanStandardToken'
 import converterAbi from '../artifacts/abi/converter'
 import aphraAirdropClaim from '../artifacts/abi/aphraAirdropClaim'
 import veAPHRA from '../artifacts/abi/aphraVeAPHRA'
+import aphraVoter from '../artifacts/abi/aphraVoter'
 import defaults from './defaults'
 import xVaderAbi from '../artifacts/abi/xvader'
 import linearVestingAbi from '../artifacts/abi/linearVesting'
@@ -61,12 +62,63 @@ const getGaugeBalanceOf = async (gaugeAddress, activeWallet, provider) => {
   const contract = new ethers.Contract(gaugeAddress, gauge, provider)
   return await contract.balanceOf(activeWallet)
 }
-const getVeBalanceOfNFT = async (tokenAddress, activeWallet, provider) => {
-  const contract = new ethers.Contract(tokenAddress, veAPHRA, provider)
+
+const setVotesForNFT = async (tokenId, assetVotes, assetWeights, provider) => {
+  const contract = new ethers.Contract(
+    defaults.voter.address,
+    aphraVoter,
+    provider.getSigner(0),
+  )
+  return await contract.vote(tokenId, assetVotes, assetWeights)
+}
+const getVotesForNFT = async (tokenId, asset) => {
+  const contract = new ethers.Contract(
+    defaults.voter.address,
+    aphraVoter,
+    defaults.network.provider,
+  )
+
   try {
-    const veNFT = await contract.tokenOfOwnerByIndex(activeWallet, 0)
-    const balance = await contract.balanceOfNFT(veNFT)
-    return BigNumber.from(balance)
+    const votes = await contract.votes(tokenId, asset)
+
+    console.log(votes)
+    return votes
+  } catch (e) {
+    return BigNumber.from('0')
+  }
+}
+const getVeNFTsOfAddress = async activeWallet => {
+  const contract = new ethers.Contract(
+    defaults.veAphra.address,
+    veAPHRA,
+    defaults.network.provider,
+  )
+  if (!activeWallet) return BigNumber.from('0')
+
+  try {
+    const veNFTs = []
+    // todo: query the subgraph for tokens not this stupid hack
+    for (let i = 0; i < 5; i++) {
+      const nftId = await contract.tokenOfOwnerByIndex(
+        activeWallet,
+        BigNumber.from(i.toString()),
+      )
+      console.log(nftId)
+      if (nftId.eq(BigNumber.from('0'))) return veNFTs
+      veNFTs.push(nftId)
+    }
+  } catch (e) {
+    return BigNumber.from('0')
+  }
+}
+const getVeBalanceOfNFT = async tokenId => {
+  const contract = new ethers.Contract(
+    defaults.veAphra.address,
+    veAPHRA,
+    defaults.network.provider,
+  )
+  try {
+    return await contract.balanceOfNFT(tokenId)
   } catch (e) {
     return BigNumber.from('0')
   }
@@ -593,4 +645,7 @@ export {
   getVeBalanceOfNFT,
   getGaugeBalanceOf,
   gaugeClaimAndExit,
+  getVeNFTsOfAddress,
+  getVotesForNFT,
+  setVotesForNFT,
 }

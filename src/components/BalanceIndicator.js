@@ -19,7 +19,11 @@ import {
 import defaults from '../common/defaults'
 import { useWallet } from 'use-wallet'
 import { useXvaderPrice } from '../hooks/useXvaderPrice'
-import { getERC20BalanceOf, getVeBalanceOfNFT } from '../common/ethereum'
+import {
+  getERC20BalanceOf,
+  getVeBalanceOfNFT,
+  getVeNFTsOfAddress,
+} from '../common/ethereum'
 import { prettifyNumber } from '../common/utils'
 
 const Item = props => {
@@ -68,12 +72,8 @@ export const BalanceIndicator = () => {
     `${defaults.veAphra.address}_erc20Balanceof_${wallet?.account}`,
     async () => {
       if (wallet.account) {
-        const provider = new ethers.providers.Web3Provider(wallet.ethereum)
-        return await getVeBalanceOfNFT(
-          defaults.veAphra.address,
-          wallet.account,
-          provider,
-        )
+        const nfts = await getVeNFTsOfAddress(wallet.account)
+        return await getVeBalanceOfNFT(nfts[0])
       }
     },
     {

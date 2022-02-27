@@ -181,7 +181,7 @@ defaults.address.veAphra =
     : defaults.network.chainId === 42
     ? ''
     : undefined
-defaults.address.avUSDV3CRV =
+defaults.address.USDV3CRV =
   defaults.network.chainId === 1
     ? '0x7abd51bba7f9f6ae87ac77e1ea1c5783ada56e5c'
     : defaults.network.chainId === 42
@@ -280,18 +280,28 @@ defaults.veAphra = {
   decimals: 18,
   logoURI: defaults.aphra.logoURI,
 }
+defaults.USDV3CRV = {
+  vault: v0.avVADER.address,
+  chainId: defaults.network.chainId,
+  address: defaults.address.USDV3CRV,
+  name: 'USDV3CRV',
+  symbol: 'USDV3CRV',
+  decimals: 18,
+  logoURI: '/curvefi.svg',
+}
 defaults.avUSDV3CRV = {
-  vault: null,
+  isVault: true,
   gauge: v0.avUSDV3CRVGauge.address,
   bribe: v0.avUSDV3CRVBribe.address,
   chainId: defaults.network.chainId,
-  address: defaults.address.avUSDV3CRV,
+  address: v0.avUSDV3CRV.address,
   name: 'avUSDV3CRV',
   symbol: 'avUSDV3CRV',
   decimals: 18,
   logoURI: '/curvefi.svg',
 }
 defaults.avUSDV3CRV['gaugeAsset'] = defaults.avUSDV3CRV
+defaults.USDV3CRV['gaugeAsset'] = defaults.avUSDV3CRV
 
 defaults.vader['gaugeAsset'] = defaults.avVADER
 defaults.usdv = {
@@ -333,7 +343,12 @@ defaults.gauges = [
   ...[defaults.avUSDV3CRV],
   ...[defaults.avVADER],
 ]
-defaults.vaultable = [...[defaults.vader], ...[defaults.usdv]]
+
+defaults.vaultable = [
+  ...[defaults.vader],
+  ...[defaults.usdv],
+  ...[defaults.USDV3CRV],
+]
 
 defaults.bonds = vaderBonds
 defaults.bondZapMinPayoutAllowed = '10000000000000000'

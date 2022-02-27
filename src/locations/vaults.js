@@ -48,8 +48,7 @@ import {
 } from '../messages'
 import { useERC20Balance } from '../hooks/useERC20Balance'
 
-export const txnErrHandler = async (err, cb) => {
-  const toast = useToast()
+export const txnErrHandler = async (err, toast, cb) => {
   if (cb) cb()
   if (err.code === 4001) {
     console.log(
@@ -61,9 +60,7 @@ export const txnErrHandler = async (err, cb) => {
     toast(failed)
   }
 }
-export const txnHandler = async (tx, messageObj, cb) => {
-  const toast = useToast()
-
+export const txnHandler = async (tx, messageObj, toast, cb) => {
   const r = await tx.wait(defaults.network.tx.confirmations)
   cb(r)
   toast({
@@ -133,7 +130,7 @@ const Vaults = props => {
               defaults.network.erc20.maxApproval,
               provider,
             ).then(tx =>
-              txnHandler(tx, approved, () => {
+              txnHandler(tx, approved, toast, () => {
                 setVaultApproved(true)
               }),
             ),
@@ -144,7 +141,7 @@ const Vaults = props => {
             setWorking(false)
           })
           .catch(err =>
-            txnErrHandler(err, () => {
+            txnErrHandler(err, toast, () => {
               setWorking(false)
             }),
           )
@@ -165,6 +162,7 @@ const Vaults = props => {
               txnHandler(
                 tx,
                 !submitOption ? assetDeposited : assetWithdrawn,
+                toast,
                 () => {
                   setWorking(false)
                   setVaultApproved(true)
@@ -172,7 +170,7 @@ const Vaults = props => {
               ),
             )
             .catch(err =>
-              txnErrHandler(err, () => {
+              txnErrHandler(err, toast, () => {
                 setWorking(false)
                 setVaultApproved(true)
               }),

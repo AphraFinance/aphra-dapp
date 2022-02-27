@@ -124,6 +124,14 @@ const assetDeposited = {
   isClosable: defaults.toast.closable,
   position: defaults.toast.position,
 }
+const votedSuccessfully = {
+  title: 'Vote Success',
+  description: 'Your vote was successfully cast',
+  status: 'success',
+  duration: defaults.toast.duration,
+  isClosable: defaults.toast.closable,
+  position: defaults.toast.position,
+}
 const assetWithdrawn = {
   title: 'Withdraw Success',
   description: 'Your tokens were successfully withdrawn from the vault.',
@@ -298,4 +306,5 @@ export {
   assetWithdrawn,
   gaugeWithdrawMessage,
   gaugeDepositMessage,
+  votedSuccessfully,
 }
