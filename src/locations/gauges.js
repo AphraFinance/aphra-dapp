@@ -111,17 +111,13 @@ const Gauge = props => {
   }
 
   useEffect(async () => {
-    if (wallet.account) {
-      const nfts = await getVeNFTsOfAddress(wallet.account)
-      const totalVotes = await getVeBalanceOfNFT(nfts[0])
-      console.log(totalVotes.toString())
-      setActiveTokenId(nfts[0])
+    const totalVotes = await getVeBalanceOfNFT(activeTokenId)
+    if (totalVotes.toString() !== '0') {
       defaults.gauges.map(async el => {
         const votes = await getVotesForNFT(
-          nfts[0],
+          activeTokenId,
           el.gaugeAsset.address,
         ).catch(err => console.log(err))
-        console.log(votes.mul(100).div(totalVotes).toNumber())
         if (votes) {
           setVoteValues(old => ({
             ...old,
@@ -134,7 +130,14 @@ const Gauge = props => {
         setRemainingVotePower(100 - totalPowerUsed(voteValues))
       })
     }
-  }, [wallet.account, setRemainingVotePower, setVoteValues, setActiveTokenId])
+  }, [wallet.account, activeTokenId, setRemainingVotePower, setVoteValues])
+
+  useEffect(async () => {
+    if (wallet.account) {
+      const nfts = await getVeNFTsOfAddress(wallet.account)
+      setActiveTokenId(nfts[0])
+    }
+  }, [wallet.account, setActiveTokenId])
   return (
     <Box
       minHeight="634.95px"
@@ -148,60 +151,64 @@ const Gauge = props => {
           {assets.map(el => (
             <Flex key={`flex-${el.gauge}`} flexDir={'column'}>
               <GaugeItem asset={el} />
-              <Flex justifyContent={'center'} mt={'2rem'}>
-                <NumberInput
-                  size={'lg'}
-                  onChange={value => {
-                    const newState = {}
-                    if (
-                      totalPowerUsed(voteValues) < 100 ||
-                      value < voteValues[`${el.gaugeAsset.address}`]
-                    ) {
-                      newState[`${el.gaugeAsset.address}`] = value
-                    }
-                    setVoteValues(old => ({
-                      ...old,
-                      ...newState,
-                    }))
-                    setRemainingVotePower(100 - totalPowerUsed(voteValues))
-                  }}
-                  value={voteValues[el.gaugeAsset?.address] || 0}
-                  defaultValue={voteDefaults}
-                  max={100}
-                >
-                  <NumberInputField />
-                  <NumberInputStepper>
-                    <NumberIncrementStepper />
-                    <NumberDecrementStepper />
-                  </NumberInputStepper>
-                </NumberInput>
-              </Flex>
+              {activeTokenId && (
+                <Flex justifyContent={'center'} mt={'2rem'}>
+                  <NumberInput
+                    size={'lg'}
+                    onChange={value => {
+                      const newState = {}
+                      if (
+                        totalPowerUsed(voteValues) < 100 ||
+                        value < voteValues[`${el.gaugeAsset.address}`]
+                      ) {
+                        newState[`${el.gaugeAsset.address}`] = value
+                      }
+                      setVoteValues(old => ({
+                        ...old,
+                        ...newState,
+                      }))
+                      setRemainingVotePower(100 - totalPowerUsed(voteValues))
+                    }}
+                    value={voteValues[el.gaugeAsset?.address] || 0}
+                    defaultValue={voteDefaults}
+                    max={100}
+                  >
+                    <NumberInputField />
+                    <NumberInputStepper>
+                      <NumberIncrementStepper />
+                      <NumberDecrementStepper />
+                    </NumberInputStepper>
+                  </NumberInput>
+                </Flex>
+              )}
             </Flex>
           ))}
         </HStack>
       </Flex>
-      <Flex mt={'2rem'} justifyContent={'center'} flexDir={'row'}>
-        <Flex justifyContent={'center'} flexDir={'row'}>
-          <HStack>
-            <Flex>
-              <Button
-                onClick={() => {
-                  setVoteValues({})
-                }}
-              >
-                Reset
-              </Button>
-            </Flex>
-            <Spacer />
+      {activeTokenId && (
+        <Flex mt={'2rem'} justifyContent={'center'} flexDir={'row'}>
+          <Flex justifyContent={'center'} flexDir={'row'}>
+            <HStack>
+              <Flex>
+                <Button
+                  onClick={() => {
+                    setVoteValues({})
+                  }}
+                >
+                  Reset
+                </Button>
+              </Flex>
+              <Spacer />
 
-            <Flex>Voting Power Used {totalPowerUsed(voteValues)}%</Flex>
-            <Spacer />
-            <Flex>
-              <Button onClick={() => submitVote()}>Vote</Button>
-            </Flex>
-          </HStack>
+              <Flex>Voting Power Used {totalPowerUsed(voteValues)}%</Flex>
+              <Spacer />
+              <Flex>
+                <Button onClick={() => submitVote()}>Vote</Button>
+              </Flex>
+            </HStack>
+          </Flex>
         </Flex>
-      </Flex>
+      )}
     </Box>
   )
 }

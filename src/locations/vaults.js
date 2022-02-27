@@ -109,15 +109,13 @@ const Vaults = props => {
   const [working, setWorking] = useState(false)
 
   const submit = () => {
+    debugger
     if (!working) {
       if (!wallet.account) {
         toast(walletNotConnected)
       } else if (!tokenSelect) {
         toast(noToken0)
-      } else if (
-        (!vaultApproved && !submitOption) ||
-        (!gaugeApproved && depositGaugeEnabled)
-      ) {
+      } else if (!vaultApproved && !submitOption) {
         const provider = new ethers.providers.Web3Provider(wallet.ethereum)
         setWorking(true)
 
