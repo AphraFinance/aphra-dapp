@@ -74,7 +74,7 @@ const Gauge = props => {
   const [assets] = useState(defaults.gauges)
   const voteDefaults = 0
   const [voteValues, setVoteValue] = useState({})
-  const [remainingPerGauge, setRemainingPerGauge] = useState({})
+  const [remainingVotePower, setRemainingVotePower] = useState(100)
 
   return (
     <Box
@@ -93,20 +93,18 @@ const Gauge = props => {
                 <NumberInput
                   size={'lg'}
                   onChange={value => {
+                    const newState = {}
                     if (
-                      Object.entries(voteValues).length > 1 &&
-                      value > remainingPerGauge
-                    )
-                      value = remainingPerGauge
+                      totalPowerUsed(voteValues) < 100 ||
+                      value < voteValues[`${el.gaugeAsset.address}`]
+                    ) {
+                      newState[`${el.gaugeAsset.address}`] = value
+                    }
                     setVoteValue(old => ({
                       ...old,
-                      [`${el.gaugeAsset.address}`]: value,
+                      ...newState,
                     }))
-                    setRemainingPerGauge(
-                      (100 - totalPowerUsed(voteValues)) /
-                        (Object.keys(assets).length -
-                          Object.entries(voteValues).length),
-                    )
+                    setRemainingVotePower(100 - totalPowerUsed(voteValues))
                   }}
                   value={voteValues[el.gaugeAsset?.address] || 0}
                   defaultValue={voteDefaults}

@@ -270,6 +270,7 @@ defaults.xvader = {
     'https://raw.githubusercontent.com/vetherasset/branding/main/xvader/xvader-symbol-w-ring.png',
 }
 defaults.xvader['gaugeAsset'] = defaults.xvader
+defaults.avVADER['gaugeAsset'] = defaults.avVADER
 
 defaults.veAphra = {
   chainId: defaults.network.chainId,
@@ -315,6 +316,7 @@ defaults.avUSDV = {
   decimals: 18,
   logoURI: defaults.usdv.logoURI,
 }
+defaults.avUSDV['gaugeAsset'] = defaults.avUSDV
 defaults.usdv['gaugeAsset'] = defaults.avUSDV
 
 defaults.redeemables = [
