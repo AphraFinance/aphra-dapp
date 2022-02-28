@@ -127,8 +127,6 @@ const Vaults = props => {
   const [isSelect, setIsSelect] = useState(-1)
   const [tokenSelect, setTokenSelect] = useState(false)
   const [vaultApproved, setVaultApproved] = useState(false)
-  const [gaugeApproved, setGaugeApproved] = useState(false)
-  const [setDepositGauge, depositGaugeEnabled] = useState(false)
   const [submitOption, setSubmitOption] = useLocalStorage(
     'acquireSubmitOption23049',
     false,
@@ -180,10 +178,8 @@ const Vaults = props => {
           setWorking(true)
           new Promise(resolve => {
             if (!submitOption) {
-              // handle also depositing to the gauge in single user action
               resolve(vaultDeposit(value, tokenSelect.vault, provider))
             } else {
-              // remove from gauge is done on the gauge page.
               resolve(vaultWithdraw(value, tokenSelect.vault, provider))
             }
           })
@@ -382,7 +378,15 @@ const Vaults = props => {
                             paddingInlineStart="0.5rem"
                             paddingInlineEnd="0.5rem"
                           >
-                            <Flex cursor="default" zIndex="1">
+                            <Flex
+                              cursor="pointer"
+                              zIndex="1"
+                              onClick={() =>
+                                window.open(
+                                  `https://etherscan.io/address/${tokenSelect.vault}`,
+                                )
+                              }
+                            >
                               <Box d="flex" alignItems="center">
                                 <Image
                                   width="24px"

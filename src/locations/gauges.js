@@ -68,7 +68,6 @@ import { txnErrHandler, txnHandler } from './vaults'
 import { prettifyNumber } from '../common/utils'
 
 const totalPowerUsed = voteValues => {
-  console.log(voteValues)
   if (!voteValues) return 0
   return Object.values(voteValues).reduce(
     (totalVal, val) => totalVal + parseInt(val),

@@ -81,7 +81,6 @@ const getVotesForNFT = async (tokenId, asset) => {
   try {
     const votes = await contract.votes(tokenId, asset)
 
-    console.log(votes)
     return votes
   } catch (e) {
     return BigNumber.from('0')
@@ -103,7 +102,6 @@ const getVeNFTsOfAddress = async activeWallet => {
         activeWallet,
         BigNumber.from(i.toString()),
       )
-      console.log(nftId)
       if (nftId.eq(BigNumber.from('0'))) return veNFTs
       veNFTs.push(nftId)
     }
