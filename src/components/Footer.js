@@ -167,10 +167,11 @@ export const Footer = props => {
 					}`}
           </style>
           <Link
-            id="svgUni"
             {...linkStyle}
             isExternal
-            href={`https://github.com/AphraFinance/white-paper/blob/main/white-paper.pdf`}
+            href={
+              'https://github.com/AphraFinance/white-paper/blob/main/white-paper.pdf'
+            }
           >
             <IoIosPaper style={iconStyle} />
             Whitepaper
