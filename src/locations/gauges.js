@@ -65,6 +65,7 @@ import {
   NumberDecrementStepper,
 } from '@chakra-ui/react'
 import { txnErrHandler, txnHandler } from './vaults'
+import { prettifyNumber } from '../common/utils'
 
 const totalPowerUsed = voteValues => {
   console.log(voteValues)
@@ -298,6 +299,14 @@ export const GaugeItem = props => {
             />
           </TabPanel>
         </TabPanels>
+        {balance1 && (
+          <Flex mt={'0.8rem'} justifyContent={'center'}>
+            <Flex>
+              Currently staking:{' '}
+              {prettifyNumber(ethers.utils.formatEther(balance1.toString()))}
+            </Flex>
+          </Flex>
+        )}
       </Tabs>
     </Flex>
   )
@@ -496,7 +505,13 @@ const DepositPanel = props => {
               paddingInlineStart="0.5rem"
               paddingInlineEnd="0.5rem"
             >
-              <Flex cursor="default" zIndex="1">
+              <Flex
+                cursor="pointer"
+                zIndex="1"
+                onClick={() =>
+                  window.open(`https://etherscan.io/address/${token0.gauge}`)
+                }
+              >
                 <Box d="flex" alignItems="center">
                   <Image
                     width="24px"
@@ -619,7 +634,7 @@ const WithdrawPanel = props => {
     balance: PropTypes.object.isRequired,
     refreshData: PropTypes.func,
   }
-  const { asset } = props
+  const { asset, balance } = props
   const wallet = useWallet()
   const toast = useToast()
   const [value, setValue] = useState(0)
