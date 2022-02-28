@@ -279,7 +279,7 @@ const Vaults = props => {
               display="block"
               mb="2rem"
             >
-              Deposit Asset&apos;s into the Vaults
+              Deposit Assets into the Vaults
             </Text>
 
             <Text as="h4" fontSize="1.24rem" fontWeight="bolder">
