@@ -58,9 +58,37 @@ const getERC20BalanceOf = async (tokenAddress, address, provider) => {
   )
   return await contract.balanceOf(address)
 }
+
+const getGaugeWeight = async gaugeAddress => {
+  const contract = new ethers.Contract(
+    defaults.address.voter,
+    aphraVoter,
+    defaults.network.provider,
+  )
+  return await contract.weights(gaugeAddress)
+}
+const getTotalWeight = async () => {
+  const contract = new ethers.Contract(
+    defaults.address.voter,
+    aphraVoter,
+    defaults.network.provider,
+  )
+  return await contract.totalWeight()
+}
+
 const getGaugeBalanceOf = async (gaugeAddress, activeWallet, provider) => {
   const contract = new ethers.Contract(gaugeAddress, gauge, provider)
   return await contract.balanceOf(activeWallet)
+}
+
+const getGaugeEarned = async (
+  rewardToken,
+  gaugeAddress,
+  activeWallet,
+  provider,
+) => {
+  const contract = new ethers.Contract(gaugeAddress, gauge, provider)
+  return await contract.earned(rewardToken, activeWallet)
 }
 
 const setVotesForNFT = async (tokenId, assetVotes, assetWeights, provider) => {
@@ -646,4 +674,7 @@ export {
   getVeNFTsOfAddress,
   getVotesForNFT,
   setVotesForNFT,
+  getGaugeEarned,
+  getGaugeWeight,
+  getTotalWeight,
 }

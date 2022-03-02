@@ -35,6 +35,9 @@ import {
   getVeNFTsOfAddress,
   getVotesForNFT,
   setVotesForNFT,
+  getGaugeEarned,
+  getGaugeWeight,
+  getTotalWeight,
 } from '../common/ethereum'
 import {
   approved,
@@ -66,6 +69,7 @@ import {
 } from '@chakra-ui/react'
 import { txnErrHandler, txnHandler } from './vaults'
 import { prettifyNumber } from '../common/utils'
+import v0 from '../artifacts/json/v0.json'
 
 const totalPowerUsed = voteValues => {
   if (!voteValues) return 0
@@ -225,6 +229,8 @@ export const GaugeItem = props => {
   const [balance0, setToken0balance] = useState(ethers.BigNumber.from('0'))
   const [balance1, setToken1balance] = useState(ethers.BigNumber.from('0'))
   const [refreshDataToken, setRefreshDataToken] = useState(Date.now())
+  const [totalWeight, setTotalWeight] = useState(ethers.BigNumber.from('0'))
+  const [gaugeWeight, setGaugeWeight] = useState(ethers.BigNumber.from('0'))
 
   useEffect(() => {
     if (wallet?.account && asset) {
@@ -237,8 +243,25 @@ export const GaugeItem = props => {
         .catch(err => {
           console.log(err)
         })
+
+      getTotalWeight()
+        .then(data => {
+          setTotalWeight(data)
+        })
+        .catch(err => console.log(err))
     }
-  }, [wallet?.account, refreshDataToken])
+  }, [wallet?.account, refreshDataToken, asset.gauge])
+
+  useEffect(() => {
+    if (wallet?.account && asset) {
+      getGaugeWeight(asset.address)
+        .then(weight => {
+          console.log(weight.toString())
+          setGaugeWeight(weight.mul(100).div(totalWeight))
+        })
+        .catch(err => console.log(err))
+    }
+  }, [wallet?.account, refreshDataToken, asset.gauge, totalWeight])
 
   useEffect(() => {
     if (wallet?.account) {
@@ -286,26 +309,23 @@ export const GaugeItem = props => {
           <TabPanel p="0">
             <DepositPanel
               asset={asset}
+              totalWeight={totalWeight}
+              gaugeWeight={gaugeWeight}
               balance={balance0}
+              balance1={balance1}
               refreshData={setRefreshDataToken}
             />
           </TabPanel>
           <TabPanel p="0">
             <WithdrawPanel
               asset={asset}
+              totalWeight={totalWeight}
+              gaugeWeight={gaugeWeight}
               balance={balance1}
               refreshData={setRefreshDataToken}
             />
           </TabPanel>
         </TabPanels>
-        {balance1 && (
-          <Flex mt={'0.8rem'} justifyContent={'center'}>
-            <Flex>
-              Currently staking:{' '}
-              {prettifyNumber(ethers.utils.formatEther(balance1.toString()))}
-            </Flex>
-          </Flex>
-        )}
       </Tabs>
     </Flex>
   )
@@ -315,9 +335,12 @@ const DepositPanel = props => {
   DepositPanel.propTypes = {
     asset: PropTypes.object,
     balance: PropTypes.object.isRequired,
+    balance1: PropTypes.object.isRequired,
+    totalWeight: PropTypes.object.isRequired,
+    gaugeWeight: PropTypes.object.isRequired,
     refreshData: PropTypes.func,
   }
-  const { asset } = props
+  const { asset, balance1, totalWeight, gaugeWeight } = props
   const wallet = useWallet()
   const toast = useToast()
   const [value, setValue] = useState(0)
@@ -621,6 +644,11 @@ const DepositPanel = props => {
               </Text>
             </Button>
           </Flex>
+          {balance1 && (
+            <Flex mt={'0.8rem'} justifyContent={'center'}>
+              <Flex>Receiving {gaugeWeight.toString()} % of the votes</Flex>
+            </Flex>
+          )}
         </Flex>
       </Flex>
     </>
@@ -631,16 +659,62 @@ const WithdrawPanel = props => {
   WithdrawPanel.propTypes = {
     asset: PropTypes.object,
     balance: PropTypes.object.isRequired,
+    totalWeight: PropTypes.object.isRequired,
+    gaugeWeight: PropTypes.object.isRequired,
     refreshData: PropTypes.func,
   }
-  const { asset, balance } = props
+  const { asset, balance, totalWeight, gaugeWeight } = props
   const wallet = useWallet()
   const toast = useToast()
   const [value, setValue] = useState(0)
   const [inputAmount, setInputAmount] = useState('')
   const [token0] = useState(asset)
   const [working, setWorking] = useState(false)
+  const [earned, setEarned] = useState('0')
 
+  useEffect(() => {
+    getGaugeEarned(
+      defaults.address.aphra,
+      asset.gauge,
+      wallet.account,
+      defaults.network.provider,
+    )
+      .then(result => {
+        if (result.gt(0)) {
+          setEarned(ethers.utils.formatEther(result.toNumber()))
+        }
+      })
+      .catch(e => console.log(e))
+  }, [wallet.account, setEarned, asset.gauge])
+
+  const claimAndExit = () => {
+    if (!working) {
+      if (!wallet.account) {
+        toast(walletNotConnected)
+      } else if (!token0) {
+        toast(noToken0)
+      } else if (value > 0) {
+        if (props.balance.gte(value)) {
+          const provider = new ethers.providers.Web3Provider(wallet.ethereum)
+          setWorking(true)
+          gaugeClaimAndExit(token0.gauge, provider).then(tx =>
+            txnHandler(tx, gaugeWithdrawMessage(asset), toast, () => {
+              setWorking(false)
+              props.refreshData(Date.now())
+            }).catch(err =>
+              txnErrHandler(err, toast, () => {
+                setWorking(false)
+              }),
+            ),
+          )
+        } else {
+          toast(insufficientBalance)
+        }
+      } else {
+        toast(noAmount)
+      }
+    }
+  }
   const submit = () => {
     if (!working) {
       if (!wallet.account) {
@@ -703,14 +777,15 @@ const WithdrawPanel = props => {
   }
   return (
     <>
-      <Flex mt="4.2rem" flexDir="column">
+      <Flex mt="2.2rem" flexDir="column">
         <Flex alignItems="center" justifyContent="space-between">
           <Text
             as="h4"
             fontSize={{ base: '1rem', md: '1.24rem' }}
             fontWeight="bolder"
           >
-            Amount
+            Staking:{' '}
+            {prettifyNumber(ethers.utils.formatEther(balance.toString()))}
           </Text>
         </Flex>
         <Flex layerStyle="inputLike">
@@ -831,7 +906,7 @@ const WithdrawPanel = props => {
             MAX
           </Button>
         </Flex>
-        <Flex mt="5.05rem" justifyContent="center">
+        <Flex mt="2.05rem" justifyContent="center" flexDir={'column'}>
           <Button
             minWidth="100%"
             size="lg"
@@ -851,6 +926,41 @@ const WithdrawPanel = props => {
                 </>
               )}
               {!wallet.account && <>Withdraw</>}
+            </Text>
+          </Button>
+          <Flex
+            mt={'2.5rem'}
+            alignItems="center"
+            justifyContent="space-between"
+          >
+            <Text
+              as="h4"
+              fontSize={{ base: '1rem', md: '1.24rem' }}
+              fontWeight="bolder"
+            >
+              Earned: {earned} APHRA
+            </Text>
+          </Flex>
+
+          <Button
+            minWidth="100%"
+            size="lg"
+            variant="solidRadial"
+            disabled={working}
+            onClick={() => claimAndExit()}
+          >
+            <Text as="span" fontWeight="bold">
+              {wallet.account && (
+                <>
+                  {!working && <>Claim Rewards</>}
+                  {working && (
+                    <>
+                      <Spinner />
+                    </>
+                  )}
+                </>
+              )}
+              {!wallet.account && <>Claim Rewards</>}
             </Text>
           </Button>
         </Flex>

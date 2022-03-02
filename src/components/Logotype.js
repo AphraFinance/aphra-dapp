@@ -11,7 +11,7 @@ export const Logotype = props => {
   })
 
   return (
-    <Link style={{ alignSelf: 'center' }} to="/">
+    <Link style={{ alignSelf: 'center' }} to="https://aphra.finance">
       <Image
         style={{ maxWidth: width }}
         src={AphraLogoText}

@@ -157,6 +157,7 @@ defaults.api.etherscanUrl =
 
 defaults.address = {}
 defaults.address.airdrop = v0.AirdropClaim.address
+defaults.address.voter = v0.Voter.address
 defaults.address.routerModule =
   defaults.network.chainId === 1
     ? '0x2602278EE1882889B946eb11DC0E810075650983'
