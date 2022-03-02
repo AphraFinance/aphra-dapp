@@ -243,25 +243,21 @@ export const GaugeItem = props => {
         .catch(err => {
           console.log(err)
         })
-
-      getTotalWeight()
-        .then(data => {
-          setTotalWeight(data)
-        })
-        .catch(err => console.log(err))
     }
   }, [wallet?.account, refreshDataToken, asset.gauge])
 
   useEffect(() => {
-    if (wallet?.account && asset) {
-      getGaugeWeight(asset.address)
-        .then(weight => {
-          console.log(weight.toString())
-          setGaugeWeight(weight.mul(100).div(totalWeight))
+    if (asset) {
+      getTotalWeight()
+        .then(data => {
+          setTotalWeight(data)
+          return getGaugeWeight(asset.address).then(weight => {
+            setGaugeWeight(weight.mul(100).div(data))
+          })
         })
         .catch(err => console.log(err))
     }
-  }, [wallet?.account, refreshDataToken, asset.gauge, totalWeight])
+  }, [refreshDataToken, asset.gauge])
 
   useEffect(() => {
     if (wallet?.account) {
@@ -673,18 +669,20 @@ const WithdrawPanel = props => {
   const [earned, setEarned] = useState('0')
 
   useEffect(() => {
-    getGaugeEarned(
-      defaults.address.aphra,
-      asset.gauge,
-      wallet.account,
-      defaults.network.provider,
-    )
-      .then(result => {
-        if (result.gt(0)) {
-          setEarned(ethers.utils.formatEther(result.toNumber()))
-        }
-      })
-      .catch(e => console.log(e))
+    if (wallet.account) {
+      getGaugeEarned(
+        defaults.address.aphra,
+        asset.gauge,
+        wallet.account,
+        defaults.network.provider,
+      )
+        .then(result => {
+          if (result.gt(0)) {
+            setEarned(ethers.utils.formatEther(result.toNumber()))
+          }
+        })
+        .catch(e => console.log(e))
+    }
   }, [wallet.account, setEarned, asset.gauge])
 
   const claimAndExit = () => {
