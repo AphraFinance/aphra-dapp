@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import {
   BrowserRouter as Router,
   Switch,
@@ -6,7 +6,21 @@ import {
   Redirect,
   useLocation,
 } from 'react-router-dom'
-import { ChakraProvider, Box } from '@chakra-ui/react'
+import {
+  ChakraProvider,
+  Box,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  useDisclosure,
+  Text,
+  Button,
+  Flex,
+} from '@chakra-ui/react'
 import theme from './themes/aphra'
 import { UseWalletProvider } from 'use-wallet'
 import { Header } from './components/Header'
@@ -20,6 +34,7 @@ import defaults from './common/defaults'
 import { Footer } from './components/Footer'
 import { Wave } from './assets/svg/effects/Wave'
 import Vaults from './locations/vaults'
+import { useLocalStorage } from 'react-use'
 
 const App = () => {
   return (
@@ -101,10 +116,71 @@ const App = () => {
               height="100%"
               transform={maskTransform}
             />
+            <AlphaModalAgreement />
           </Wave>
         </UseWalletProvider>
       </ChakraProvider>
     </Router>
+  )
+}
+
+function AlphaModalAgreement() {
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const [agreement, setAgreement] = useLocalStorage(
+    'disclaimerAgreement',
+    false,
+  )
+  useEffect(() => {
+    if (!agreement) {
+      onOpen()
+    }
+  }, [agreement])
+  return (
+    <>
+      <Modal
+        closeOnOverlayClick={false}
+        closeOnEsc={false}
+        isOpen={isOpen}
+        onClose={onClose}
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Alpha Disclaimer</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Flex p={'2rem'}>
+              <Text>
+                <h1>Aphra Finance is an experimental protocol.</h1>
+                <ul>
+                  <li>It has not been audited</li>
+                  <li>It is not risk-free</li>
+                  <li>You may loose 100% of deposits</li>
+                </ul>
+                <br />
+                <p>Never deposit more than you can afford to lose.</p>
+                <p>
+                  Aphra Finance will not be responsible for compensation of any
+                  losses under any circumstances.
+                </p>
+              </Text>
+            </Flex>
+          </ModalBody>
+
+          <ModalFooter>
+            <Button
+              colorScheme="blue"
+              mr={3}
+              onClick={() => {
+                setAgreement(true)
+                onClose()
+              }}
+            >
+              I accept these risks.
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </>
   )
 }
 
