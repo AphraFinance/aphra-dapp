@@ -261,7 +261,9 @@ export const GaugeItem = props => {
         .then(data => {
           setTotalWeight(data)
           return getGaugeWeight(asset.address).then(weight => {
-            setGaugeWeight(weight.mul(100).div(data))
+            setGaugeWeight(
+              (parseInt(weight.toString()) * 100) / parseInt(data.toString()),
+            )
           })
         })
         .catch(err => console.log(err))
@@ -654,7 +656,10 @@ const DepositPanel = props => {
           </Flex>
           {balance1 && (
             <Flex mt={'0.8rem'} justifyContent={'center'}>
-              <Flex>Receiving {gaugeWeight.toString()} % of the votes</Flex>
+              <Flex>
+                Receiving {prettifyNumber(gaugeWeight.toString(), 0, 2)} % of
+                the votes
+              </Flex>
             </Flex>
           )}
         </Flex>
