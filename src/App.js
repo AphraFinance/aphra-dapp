@@ -154,7 +154,7 @@ function AlphaModalAgreement() {
                 <ul>
                   <li>It has not been audited</li>
                   <li>It is not risk-free</li>
-                  <li>You may loose 100% of deposits</li>
+                  <li>You may lose 100% of deposits</li>
                 </ul>
                 <br />
                 <p>Never deposit more than you can afford to lose.</p>
