@@ -145,7 +145,7 @@ function AlphaModalAgreement() {
       >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Alpha Disclaimer</ModalHeader>
+          <ModalHeader>Disclaimer</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <Flex p={'2rem'}>
