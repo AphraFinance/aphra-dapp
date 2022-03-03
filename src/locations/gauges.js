@@ -231,6 +231,9 @@ export const GaugeItem = props => {
   const [refreshDataToken, setRefreshDataToken] = useState(Date.now())
   const [totalWeight, setTotalWeight] = useState(ethers.BigNumber.from('0'))
   const [gaugeWeight, setGaugeWeight] = useState(ethers.BigNumber.from('0'))
+  const [assetGaugeBalance, setAssetGaugeBalance] = useState(
+    ethers.BigNumber.from('0'),
+  )
 
   useEffect(() => {
     if (wallet?.account && asset) {
@@ -248,6 +251,12 @@ export const GaugeItem = props => {
 
   useEffect(() => {
     if (asset) {
+      getERC20BalanceOf(asset.address, asset.gauge, defaults.network.provider)
+        .then(data => {
+          setAssetGaugeBalance(ethers.utils.formatEther(data))
+        })
+        .catch(err => console.log(err))
+
       getTotalWeight()
         .then(data => {
           setTotalWeight(data)
@@ -257,7 +266,7 @@ export const GaugeItem = props => {
         })
         .catch(err => console.log(err))
     }
-  }, [refreshDataToken, asset.gauge])
+  }, [refreshDataToken, asset])
 
   useEffect(() => {
     if (wallet?.account) {
@@ -275,7 +284,10 @@ export const GaugeItem = props => {
     }
   }, [wallet?.account, refreshDataToken])
   return (
-    <Flex layerStyle="colorful" height="482.95px">
+    <Flex layerStyle="colorful" height="500.95px" flexDir={'column'}>
+      <Flex justifyContent={'center'}>
+        <Text>TVL: {prettifyNumber(assetGaugeBalance)} </Text>
+      </Flex>
       <Tabs width="100%" isFitted colorScheme="bluish">
         <TabList mb="1rem">
           <Tab
