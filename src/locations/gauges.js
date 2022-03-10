@@ -694,8 +694,8 @@ const WithdrawPanel = props => {
         defaults.network.provider,
       )
         .then(result => {
-          if (result.gt(0)) {
-            setEarned(ethers.utils.formatEther(result.toNumber()))
+          if (result.gt(ethers.BigNumber.from('0'))) {
+            setEarned(ethers.utils.formatEther(result.toString()))
           }
         })
         .catch(e => console.log(e))
@@ -953,7 +953,7 @@ const WithdrawPanel = props => {
               fontSize={{ base: '1rem', md: '1.24rem' }}
               fontWeight="bolder"
             >
-              Earned: {earned} APHRA
+              Earned: {prettifyNumber(earned, 5, 5)} APHRA
             </Text>
           </Flex>
 
