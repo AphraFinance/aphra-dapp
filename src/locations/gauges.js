@@ -30,6 +30,7 @@ import {
   getGaugeBalanceOf,
   gaugeWithdraw,
   gaugeDeposit,
+  gaugeClaim,
   gaugeClaimAndExit,
   getVeBalanceOfNFT,
   getVeNFTsOfAddress,
@@ -684,6 +685,7 @@ const WithdrawPanel = props => {
   const [token0] = useState(asset)
   const [working, setWorking] = useState(false)
   const [earned, setEarned] = useState('0')
+  const [refreshData, setRefreshData] = useState(Date.now())
 
   useEffect(() => {
     if (wallet.account) {
@@ -706,27 +708,19 @@ const WithdrawPanel = props => {
     if (!working) {
       if (!wallet.account) {
         toast(walletNotConnected)
-      } else if (!token0) {
-        toast(noToken0)
-      } else if (value > 0) {
-        if (props.balance.gte(value)) {
-          const provider = new ethers.providers.Web3Provider(wallet.ethereum)
-          setWorking(true)
-          gaugeClaimAndExit(token0.gauge, provider).then(tx =>
-            txnHandler(tx, gaugeWithdrawMessage(asset), toast, () => {
+      } else if (earned) {
+        const provider = new ethers.providers.Web3Provider(wallet.ethereum)
+        setWorking(true)
+        gaugeClaim(token0.gauge, wallet.account, provider).then(tx =>
+          txnHandler(tx, gaugeWithdrawMessage(asset), toast, () => {
+            setWorking(false)
+            props.refreshData(Date.now())
+          }).catch(err =>
+            txnErrHandler(err, toast, () => {
               setWorking(false)
-              props.refreshData(Date.now())
-            }).catch(err =>
-              txnErrHandler(err, toast, () => {
-                setWorking(false)
-              }),
-            ),
-          )
-        } else {
-          toast(insufficientBalance)
-        }
-      } else {
-        toast(noAmount)
+            }),
+          ),
+        )
       }
     }
   }
