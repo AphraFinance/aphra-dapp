@@ -135,7 +135,7 @@ const VePicker = (effect, deps) => {
                 >
                   {Object.entries(userNFTs).length > 0 &&
                     Object.entries(userNFTs).map(([nft, balance]) => (
-                      <veNFTItem
+                      <VeNFTItem
                         onClick={() => {
                           setActiveNFT(nft)
                         }}
