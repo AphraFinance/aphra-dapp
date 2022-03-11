@@ -23,10 +23,8 @@ import { prettifyNumber } from '../common/utils'
 import { useLocalStorage } from 'react-use'
 import { useActiveNFT } from '../hooks/useActiveNFT'
 
-const Item = props => {
-  Item.propTypes = {
-    name: PropTypes.string.isRequired,
-    token: PropTypes.object.isRequired,
+export const VeNFTItem = props => {
+  VeNFTItem.propTypes = {
     value: PropTypes.any.isRequired,
     onClick: PropTypes.func.isRequired,
   }
@@ -41,10 +39,10 @@ const Item = props => {
                 width="24px"
                 height="24px"
                 mr="5px"
-                src={props.token.logoURI}
-                alt={`${props.token.name} token`}
+                src={defaults.veAphra.logoURI}
+                alt={`${defaults.veAphra.name} token`}
               />
-              {props.name}
+              {defaults.veAphra.name}
             </Flex>
           </Box>
         </Container>
@@ -62,7 +60,7 @@ const Item = props => {
   )
 }
 
-export const VePicker = (effect, deps) => {
+const VePicker = (effect, deps) => {
   const { activeNFT, activeNFTBalance, setActiveNFT, userNFTs } = useActiveNFT()
 
   const placement = useBreakpointValue({ base: 'bottom-end', md: 'auto' })
@@ -137,13 +135,12 @@ export const VePicker = (effect, deps) => {
                 >
                   {Object.entries(userNFTs).length > 0 &&
                     Object.entries(userNFTs).map(([nft, balance]) => (
-                      <Item
+                      <veNFTItem
                         onClick={() => {
                           setActiveNFT(nft)
                         }}
                         key={`badge-${nft}`}
                         name={`Badge ${nft}`}
-                        token={defaults.veAphra}
                         value={prettifyNumber(balance, 0, 5)}
                       />
                     ))}
@@ -156,3 +153,5 @@ export const VePicker = (effect, deps) => {
     </>
   )
 }
+
+export default VePicker

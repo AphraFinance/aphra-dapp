@@ -459,6 +459,7 @@ const DepositPanel = props => {
       }
     }
   }
+
   useEffect(() => {
     if (wallet.account && token0) {
       setWorking(true)

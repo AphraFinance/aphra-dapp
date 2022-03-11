@@ -5,8 +5,7 @@ import defaults from '../common/defaults'
 import { Link } from 'react-router-dom'
 import { Logotype } from './Logotype'
 import { WalletConnectionToggle } from './WalletConnectionToggle'
-import { BalanceIndicator } from '../components/BalanceIndicator'
-import { VePicker } from '../components/VePicker'
+import VePicker from '../components/VePicker'
 import { BurgerMenu } from './BurgerMenu'
 
 export const Header = props => {
@@ -21,6 +20,12 @@ export const Header = props => {
       name: 'Gauges',
       text: 'Gauges',
       link: '/gauges',
+    },
+    {
+      name: 'Badges',
+      text: 'Badges',
+      link: '/badges',
+      disabled: true,
     },
     {
       name: 'Airdrop',

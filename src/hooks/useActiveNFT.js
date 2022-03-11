@@ -16,10 +16,7 @@ export const ActiveNFTContext = createContext({
 // eslint-disable-next-line react/prop-types
 export const ActiveNFTProvider = ({ children }) => {
   const wallet = useWallet()
-  const [activeNFT, setActiveNFTState] = useLocalStorage(
-    'activeNFT',
-    ethers.BigNumber.from('0'),
-  )
+  const [activeNFT, setActiveNFTState] = useState(ethers.BigNumber.from('0'))
 
   const [activeNFTBalance, setActiveNFTBalance] = useState(
     ethers.BigNumber.from('0'),
@@ -35,12 +32,11 @@ export const ActiveNFTProvider = ({ children }) => {
           await getVeBalanceOfNFT(ve),
         )
       }
+      console.log(nftObjs)
       setUserNFTs(nftObjs)
-      if (!activeNFT) {
-        setActiveNFTState(nfts[0])
-      }
-      const balance = await getVeBalanceOfNFT(activeNFT)
+      const balance = await getVeBalanceOfNFT(nfts[0])
       setActiveNFTBalance(ethers.utils.formatEther(balance))
+      setActiveNFTState(nfts[0])
     }
   }, [wallet.account])
 
