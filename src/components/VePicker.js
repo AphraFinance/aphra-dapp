@@ -25,6 +25,7 @@ import { useActiveNFT } from '../hooks/useActiveNFT'
 
 export const VeNFTItem = props => {
   VeNFTItem.propTypes = {
+    name: PropTypes.any.isRequired,
     value: PropTypes.any.isRequired,
     onClick: PropTypes.func.isRequired,
   }
@@ -42,7 +43,7 @@ export const VeNFTItem = props => {
                 src={defaults.veAphra.logoURI}
                 alt={`${defaults.veAphra.name} token`}
               />
-              {defaults.veAphra.name}
+              {props.name}
             </Flex>
           </Box>
         </Container>
