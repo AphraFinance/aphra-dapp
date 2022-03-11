@@ -19,6 +19,7 @@ import {
   Link,
   Image,
   Spinner,
+  Select,
 } from '@chakra-ui/react'
 import defaults from '../common/defaults'
 import { useWallet } from 'use-wallet'
@@ -71,6 +72,8 @@ import {
 import { txnErrHandler, txnHandler } from './vaults'
 import { prettifyNumber } from '../common/utils'
 import v0 from '../artifacts/json/v0.json'
+import { useLocalStorage } from 'react-use'
+import { useActiveNFT } from '../hooks/useActiveNFT'
 
 const totalPowerUsed = voteValues => {
   if (!voteValues) return 0
@@ -84,12 +87,11 @@ const Gauge = props => {
   const [assets] = useState(defaults.gauges)
   const voteDefaults = 0
   const wallet = useWallet()
+  const { activeNFT } = useActiveNFT()
   const [voteValues, setVoteValues] = useState({})
-  const [activeTokenId, setActiveTokenId] = useState({})
   const [remainingVotePower, setRemainingVotePower] = useState(0)
   const [working, setWorking] = useState(false)
   const toast = useToast()
-
   const submitVote = () => {
     if (!working) {
       if (!wallet.account) {
@@ -106,11 +108,10 @@ const Gauge = props => {
           }
         }
         const provider = new ethers.providers.Web3Provider(wallet.ethereum)
-        setVotesForNFT(activeTokenId, assetVotes, assetWeights, provider).then(
-          tx =>
-            txnHandler(tx, votedSuccessfully, toast, null).catch(err =>
-              txnErrHandler(err, toast, null),
-            ),
+        setVotesForNFT(activeNFT, assetVotes, assetWeights, provider).then(tx =>
+          txnHandler(tx, votedSuccessfully, toast, null).catch(err =>
+            txnErrHandler(err, toast, null),
+          ),
         )
       } else {
         toast(noAmount)
@@ -119,11 +120,11 @@ const Gauge = props => {
   }
 
   useEffect(async () => {
-    const totalVotes = await getVeBalanceOfNFT(activeTokenId)
+    const totalVotes = await getVeBalanceOfNFT(activeNFT)
     if (totalVotes.toString() !== '0') {
       defaults.gauges.map(async el => {
         const votes = await getVotesForNFT(
-          activeTokenId,
+          activeNFT,
           el.gaugeAsset.address,
         ).catch(err => console.log(err))
         if (votes) {
@@ -137,14 +138,8 @@ const Gauge = props => {
         setRemainingVotePower(100 - totalPowerUsed(voteValues))
       })
     }
-  }, [wallet.account, activeTokenId, setRemainingVotePower, setVoteValues])
+  }, [wallet.account, activeNFT, setRemainingVotePower, setVoteValues])
 
-  useEffect(async () => {
-    if (wallet.account) {
-      const nfts = await getVeNFTsOfAddress(wallet.account)
-      setActiveTokenId(nfts[0])
-    }
-  }, [wallet.account, setActiveTokenId])
   return (
     <Box
       minHeight="634.95px"
@@ -154,11 +149,11 @@ const Gauge = props => {
       {...props}
     >
       <Flex flexDir={{ base: 'column', md: 'row' }}>
-        <HStack spacing={'2rem'}>
+        <HStack spacing={'1rem'}>
           {assets.map(el => (
             <Flex key={`flex-${el.gauge}`} flexDir={'column'}>
               <GaugeItem asset={el} />
-              {activeTokenId && (
+              {activeNFT && (
                 <Flex justifyContent={'center'} mt={'2rem'}>
                   <NumberInput
                     size={'lg'}
@@ -192,7 +187,7 @@ const Gauge = props => {
           ))}
         </HStack>
       </Flex>
-      {activeTokenId && (
+      {activeNFT && (
         <Flex mt={'2rem'} justifyContent={'center'} flexDir={'row'}>
           <Flex justifyContent={'center'} flexDir={'row'}>
             <HStack>
@@ -207,7 +202,10 @@ const Gauge = props => {
               </Flex>
               <Spacer />
 
-              <Flex>Voting Power Used {totalPowerUsed(voteValues)}%</Flex>
+              <Flex>
+                Badge {activeNFT.toString()} Voting Power Used{' '}
+                {totalPowerUsed(voteValues)}%
+              </Flex>
               <Spacer />
               <Flex>
                 <Button onClick={() => submitVote()}>Vote</Button>
@@ -356,7 +354,7 @@ const DepositPanel = props => {
   const toast = useToast()
   const [value, setValue] = useState(0)
   const [inputAmount, setInputAmount] = useState('')
-  const [activeTokenId, setActiveTokenId] = useState(null)
+  const { activeNFT, userNFTs } = useActiveNFT()
   const [token0] = useState(asset)
   const [token0Approved, setToken0Approved] = useState(false)
   const [working, setWorking] = useState(false)
@@ -410,9 +408,7 @@ const DepositPanel = props => {
         if (props.balance.gte(value)) {
           const provider = new ethers.providers.Web3Provider(wallet.ethereum)
           setWorking(true)
-
-          // TODO: associate their veNFT, no boost atm so no associations.
-          gaugeDeposit(value, token0.gauge, 0, provider)
+          gaugeDeposit(value, token0.gauge, activeNFT, provider)
             .then(tx => {
               tx.wait(defaults.network.tx.confirmations).then(r => {
                 setWorking(false)
@@ -463,12 +459,6 @@ const DepositPanel = props => {
       }
     }
   }
-  useEffect(async () => {
-    if (wallet.account) {
-      const nfts = await getVeNFTsOfAddress(wallet.account)
-      setActiveTokenId(nfts[0])
-    }
-  }, [wallet.account, setActiveTokenId])
   useEffect(() => {
     if (wallet.account && token0) {
       setWorking(true)
@@ -624,8 +614,17 @@ const DepositPanel = props => {
             MAX
           </Button>
         </Flex>
-        <Flex mt="5.05rem" justifyContent="center" flexDir="column">
+        <Flex mt="1.05rem" justifyContent="center" flexDir="column">
           <Flex justifyContent="center">
+            <Select placeholder="Select veAPHRA to deposit">
+              {Object.entries(userNFTs).map(([nft, balance]) => (
+                <option key={nft.toString()} value={nft.toString()}>
+                  {nft.toString()} ({balance.toString()})
+                </option>
+              ))}
+            </Select>
+          </Flex>
+          <Flex mt={'2rem'} justifyContent="center">
             <Button
               minWidth="100%"
               size="lg"
@@ -685,7 +684,6 @@ const WithdrawPanel = props => {
   const [token0] = useState(asset)
   const [working, setWorking] = useState(false)
   const [earned, setEarned] = useState('0')
-  const [refreshData, setRefreshData] = useState(Date.now())
 
   useEffect(() => {
     if (wallet.account) {
@@ -697,7 +695,13 @@ const WithdrawPanel = props => {
       )
         .then(result => {
           if (result.gt(ethers.BigNumber.from('0'))) {
-            setEarned(ethers.utils.formatEther(result.toString()))
+            setEarned(
+              ethers.utils.formatEther(
+                result
+                  .mul(ethers.BigNumber.from('40'))
+                  .div(ethers.BigNumber.from('100')),
+              ),
+            )
           }
         })
         .catch(e => console.log(e))

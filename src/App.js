@@ -35,6 +35,7 @@ import { Footer } from './components/Footer'
 import { Wave } from './assets/svg/effects/Wave'
 import Vaults from './locations/vaults'
 import { useLocalStorage } from 'react-use'
+import { ActiveNFTProvider } from './hooks/useActiveNFT'
 
 const App = () => {
   return (
@@ -45,79 +46,81 @@ const App = () => {
           connectors={defaults.network.connectors}
           autoConnect={defaults.network.autoConnect}
         >
-          <Header
-            width={defaults.layout.header.width}
-            p={defaults.layout.header.padding}
-            justifyContent="center"
-            position="relative"
-            zIndex="2"
-          />
-          <Switch>
-            <Route
-              path="/"
-              exact
-              render={() => <Vaults position="relative" zIndex="1" />}
+          <ActiveNFTProvider>
+            <Header
+              width={defaults.layout.header.width}
+              p={defaults.layout.header.padding}
+              justifyContent="center"
+              position="relative"
+              zIndex="2"
             />
-            <Route
-              path="/vaults"
-              exact
-              render={() => <Vaults position="relative" zIndex="1" />}
+            <Switch>
+              <Route
+                path="/"
+                exact
+                render={() => <Vaults position="relative" zIndex="1" />}
+              />
+              <Route
+                path="/vaults"
+                exact
+                render={() => <Vaults position="relative" zIndex="1" />}
+              />
+              <Route
+                path="/gauge/:address"
+                exact
+                render={() => <Gauge position="relative" zIndex="1" />}
+              />
+              <Route
+                path="/gauges"
+                exact
+                render={() => <Gauge position="relative" zIndex="1" />}
+              />
+              <Route
+                path="/claim"
+                exact
+                render={() => <Claim position="relative" zIndex="1" />}
+              />
+              <Route
+                path="/airdrop"
+                exact
+                render={() => <Claim position="relative" zIndex="1" />}
+              />
+              <Route path="*" render={() => <Redirect to={'/'} />} />
+            </Switch>
+            <Footer
+              width="auto"
+              height="10vh"
+              maxWidth={defaults.layout.container.sm.width}
+              m="0 auto"
+              opacity="0.8"
+              position="relative"
+              zIndex="1"
+              alignContent="center"
+              flexWrap="wrap"
+              padding="8.53rem 2rem 6.53rem"
+              style={{
+                gap: '0 2rem',
+              }}
             />
-            <Route
-              path="/gauge/:address"
-              exact
-              render={() => <Gauge position="relative" zIndex="1" />}
-            />
-            <Route
-              path="/gauges"
-              exact
-              render={() => <Gauge position="relative" zIndex="1" />}
-            />
-            <Route
-              path="/claim"
-              exact
-              render={() => <Claim position="relative" zIndex="1" />}
-            />
-            <Route
-              path="/airdrop"
-              exact
-              render={() => <Claim position="relative" zIndex="1" />}
-            />
-            <Route path="*" render={() => <Redirect to={'/'} />} />
-          </Switch>
-          <Footer
-            width="auto"
-            height="10vh"
-            maxWidth={defaults.layout.container.sm.width}
-            m="0 auto"
-            opacity="0.8"
-            position="relative"
-            zIndex="1"
-            alignContent="center"
-            flexWrap="wrap"
-            padding="8.53rem 2rem 6.53rem"
-            style={{
-              gap: '0 2rem',
-            }}
-          />
-          <Wave
-            width="100%"
-            height="777.65665px"
-            position="absolute"
-            left="50%"
-            top="65%"
-            transform="translate(-50%, -65%)"
-            m="0 auto"
-            overflowX="hidden"
-          >
-            <Box
-              id="radialMask"
+            <Wave
               width="100%"
-              height="100%"
-              transform={maskTransform}
-            />
-            <AlphaModalAgreement />
-          </Wave>
+              height="777.65665px"
+              position="absolute"
+              left="50%"
+              top="65%"
+              transform="translate(-50%, -65%)"
+              m="0 auto"
+              overflowX="hidden"
+            >
+              <Box
+                id="radialMask"
+                width="100%"
+                height="100%"
+                transform={maskTransform}
+              />
+              <AlphaModalAgreement />
+            </Wave>
+          </ActiveNFTProvider>
         </UseWalletProvider>
       </ChakraProvider>
     </Router>

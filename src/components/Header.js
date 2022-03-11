@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom'
 import { Logotype } from './Logotype'
 import { WalletConnectionToggle } from './WalletConnectionToggle'
 import { BalanceIndicator } from '../components/BalanceIndicator'
+import { VePicker } from '../components/VePicker'
 import { BurgerMenu } from './BurgerMenu'
 
 export const Header = props => {
@@ -104,9 +105,9 @@ export const Header = props => {
         gridGap={{ base: '7.3px', sm: '17.3px' }}
       >
         {useBreakpointValue({
-          base: <BalanceIndicator />,
-          md: '',
-          lg: <BalanceIndicator />,
+          base: <VePicker />,
+          md: <VePicker />,
+          lg: <VePicker />,
         })}
         {useBreakpointValue({
           base: <BurgerMenu pages={pages} />,
