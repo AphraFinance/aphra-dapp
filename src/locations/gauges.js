@@ -19,8 +19,8 @@ import {
   Link,
   Image,
   Spinner,
-  Select,
 } from '@chakra-ui/react'
+import { Select } from 'chakra-react-select'
 import defaults from '../common/defaults'
 import { useWallet } from 'use-wallet'
 import { BigNumber, ethers } from 'ethers'
@@ -354,7 +354,8 @@ const DepositPanel = props => {
   const toast = useToast()
   const [value, setValue] = useState(0)
   const [inputAmount, setInputAmount] = useState('')
-  const { activeNFT, userNFTs } = useActiveNFT()
+  const { userNFTs } = useActiveNFT()
+  const [depositNFT, setDepositNFT] = useState('0')
   const [token0] = useState(asset)
   const [token0Approved, setToken0Approved] = useState(false)
   const [working, setWorking] = useState(false)
@@ -408,7 +409,7 @@ const DepositPanel = props => {
         if (props.balance.gte(value)) {
           const provider = new ethers.providers.Web3Provider(wallet.ethereum)
           setWorking(true)
-          gaugeDeposit(value, token0.gauge, activeNFT, provider)
+          gaugeDeposit(value, token0.gauge, depositNFT, provider)
             .then(tx => {
               tx.wait(defaults.network.tx.confirmations).then(r => {
                 setWorking(false)
@@ -616,14 +617,32 @@ const DepositPanel = props => {
           </Button>
         </Flex>
         <Flex mt="1.05rem" justifyContent="center" flexDir="column">
-          <Flex justifyContent="center">
-            <Select placeholder="Select veAPHRA to deposit">
-              {Object.entries(userNFTs).map(([nft, balance]) => (
-                <option key={nft.toString()} value={nft.toString()}>
-                  {nft.toString()} ({balance.toString()})
-                </option>
-              ))}
-            </Select>
+          <Flex w={'100%'} justifyContent="center">
+            <div style={{ width: '100%' }}>
+              <Select
+                tagVariant={'solid'}
+                options={(() => {
+                  const opt = [{ label: 'None', value: '0' }]
+                  Object.entries(userNFTs).map(([nft, balance]) => {
+                    opt.push({
+                      label: `${nft.toString()} (${prettifyNumber(
+                        balance,
+                        5,
+                        5,
+                      )})`,
+                      value: nft.toString(),
+                    })
+                  })
+                  return opt
+                })()}
+                size={'md'}
+                onChange={e => {
+                  console.log(e.value)
+                  setDepositNFT(e.value)
+                }}
+                placeholder="Select veAPHRA to deposit"
+              />
+            </div>
           </Flex>
           <Flex mt={'2rem'} justifyContent="center">
             <Button
