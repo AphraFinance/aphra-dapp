@@ -153,67 +153,10 @@ const Gauge = props => {
           {assets.map(el => (
             <Flex key={`flex-${el.gauge}`} flexDir={'column'}>
               <GaugeItem asset={el} />
-              {activeNFT && (
-                <Flex justifyContent={'center'} mt={'2rem'}>
-                  <NumberInput
-                    size={'lg'}
-                    onChange={value => {
-                      const newState = {}
-                      if (
-                        totalPowerUsed(voteValues) < 100 ||
-                        value < voteValues[`${el.gaugeAsset.address}`]
-                      ) {
-                        newState[`${el.gaugeAsset.address}`] = value
-                      }
-                      setVoteValues(old => ({
-                        ...old,
-                        ...newState,
-                      }))
-                      setRemainingVotePower(100 - totalPowerUsed(voteValues))
-                    }}
-                    value={voteValues[el.gaugeAsset?.address] || 0}
-                    defaultValue={voteDefaults}
-                    max={100}
-                  >
-                    <NumberInputField />
-                    <NumberInputStepper>
-                      <NumberIncrementStepper />
-                      <NumberDecrementStepper />
-                    </NumberInputStepper>
-                  </NumberInput>
-                </Flex>
-              )}
             </Flex>
           ))}
         </HStack>
       </Flex>
-      {activeNFT && (
-        <Flex mt={'2rem'} justifyContent={'center'} flexDir={'row'}>
-          <Flex justifyContent={'center'} flexDir={'row'}>
-            <HStack>
-              <Flex>
-                <Button
-                  onClick={() => {
-                    setVoteValues({})
-                  }}
-                >
-                  Reset
-                </Button>
-              </Flex>
-              <Spacer />
-
-              <Flex>
-                Badge {activeNFT.toString()} Voting Power Used{' '}
-                {totalPowerUsed(voteValues)}%
-              </Flex>
-              <Spacer />
-              <Flex>
-                <Button onClick={() => submitVote()}>Vote</Button>
-              </Flex>
-            </HStack>
-          </Flex>
-        </Flex>
-      )}
     </Box>
   )
 }
@@ -295,17 +238,6 @@ export const GaugeItem = props => {
             p="1.5rem 0"
             _focus={{
               boxShadow: '0',
-              borderRadius: '24px 0 0 0',
-            }}
-          >
-            <Text as="h3" m="0" fontSize="1.24rem">
-              Deposit
-            </Text>
-          </Tab>
-          <Tab
-            p="1.5rem 0"
-            _focus={{
-              boxShadow: '0',
               borderRadius: '0 24px 0 0',
             }}
           >
@@ -315,16 +247,6 @@ export const GaugeItem = props => {
           </Tab>
         </TabList>
         <TabPanels p={{ base: '0 0.9rem', md: '0 2.6rem' }}>
-          <TabPanel p="0">
-            <DepositPanel
-              asset={asset}
-              totalWeight={totalWeight}
-              gaugeWeight={gaugeWeight}
-              balance={balance0}
-              balance1={balance1}
-              refreshData={setRefreshDataToken}
-            />
-          </TabPanel>
           <TabPanel p="0">
             <WithdrawPanel
               asset={asset}
@@ -933,7 +855,7 @@ const WithdrawPanel = props => {
               setInputAmount(
                 ethers.utils.formatUnits(props.balance, token0.decimals),
               )
-              setValue(props.balance)
+              setValue(props.balance.sub(1))
             }}
           >
             MAX

@@ -129,15 +129,9 @@ const App = () => {
 
 function AlphaModalAgreement() {
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const [agreement, setAgreement] = useLocalStorage(
-    'disclaimerAgreement',
-    false,
-  )
   useEffect(() => {
-    if (!agreement) {
-      onOpen()
-    }
-  }, [agreement])
+    onOpen()
+  }, [])
   return (
     <>
       <Modal
@@ -154,16 +148,10 @@ function AlphaModalAgreement() {
             <Flex p={'2rem'}>
               <Text>
                 <h1>Aphra Finance is an experimental protocol.</h1>
-                <ul>
-                  <li>It has not been audited</li>
-                  <li>It is not risk-free</li>
-                  <li>You may lose 100% of deposits</li>
-                </ul>
-                <br />
-                <p>Never deposit more than you can afford to lose.</p>
                 <p>
-                  Aphra Finance will not be responsible for compensation of any
-                  losses under any circumstances.
+                  We received reports of withdrawal issues and have discovered
+                  an issue in the gauges, no more deposits are being accepted at
+                  this time and all users should exit their gauges.
                 </p>
               </Text>
             </Flex>
@@ -174,11 +162,10 @@ function AlphaModalAgreement() {
               colorScheme="blue"
               mr={3}
               onClick={() => {
-                setAgreement(true)
                 onClose()
               }}
             >
-              I accept these risks.
+              I understand
             </Button>
           </ModalFooter>
         </ModalContent>
