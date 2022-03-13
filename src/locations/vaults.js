@@ -522,12 +522,6 @@ const Vaults = props => {
                   )}
                   {!wallet.account && <>Deposit</>}
                 </Button>
-                {!working && tokenSelect && (
-                  <>
-                    <GagueActiveTag mt={'2rem'} />
-                    <GaugeItem asset={tokenSelect.gaugeAsset} />
-                  </>
-                )}
               </>
             )}
           </Flex>
