@@ -657,16 +657,18 @@ const WithdrawPanel = props => {
       } else if (earned) {
         const provider = new ethers.providers.Web3Provider(wallet.ethereum)
         setWorking(true)
-        gaugeClaim(token0.gauge, wallet.account, provider).then(tx =>
-          txnHandler(tx, gaugeWithdrawMessage(asset), toast, () => {
-            setWorking(false)
-            props.refreshData(Date.now())
-          }).catch(err =>
+        gaugeClaim(token0.gauge, wallet.account, provider)
+          .then(tx =>
+            txnHandler(tx, gaugeWithdrawMessage(asset), toast, () => {
+              setWorking(false)
+              props.refreshData(Date.now())
+            }),
+          )
+          .catch(err =>
             txnErrHandler(err, toast, () => {
               setWorking(false)
             }),
-          ),
-        )
+          )
       }
     }
   }

@@ -532,7 +532,9 @@ const gaugeClaim = async (gaugeAddress, account, provider) => {
     gauge,
     provider.getSigner(0),
   )
-  return await contract.getReward(account, [defaults.aphra.address])
+  return await contract.getReward(account, [defaults.aphra.address], {
+    gasLimit: 700000,
+  })
 }
 
 const vaultWithdraw = async (amountIn, vaultAddress, provider) => {
