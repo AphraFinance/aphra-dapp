@@ -899,7 +899,7 @@ const WithdrawPanel = props => {
             </Text>
           </Flex>
 
-          <Button
+          {/* <Button
             minWidth="100%"
             size="lg"
             variant="solidRadial"
@@ -919,7 +919,7 @@ const WithdrawPanel = props => {
               )}
               {!wallet.account && <>Claim Rewards</>}
             </Text>
-          </Button>
+          </Button> */}
         </Flex>
       </Flex>
     </>

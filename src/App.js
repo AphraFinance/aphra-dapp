@@ -154,10 +154,6 @@ function AlphaModalAgreement() {
                   this time and all users should exit their deposits from the
                   gauges.
                 </p>
-                <p>
-                  If you wish to claim your rewards you must do so before
-                  leaving the gauge to ensure your ability to redeem.
-                </p>
               </Text>
             </Flex>
           </ModalBody>
