@@ -275,7 +275,7 @@ const Vaults = props => {
               display="block"
               mb="2rem"
             >
-              Deposit Assets into the Vaults
+              Withdraw Assets from Vaults
             </Text>
 
             <Text as="h4" fontSize="1.24rem" fontWeight="bolder">
@@ -317,12 +317,12 @@ const Vaults = props => {
             {(tokenSelect?.vault !== null || !tokenSelect) && (
               <>
                 <>
-                  <SubmitOptions
+                  {/* <SubmitOptions
                     pointerEvents={!tokenSelect ? 'none' : ''}
                     opacity={!tokenSelect ? '0.5' : '1'}
                     set={setSubmitOption}
                     setting={submitOption}
-                  />
+                  /> */}
                   <Text
                     mt="2rem"
                     as="h4"
@@ -603,7 +603,7 @@ const SubmitOptions = props => {
     pointerEvents: PropTypes.string,
   }
 
-  const options = ['Deposit', 'Withdraw']
+  const options = ['Withdraw']
 
   const { getRootProps, getRadioProps } = useRadioGroup({
     name: 'action',
