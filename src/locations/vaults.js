@@ -314,7 +314,8 @@ const Vaults = props => {
               </Button>
             </Flex>
 
-            {(tokenSelect?.vault !== null || !tokenSelect) && (
+            {((!tokenSelect?.symbol && tokenSelect?.vault !== null) ||
+              tokenSelect?.symbol) && (
               <>
                 <>
                   {/* <SubmitOptions
@@ -497,22 +498,14 @@ const Vaults = props => {
                       {!working && tokenSelect && (
                         <>
                           {!vaultApproved && (
-                            <>
-                              {submitOption && <>Withdraw</>}
-                              {!submitOption && (
-                                <>Approve {tokenSelect.symbol}</>
-                              )}
-                            </>
+                            <>{submitOption && <>Withdraw</>}</>
                           )}
                           {vaultApproved && (
-                            <>
-                              {submitOption && <>Withdraw</>}
-                              {!submitOption && <>Deposit</>}
-                            </>
+                            <>{submitOption && <>Withdraw</>}</>
                           )}
                         </>
                       )}
-                      {!working && !tokenSelect && <>Deposit</>}
+                      {!working && !tokenSelect && <>Withdraw</>}
                       {working && (
                         <>
                           <Spinner />
@@ -520,7 +513,7 @@ const Vaults = props => {
                       )}
                     </>
                   )}
-                  {!wallet.account && <>Deposit</>}
+                  {!wallet.account && <>Withdraw</>}
                 </Button>
               </>
             )}
