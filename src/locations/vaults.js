@@ -232,6 +232,21 @@ const Vaults = props => {
     }
   }, [wallet.account, tokenSelect])
 
+  useEffect(() => {
+    if (wallet.account && tokenSelect?.vault) {
+      setWorking(true)
+      setInputAmount(
+        ethers.utils.formatUnits(balance?.data, tokenSelect.decimals),
+      )
+      setValue(balance?.data)
+    }
+
+    return () => {
+      setWorking(false)
+      setVaultApproved(false)
+    }
+  }, [wallet.account, tokenSelect])
+
   return (
     <>
       <Box
@@ -413,7 +428,7 @@ const Vaults = props => {
                     </Box>
                   </Flex>
 
-                  <Flex mt=".6rem" justifyContent="flex-end" flexDir="row">
+                  {/* <Flex mt=".6rem" justifyContent="flex-end" flexDir="row">
                     <Button
                       variant="outline"
                       size="sm"
@@ -482,7 +497,7 @@ const Vaults = props => {
                     >
                       MAX
                     </Button>
-                  </Flex>
+                  </Flex> */}
                 </>
                 <Button
                   variant="solidRadial"
@@ -498,14 +513,14 @@ const Vaults = props => {
                       {!working && tokenSelect && (
                         <>
                           {!vaultApproved && (
-                            <>{submitOption && <>Withdraw</>}</>
+                            <>{submitOption && <>Withdraw All</>}</>
                           )}
                           {vaultApproved && (
-                            <>{submitOption && <>Withdraw</>}</>
+                            <>{submitOption && <>Withdraw All</>}</>
                           )}
                         </>
                       )}
-                      {!working && !tokenSelect && <>Withdraw</>}
+                      {!working && !tokenSelect && <>Withdraw All</>}
                       {working && (
                         <>
                           <Spinner />
@@ -513,7 +528,7 @@ const Vaults = props => {
                       )}
                     </>
                   )}
-                  {!wallet.account && <>Withdraw</>}
+                  {!wallet.account && <>Withdraw All</>}
                 </Button>
               </>
             )}
@@ -600,7 +615,7 @@ const SubmitOptions = props => {
 
   const { getRootProps, getRadioProps } = useRadioGroup({
     name: 'action',
-    value: !props.setting ? 'Deposit' : 'Withdraw',
+    value: !props.setting ? 'Deposit' : 'Withdraw All',
     onChange: () => props.set(!props.setting),
   })
   const group = getRootProps()
