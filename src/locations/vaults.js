@@ -233,7 +233,7 @@ const Vaults = props => {
   }, [wallet.account, tokenSelect])
 
   useEffect(() => {
-    if (wallet.account && tokenSelect?.vault) {
+    if (wallet.account && balance?.data && tokenSelect?.vault) {
       setWorking(true)
       setInputAmount(
         ethers.utils.formatUnits(balance?.data, tokenSelect.decimals),
