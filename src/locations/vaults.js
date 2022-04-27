@@ -508,27 +508,12 @@ const Vaults = props => {
                   disabled={working}
                   onClick={() => submit()}
                 >
-                  {wallet.account && (
+                  Withdraw All{' '}
+                  {working && (
                     <>
-                      {!working && tokenSelect && (
-                        <>
-                          {!vaultApproved && (
-                            <>{submitOption && <>Withdraw All</>}</>
-                          )}
-                          {vaultApproved && (
-                            <>{submitOption && <>Withdraw All</>}</>
-                          )}
-                        </>
-                      )}
-                      {!working && !tokenSelect && <>Withdraw All</>}
-                      {working && (
-                        <>
-                          <Spinner />
-                        </>
-                      )}
+                      <Spinner />
                     </>
                   )}
-                  {!wallet.account && <>Withdraw All</>}
                 </Button>
               </>
             )}
