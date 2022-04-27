@@ -2,7 +2,7 @@
   "name": "aphra-dapp",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://aphrafinance.github.io/aphra-dapp",
+  "homepage": "https://aphra.finance",
   "dependencies": {
     "@apollo/client": "^3.4.16",
     "@chakra-ui/icons": "^1.0.13",
@@ -42,7 +42,7 @@
   },
   "scripts": {
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
+    "deploy": "echo 'aphra.finance' > ./build/CNAME && gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",

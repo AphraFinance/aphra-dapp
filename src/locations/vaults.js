@@ -131,9 +131,7 @@ const Vaults = props => {
     'acquireSubmitOption23049',
     false,
   )
-  const balance = useERC20Balance(
-    !submitOption ? tokenSelect?.address : tokenSelect?.vault,
-  )
+  const balance = useERC20Balance(tokenSelect?.vault)
   const [inputAmount, setInputAmount] = useState('')
   const [value, setValue] = useState(0)
   const [working, setWorking] = useState(false)
@@ -177,22 +175,17 @@ const Vaults = props => {
         if (balance?.data?.gte(value)) {
           setWorking(true)
           new Promise(resolve => {
-            if (!submitOption) {
-              resolve(vaultDeposit(value, tokenSelect.vault, provider))
-            } else {
-              resolve(vaultWithdraw(value, tokenSelect.vault, provider))
-            }
+            // if (!submitOption) {
+            // resolve(vaultDeposit(value, tokenSelect.vault, provider))
+            // } else {
+            resolve(vaultWithdraw(value, tokenSelect.vault, provider))
+            // }
           })
             .then(tx =>
-              txnHandler(
-                tx,
-                !submitOption ? assetDeposited : assetWithdrawn,
-                toast,
-                () => {
-                  setWorking(false)
-                  setVaultApproved(true)
-                },
-              ),
+              txnHandler(tx, assetWithdrawn, toast, () => {
+                setWorking(false)
+                setVaultApproved(true)
+              }),
             )
             .catch(err =>
               txnErrHandler(err, toast, () => {
@@ -359,7 +352,7 @@ const Vaults = props => {
                         <Input
                           variant="transparent"
                           flex="1"
-                          disabled={!tokenSelect}
+                          disabled={true}
                           _disabled={{
                             opacity: '0.5',
                             cursor: 'not-allowed',
@@ -427,77 +420,6 @@ const Vaults = props => {
                       </InputGroup>
                     </Box>
                   </Flex>
-
-                  {/* <Flex mt=".6rem" justifyContent="flex-end" flexDir="row">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      mr="0.4rem"
-                      onClick={() => {
-                        let localAmount = balance?.data?.div(100).mul(25)
-                        if (!localAmount) {
-                          localAmount = '0;'
-                        }
-                        setInputAmount(
-                          ethers.utils.formatUnits(
-                            balance?.data?.div(100).mul(25),
-                            tokenSelect.decimals,
-                          ),
-                        )
-                        setValue(balance?.data?.div(100).mul(25))
-                      }}
-                    >
-                      25%
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      mr="0.4rem"
-                      onClick={() => {
-                        setInputAmount(
-                          ethers.utils.formatUnits(
-                            balance?.data?.div(100).mul(50),
-                            tokenSelect.decimals,
-                          ),
-                        )
-                        setValue(balance?.data?.div(100).mul(50))
-                      }}
-                    >
-                      50%
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      mr="0.4rem"
-                      onClick={() => {
-                        setInputAmount(
-                          ethers.utils.formatUnits(
-                            balance?.data?.div(100).mul(75),
-                            tokenSelect.decimals,
-                          ),
-                        )
-                        setValue(balance?.data?.div(100).mul(75))
-                      }}
-                    >
-                      75%
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      mr="0.4rem"
-                      onClick={() => {
-                        setInputAmount(
-                          ethers.utils.formatUnits(
-                            balance?.data,
-                            tokenSelect.decimals,
-                          ),
-                        )
-                        setValue(balance?.data)
-                      }}
-                    >
-                      MAX
-                    </Button>
-                  </Flex> */}
                 </>
                 <Button
                   variant="solidRadial"
@@ -505,10 +427,12 @@ const Vaults = props => {
                   size="lg"
                   minWidth="230px"
                   textTransform="uppercase"
-                  disabled={working}
+                  disabled={working || value === 0}
                   onClick={() => submit()}
                 >
-                  Withdraw All{' '}
+                  {!tokenSelect && <>Select a Token</>}
+                  {tokenSelect && value > 0 && <>Withdraw All</>}
+                  {tokenSelect && value === 0 && <>Nothing to withdraw</>}
                   {working && (
                     <>
                       <Spinner />
